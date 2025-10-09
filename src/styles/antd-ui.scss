@@ -1,0 +1,242 @@
+// 优化antd组件样式
+
+:root {
+    // 系统主色
+    --main-color: var(--ant-color-primary);
+    --ant-color-white: white !important;
+    --ant-color-black: white !important;
+    // 输入框边框颜色
+    // --ant-border-color: #E4E4E7 !important; // DCDFE6
+    // 按钮粗度
+    --ant-font-weight-primary: 400 !important;
+
+    // 边框、按钮圆角...
+    --ant-border-radius-base: 8px !important;
+
+    --ant-border-radius-small: 10px !important;
+    --ant-messagebox-border-radius: 10px !important;
+
+    // 默认按钮颜色
+    .my-template-umi-ant-button--primary {
+        --ant-button-font-color: #ffffff;
+        --ant-button-active-font-color: #e6e6e6;
+        --ant-button-background-color: var(--main-color);
+        --ant-button-border-color: var(--main-color);
+        --ant-button-hover-color: var(--main-color);
+        --ant-button-active-background-color: var(--main-color);
+        --ant-button-active-border-color: var(--main-color);
+    }
+
+    .region .my-template-umi-ant-radio-button__original-radio:checked+.my-template-umi-ant-radio-button__inner {
+        color: var(--main-color);
+    }
+
+    .my-template-umi-ant-button:active {
+        color: var(--main-color);
+        border-color: var(--ant-color-primary-light-6);
+    }
+}
+
+.my-template-umi-ant-pagination.is-background .btn-next,
+.my-template-umi-ant-pagination.is-background .btn-prev,
+.my-template-umi-ant-pagination.is-background .my-template-umi-ant-pager li {
+    border-radius: 6px;
+}
+
+.my-template-umi-ant-popover {
+    min-width: 80px;
+}
+
+.my-template-umi-ant-dialog__header {
+    padding: 10px 10px;
+}
+
+.my-template-umi-ant-dialog__body {
+    padding: 25px 10px !important;
+}
+
+.my-template-umi-ant-dialog__footer {
+    padding: 10px 10px !important;
+    // border-top: 1px solid #F0F0F0;
+}
+
+// ✅ my-template-umi-ant-message 样式优化
+.my-template-umi-ant-message {
+    background-color: var(--art-main-bg-color) !important;
+    border: 0 !important;
+    box-shadow:
+        0 6px 16px 0 rgba(0, 0, 0, 0.08),
+        0 3px 6px -4px rgba(0, 0, 0, 0.12),
+        0 9px 28px 8px rgba(0, 0, 0, 0.05) !important;
+
+    p {
+        color: #515a6e !important;
+        font-size: 13px;
+    }
+}
+
+.my-template-umi-ant-dropdown-selfdefine:focus {
+    outline: none !important;
+}
+
+// 处理移动端组件兼容性
+// @media screen and (max-width: $device-phone) {
+
+//     .my-template-umi-ant-message-box,
+//     .my-template-umi-ant-message,
+//     .my-template-umi-ant-dialog {
+//         width: calc(100% - 24px) !important;
+//     }
+
+//     .my-template-umi-ant-date-picker.has-sidebar.has-time {
+//         width: calc(100% - 24px);
+//         left: 12px !important;
+//     }
+
+//     .my-template-umi-ant-picker-panel *[slot='sidebar'],
+//     .my-template-umi-ant-picker-panel__sidebar {
+//         display: none;
+//     }
+
+//     .my-template-umi-ant-picker-panel *[slot='sidebar']+.my-template-umi-ant-picker-panel__body,
+//     .my-template-umi-ant-picker-panel__sidebar+.my-template-umi-ant-picker-panel__body {
+//         margin-left: 0;
+//     }
+// }
+
+// 修改el-button样式
+.my-template-umi-ant-button {
+    &:active {
+        color: #fff !important;
+    }
+
+    &.my-template-umi-ant-button--text {
+        background-color: transparent !important;
+        padding: 0 !important;
+
+        span {
+            margin-left: 0 !important;
+        }
+    }
+}
+
+// 修改el-tag样式
+.my-template-umi-ant-tag {
+    height: 28px !important;
+    line-height: 28px !important;
+    padding: 0 14px !important;
+    border: 0 !important;
+    border-radius: 6px !important;
+    font-weight: bold;
+    transition: all 0s !important;
+}
+
+.my-template-umi-ant-tag--success {
+    background-color: rgba(#dcfce7, 0.85) !important;
+}
+
+.my-template-umi-ant-tag--success {
+    background-color: --main-color !important;
+}
+
+.dark {
+    .my-template-umi-ant-tag {
+        color: #eee !important;
+    }
+
+    .my-template-umi-ant-tag--primary {
+        background-color: #409eff !important;
+    }
+
+    .my-template-umi-ant-tag--success {
+        background-color: #49bb78 !important;
+    }
+
+    .my-template-umi-ant-tag--info {
+        background-color: #a1afc0 !important;
+    }
+
+    .my-template-umi-ant-tag--warning {
+        background-color: #f7ae55 !important;
+    }
+
+    .my-template-umi-ant-tag--danger {
+        background-color: #e53e3e !important;
+    }
+
+    .my-template-umi-ant-message {
+        border: 1px solid var(--art-border-color) !important;
+    }
+}
+
+.my-template-umi-ant-checkbox-group {
+    &.my-template-umi-ant-table-filter__checkbox-group label.my-template-umi-ant-checkbox {
+        height: 17px !important;
+
+        .my-template-umi-ant-checkbox__label {
+            font-weight: 400 !important;
+        }
+    }
+}
+
+.my-template-umi-ant-checkbox {
+    .my-template-umi-ant-checkbox__inner {
+        width: 18px !important;
+        height: 18px !important;
+        border-radius: 5px !important;
+
+        &::after {
+            width: 4px;
+            height: 8px;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 4px;
+            margin: auto;
+            // TODO:
+            border: 2px solid var(--ant-checkbox-checked-icon-color);
+            border-left: 0;
+            border-top: 0;
+        }
+    }
+}
+
+.my-template-umi-ant-notification .my-template-umi-ant-notification__icon {
+    font-size: 22px !important;
+}
+
+.my-template-umi-ant-message-box__headerbtn .my-template-umi-ant-message-box__close,
+.my-template-umi-ant-dialog__headerbtn .my-template-umi-ant-dialog__close {
+    color: #999 !important;
+}
+
+.my-template-umi-ant-table__column-filter-trigger i {
+    color: var(--main-color) !important;
+    margin: -3px 0 0 2px;
+}
+
+// 去除 my-template-umi-ant-dropdown 鼠标放上去出现的边框
+.my-template-umi-ant-tooltip__trigger:focus-visible {
+    outline: unset;
+}
+
+.my-template-umi-ant-table th,
+.my-template-umi-ant-table tr {
+    background-color: transparent !important;
+}
+
+// ipad 表单右侧按钮优化
+// @media screen and (max-width: $device-ipad-pro) {
+//     .my-template-umi-ant-table-fixed-column--right {
+//         padding-right: 0 !important;
+
+//         .my-template-umi-ant-button {
+//             margin: 5px 10px 5px 0 !important;
+//         }
+//     }
+// }
+
+.login-out-dialog {
+    padding: 30px 20px !important;
+    border-radius: 10px !important;
+}

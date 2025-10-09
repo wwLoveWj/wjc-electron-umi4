@@ -1,0 +1,1355 @@
+import React, { useState, useRef, useEffect } from "react";
+import {
+  PlayCircleFilled,
+  PauseCircleFilled,
+  StepForwardFilled,
+  StepBackwardFilled,
+  HeartOutlined,
+  HeartFilled,
+  MenuOutlined,
+  SearchOutlined,
+  HomeOutlined,
+  AimOutlined,
+  UploadOutlined,
+  DownloadOutlined,
+  PlusOutlined,
+  SoundOutlined,
+  SoundFilled,
+  MoreOutlined,
+  FolderOpenOutlined,
+  FolderOutlined,
+  InfoCircleOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
+import {
+  Row,
+  Col,
+  Button,
+  Input,
+  Card,
+  List,
+  Avatar,
+  Slider,
+  Select,
+  Modal,
+  Tabs,
+  Progress,
+  Checkbox,
+  Tooltip,
+  Divider,
+  Grid,
+  message,
+  Tag,
+  Statistic,
+  Space,
+  Popconfirm,
+} from "antd";
+import styles from "./index.less";
+import {
+  getAlbumCover,
+  getMusicCover,
+  isValidImageUrl,
+} from "@/utils/imageUtils";
+
+const { Option } = Select;
+const { TabPane } = Tabs;
+const { useBreakpoint } = Grid;
+const { Countdown } = Statistic;
+
+// 音乐类型定义
+interface Music {
+  id: string;
+  title: string;
+  artist: string;
+  album: string;
+  duration: number;
+  url: string;
+  cover: string;
+  liked: boolean;
+  filePath?: string;
+  fileName?: string;
+  fileSize?: number;
+  addedDate?: string;
+}
+
+// 播放列表类型定义
+interface Playlist {
+  id: string;
+  name: string;
+  musics: Music[];
+}
+
+// 专辑类型定义
+interface Album {
+  id: string;
+  name: string;
+  artist: string;
+  cover: string;
+  year: string;
+  musics: Music[];
+}
+
+const TechWeddingPlayer: React.FC = () => {
+  const [currentMusic, setCurrentMusic] = useState<Music | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [volume, setVolume] = useState(0.8);
+  const [playMode, setPlayMode] = useState<"list" | "single" | "random">(
+    "list"
+  );
+  const [duration, setDuration] = useState(0);
+  const [isMuted, setIsMuted] = useState(false);
+  const [selectedMusicIds, setSelectedMusicIds] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState("home");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [storagePath, setStoragePath] = useState<string>("W:\\WeddingMusic");
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadInfo, setUploadInfo] = useState({ current: 0, total: 0 });
+
+  // 模拟数据 - 根据截图内容
+  const [albums, setAlbums] = useState<Album[]>([]);
+  const [playlists, setPlaylists] = useState<Playlist[]>([
+    {
+      id: "default",
+      name: "我的收藏",
+      musics: [
+        {
+          id: "1",
+          title: "clipped audio 1759480154979",
+          artist: "未知艺术家",
+          album: "未知专辑",
+          duration: 141, // 2:21
+          url: "",
+          cover: "",
+          liked: false,
+          fileSize: 25.92,
+        },
+        {
+          id: "2",
+          title: "周杰伦",
+          artist: "周杰伦",
+          album: "周杰伦专辑",
+          duration: 223, // 3:43
+          url: "",
+          cover: "",
+          liked: false,
+          fileSize: 24.81,
+        },
+      ],
+    },
+  ]);
+
+  const [currentPlaylistId, setCurrentPlaylistId] = useState("default");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [newPlaylistName, setNewPlaylistName] = useState("");
+  const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
+
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const screens = useBreakpoint();
+
+  // 获取当前播放列表
+  const currentPlaylist =
+    playlists.find((p) => p.id === currentPlaylistId) || playlists[0];
+
+  // 初始化 - 获取存储路径和本地音乐
+  useEffect(() => {
+    const initializeApp = async () => {
+      if (window.electronAPI) {
+        try {
+          // 为专辑设置默认封面
+          const albumsWithCovers = albums.map((album) => ({
+            ...album,
+            cover: getAlbumCover(album.name, album.cover),
+          }));
+          setAlbums(albumsWithCovers);
+          // 获取存储路径
+          const path = await window.electronAPI.getStoragePath();
+          setStoragePath(path);
+
+          // 加载本地音乐
+          await loadLocalMusic();
+        } catch (error) {
+          console.error("Failed to initialize app:", error);
+          message.error("初始化失败");
+        }
+      }
+    };
+
+    initializeApp();
+  }, []);
+
+  // 在加载本地音乐时设置封面
+  const loadLocalMusic = async () => {
+    if (window.electronAPI) {
+      try {
+        const localMusic = await window.electronAPI.getLocalMusic();
+        if (localMusic.length > 0) {
+          // 为音乐设置封面
+          const musicWithCovers = localMusic.map((music) => ({
+            ...music,
+            cover: getMusicCover(music.title, music.album, music.cover),
+          }));
+
+          const updatedPlaylists = playlists.map((playlist) => {
+            if (playlist.id === "default") {
+              return {
+                ...playlist,
+                musics: musicWithCovers,
+              };
+            }
+            return playlist;
+          });
+          setPlaylists(updatedPlaylists);
+
+          // 从音乐数据生成专辑信息
+          const albumMap = new Map();
+          musicWithCovers.forEach((music) => {
+            const albumName = music.album || "默认专辑";
+            if (!albumMap.has(albumName)) {
+              albumMap.set(albumName, {
+                id: `album-${albumName}`,
+                name: albumName,
+                artist: music.artist,
+                cover: getAlbumCover(albumName),
+                year: new Date().getFullYear().toString(),
+                musics: [],
+              });
+            }
+            albumMap.get(albumName).musics.push(music);
+          });
+
+          setAlbums(Array.from(albumMap.values()));
+        }
+      } catch (error) {
+        console.error("Failed to load local music:", error);
+        message.error("加载音乐失败");
+      }
+    }
+  };
+
+  // 音频元素事件监听
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleLoadedMetadata = () => {
+      setDuration(audio.duration);
+    };
+
+    const handleTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+    };
+
+    const handleEnded = () => {
+      handleNext();
+    };
+
+    const handleError = (e: any) => {
+      console.error("Audio error:", e);
+      setIsPlaying(false);
+    };
+
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("error", handleError);
+
+    return () => {
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("ended", handleEnded);
+      audio.removeEventListener("error", handleError);
+    };
+  }, []);
+
+  // 当当前音乐改变时，更新音频源
+  useEffect(() => {
+    if (currentMusic && audioRef.current) {
+      const audio = audioRef.current;
+      audio.src = currentMusic.url;
+      audio.load();
+
+      if (isPlaying) {
+        audio.play().catch((error) => {
+          console.error("Play failed:", error);
+          setIsPlaying(false);
+        });
+      }
+    }
+  }, [currentMusic]);
+
+  // 当播放状态改变时，控制音频播放/暂停
+  useEffect(() => {
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+      audioRef.current.play().catch((error) => {
+        console.error("Play failed:", error);
+        setIsPlaying(false);
+      });
+    } else {
+      audioRef.current.pause();
+    }
+  }, [isPlaying]);
+
+  // 当音量改变时，更新音频音量
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
+
+  // 播放/暂停
+  const togglePlay = () => {
+    if (currentMusic) {
+      setIsPlaying(!isPlaying);
+    } else if (currentPlaylist.musics.length > 0) {
+      setCurrentMusic(currentPlaylist.musics[0]);
+      setIsPlaying(true);
+    }
+  };
+
+  // 下一首
+  const handleNext = () => {
+    if (!currentMusic || currentPlaylist.musics.length === 0) return;
+
+    const currentIndex = currentPlaylist.musics.findIndex(
+      (m) => m.id === currentMusic.id
+    );
+    let nextIndex;
+
+    if (playMode === "random") {
+      nextIndex = Math.floor(Math.random() * currentPlaylist.musics.length);
+    } else if (playMode === "single") {
+      nextIndex = currentIndex;
+    } else {
+      nextIndex = (currentIndex + 1) % currentPlaylist.musics.length;
+    }
+
+    setCurrentMusic(currentPlaylist.musics[nextIndex]);
+    setCurrentTime(0);
+  };
+
+  // 上一首
+  const handlePrev = () => {
+    if (!currentMusic || currentPlaylist.musics.length === 0) return;
+
+    const currentIndex = currentPlaylist.musics.findIndex(
+      (m) => m.id === currentMusic.id
+    );
+    let prevIndex;
+
+    if (playMode === "random") {
+      prevIndex = Math.floor(Math.random() * currentPlaylist.musics.length);
+    } else if (playMode === "single") {
+      prevIndex = currentIndex;
+    } else {
+      prevIndex =
+        currentIndex === 0
+          ? currentPlaylist.musics.length - 1
+          : currentIndex - 1;
+    }
+
+    setCurrentMusic(currentPlaylist.musics[prevIndex]);
+    setCurrentTime(0);
+  };
+
+  // 选择音乐
+  const handleSelectMusic = (music: Music) => {
+    setCurrentMusic(music);
+    setIsPlaying(true);
+  };
+
+  // 切换喜欢状态
+  const toggleLike = (musicId: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+
+    const updatedPlaylists = playlists.map((playlist) => ({
+      ...playlist,
+      musics: playlist.musics.map((music) =>
+        music.id === musicId ? { ...music, liked: !music.liked } : music
+      ),
+    }));
+    setPlaylists(updatedPlaylists);
+
+    if (currentMusic && currentMusic.id === musicId) {
+      setCurrentMusic({ ...currentMusic, liked: !currentMusic.liked });
+    }
+  };
+
+  // 选择专辑
+  const handleSelectAlbum = (album: Album) => {
+    setSelectedAlbum(album);
+    setActiveTab("album-detail");
+  };
+
+  // 返回专辑列表
+  const handleBackToAlbums = () => {
+    setSelectedAlbum(null);
+    setActiveTab("albums");
+  };
+
+  // 创建新歌单
+  const handleCreatePlaylist = () => {
+    if (!newPlaylistName.trim()) return;
+
+    const newPlaylist: Playlist = {
+      id: `playlist-${Date.now()}`,
+      name: newPlaylistName,
+      musics: [],
+    };
+
+    setPlaylists([...playlists, newPlaylist]);
+    setNewPlaylistName("");
+    setIsModalVisible(false);
+  };
+
+  // 处理文件上传
+  const handleUploadMusic = async () => {
+    if (!window.electronAPI) {
+      message.warning("此功能仅在 Electron 环境中可用");
+      return;
+    }
+
+    setUploading(true);
+    setUploadProgress(0);
+    setUploadInfo({ current: 0, total: 0 });
+
+    try {
+      const result = await window.electronAPI.selectAndUploadMusic();
+
+      if (result.success) {
+        const successfulUploads = result.files?.filter((file) => file.success);
+        const failedUploads = result.files?.filter((file) => !file.success);
+
+        if (successfulUploads && successfulUploads.length > 0) {
+          // 添加到当前播放列表
+          // 为上传的音乐设置封面
+          const newMusics: Music[] = successfulUploads.map((file) => ({
+            id: `music-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            title: file.title || "未知标题",
+            artist: file.artist || "未知艺术家",
+            album: file.album || "",
+            duration: file.duration || 0,
+            url: file.url || "",
+            cover: getMusicCover(
+              file.title || "",
+              file.album || "",
+              file.cover
+            ),
+            liked: false,
+            filePath: file.filePath,
+            fileName: file.fileName,
+            fileSize: file.fileSize,
+          }));
+
+          const updatedPlaylists = playlists.map((playlist) => {
+            if (playlist.id === currentPlaylistId) {
+              return {
+                ...playlist,
+                musics: [...playlist.musics, ...newMusics],
+              };
+            }
+            return playlist;
+          });
+
+          setPlaylists(updatedPlaylists);
+
+          // 重新生成专辑信息
+          await loadLocalMusic();
+
+          message.success(`成功上传 ${successfulUploads.length} 个文件`);
+        }
+
+        if (failedUploads && failedUploads.length > 0) {
+          message.error(`${failedUploads.length} 个文件上传失败`);
+        }
+      } else {
+        message.error(`上传失败: ${result.error}`);
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      message.error("上传过程中发生错误");
+    } finally {
+      setUploading(false);
+      setUploadProgress(0);
+      setUploadInfo({ current: 0, total: 0 });
+    }
+  };
+
+  // 选择存储目录
+  const handleSelectStorageDirectory = async () => {
+    if (window.electronAPI) {
+      try {
+        const result = await window.electronAPI.selectStorageDirectory();
+        if (result.success) {
+          setStoragePath(result.path || "");
+          message.success(`存储目录已设置为: ${result.path}`);
+          // 重新加载音乐
+          await loadLocalMusic();
+        }
+      } catch (error) {
+        message.error("选择目录失败");
+      }
+    } else {
+      message.warning("此功能仅在 Electron 环境中可用");
+    }
+  };
+
+  // 打开存储目录
+  const handleOpenStorageDirectory = async () => {
+    if (window.electronAPI) {
+      try {
+        const result = await window.electronAPI.openStorageDirectory();
+        if (!result.success) {
+          message.error("无法打开存储目录");
+        }
+      } catch (error) {
+        message.error("打开目录失败");
+      }
+    } else {
+      message.warning("此功能仅在 Electron 环境中可用");
+    }
+  };
+
+  // 下载选中的音乐为zip
+  const handleDownloadSelected = async () => {
+    if (selectedMusicIds.length === 0) {
+      message.warning("请先选择要下载的音乐");
+      return;
+    }
+
+    const selectedMusics = currentPlaylist.musics.filter((music) =>
+      selectedMusicIds.includes(music.id)
+    );
+
+    if (window.electronAPI) {
+      try {
+        const result =
+          await window.electronAPI.downloadMusicZip(selectedMusics);
+        if (result.success) {
+          message.success(`音乐包已保存 (${result.size}MB)`);
+        } else {
+          message.error(`打包失败: ${result.error}`);
+        }
+      } catch (error) {
+        message.error("下载失败，请重试");
+      }
+    } else {
+      message.warning("此功能仅在 Electron 环境中可用");
+    }
+  };
+
+  // 删除音乐文件
+  const handleDeleteMusic = async (music: Music, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (window.electronAPI) {
+      try {
+        const result = await window.electronAPI.deleteMusicFile(music);
+        if (result.success) {
+          // 从播放列表中移除
+          const updatedPlaylists = playlists.map((playlist) => ({
+            ...playlist,
+            musics: playlist.musics.filter((m) => m.id !== music.id),
+          }));
+          setPlaylists(updatedPlaylists);
+
+          // 从选中列表中移除
+          setSelectedMusicIds(selectedMusicIds.filter((id) => id !== music.id));
+
+          // 如果正在播放的是被删除的音乐，停止播放
+          if (currentMusic && currentMusic.id === music.id) {
+            setCurrentMusic(null);
+            setIsPlaying(false);
+            if (audioRef.current) {
+              audioRef.current.src = "";
+            }
+          }
+
+          message.success("已删除音乐文件");
+
+          // 重新加载专辑信息
+          await loadLocalMusic();
+        } else {
+          message.error(`删除失败: ${result.error}`);
+        }
+      } catch (error) {
+        message.error("删除失败");
+      }
+    } else {
+      message.warning("此功能仅在 Electron 环境中可用");
+    }
+  };
+
+  // 处理进度条跳转
+  const handleProgressChange = (value: number) => {
+    setCurrentTime(value);
+    if (audioRef.current) {
+      audioRef.current.currentTime = value;
+    }
+  };
+
+  // 切换静音
+  const toggleMute = () => {
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  // 格式化时间
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  };
+
+  // 格式化文件大小
+  const formatFileSize = (size?: number) => {
+    if (!size) return "未知";
+    return `${size.toFixed(2)} MB`;
+  };
+
+  // 过滤音乐
+  const filteredMusic = currentPlaylist.musics.filter(
+    (music) =>
+      music.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      music.artist.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      music.album.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // 渲染专辑封面时使用安全的图片URL
+  const renderAlbumCover = (album: Album, className: string = "") => (
+    <img
+      src={getAlbumCover(album.name, album.cover)}
+      alt={album.name}
+      className={className}
+      onError={(e) => {
+        // 图片加载失败时使用默认封面
+        const target = e.target as HTMLImageElement;
+        target.src = getAlbumCover(album.name);
+      }}
+    />
+  );
+
+  // 渲染音乐封面时使用安全的图片URL
+  const renderMusicCover = (music: Music, className: string = "") => (
+    <img
+      src={getMusicCover(music.title, music.album, music.cover)}
+      alt={music.title}
+      className={className}
+      onError={(e) => {
+        // 图片加载失败时使用默认封面
+        const target = e.target as HTMLImageElement;
+        target.src = getMusicCover(music.title, music.album);
+      }}
+    />
+  );
+
+  return (
+    <div className={styles.container}>
+      {/* 隐藏的audio元素 */}
+      <audio ref={audioRef} preload="metadata" />
+
+      <div className={styles.appLayout}>
+        {/* 侧边导航 */}
+        <div className={styles.sidebar}>
+          <div className={styles.logo}>
+            <div className={styles.logoIcon}>♫</div>
+            <span className={styles.logoText}>Harmony</span>
+          </div>
+
+          <div className={styles.navMenu}>
+            <div
+              className={`${styles.navItem} ${activeTab === "home" ? styles.active : ""}`}
+              onClick={() => setActiveTab("home")}
+            >
+              <HomeOutlined />
+              <span>首页</span>
+            </div>
+            <div
+              className={`${styles.navItem} ${activeTab === "albums" || activeTab === "album-detail" ? styles.active : ""}`}
+              onClick={() => {
+                setActiveTab("albums");
+                setSelectedAlbum(null);
+              }}
+            >
+              <AimOutlined />
+              <span>专辑</span>
+            </div>
+            {/* <div
+              className={`${styles.navItem} ${activeTab === "playlists" ? styles.active : ""}`}
+              onClick={() => setActiveTab("playlists")}
+            >
+              <MenuOutlined />
+              <span>播放列表</span>
+            </div> */}
+            <div
+              className={`${styles.navItem} ${activeTab === "favorites" ? styles.active : ""}`}
+              onClick={() => {
+                setActiveTab("favorites");
+                setCurrentPlaylistId("default");
+              }}
+            >
+              <HeartFilled />
+              <span>我的收藏</span>
+            </div>
+          </div>
+
+          <div className={styles.playlistsSection}>
+            <div className={styles.sectionTitle}>播放列表</div>
+            <div
+              className={`${styles.playlistItem} ${currentPlaylistId === "wedding" ? styles.active : ""}`}
+              onClick={() => setCurrentPlaylistId("wedding")}
+            >
+              <span>婚礼进行曲</span>
+              <span className={styles.count}>12</span>
+            </div>
+            <div
+              className={`${styles.playlistItem} ${currentPlaylistId === "romantic" ? styles.active : ""}`}
+              onClick={() => setCurrentPlaylistId("romantic")}
+            >
+              <span>浪漫时刻</span>
+              <span className={styles.count}>8</span>
+            </div>
+            <div
+              className={`${styles.playlistItem} ${currentPlaylistId === "dance" ? styles.active : ""}`}
+              onClick={() => setCurrentPlaylistId("dance")}
+            >
+              <span>舞会音乐</span>
+              <span className={styles.count}>15</span>
+            </div>
+            <div
+              className={styles.newPlaylistBtn}
+              onClick={() => setIsModalVisible(true)}
+            >
+              <PlusOutlined />
+              <span>新建歌单</span>
+            </div>
+          </div>
+
+          {/* 存储路径信息 */}
+          <div className={styles.storageInfo}>
+            <div className={styles.sectionTitle}>存储位置</div>
+            <div className={styles.storagePath}>
+              <FolderOutlined />
+              <Tooltip title={storagePath}>
+                <span className={styles.pathText}>
+                  {storagePath.length > 30
+                    ? `${storagePath.substring(0, 30)}...`
+                    : storagePath}
+                </span>
+              </Tooltip>
+            </div>
+            <div className={styles.storageActions}>
+              <Button
+                size="small"
+                icon={<FolderOpenOutlined />}
+                onClick={handleOpenStorageDirectory}
+              >
+                打开
+              </Button>
+              <Button size="small" onClick={handleSelectStorageDirectory}>
+                更改
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* 主内容区 */}
+        <div className={styles.mainContent}>
+          {/* 搜索栏 */}
+          <div className={styles.searchBar}>
+            <div className={styles.searchBox}>
+              <SearchOutlined />
+              <Input
+                placeholder="搜索音乐、专辑、艺术家..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                bordered={false}
+              />
+            </div>
+            <div className={styles.actionButtons}>
+              {selectedMusicIds.length > 0 && (
+                <Tooltip title={`下载选中的 ${selectedMusicIds.length} 首音乐`}>
+                  <Button
+                    icon={<DownloadOutlined />}
+                    onClick={handleDownloadSelected}
+                    className={styles.downloadBtn}
+                  >
+                    下载选中({selectedMusicIds.length})
+                  </Button>
+                </Tooltip>
+              )}
+              <Button
+                icon={<UploadOutlined />}
+                onClick={handleUploadMusic}
+                className={styles.uploadBtn}
+                loading={uploading}
+              >
+                上传音乐
+              </Button>
+            </div>
+          </div>
+
+          {/* 上传进度显示 */}
+          {uploading && (
+            <div className={styles.uploadProgress}>
+              <div className={styles.progressHeader}>
+                <span>上传文件中...</span>
+                <span>{uploadProgress}%</span>
+              </div>
+              <Progress
+                percent={uploadProgress}
+                status="active"
+                strokeColor={{
+                  "0%": "#6c5ce7",
+                  "100%": "#a29bfe",
+                }}
+              />
+              {uploadInfo.total > 0 && (
+                <div className={styles.uploadStats}>
+                  正在处理 {uploadInfo.current} / {uploadInfo.total} 个文件
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 内容区域 */}
+          <div className={styles.contentArea}>
+            {activeTab === "favorites" && (
+              <div className={styles.favoritesTab}>
+                <div className={styles.favoritesHeader}>
+                  <h2>我的收藏</h2>
+                  <div className={styles.favoritesStats}>
+                    <span>{currentPlaylist.musics.length} 首歌曲</span>
+                    <span>·</span>
+                    <span>604 MB</span>
+                    <span>·</span>
+                    <span>507300000000004 MB</span>
+                  </div>
+                </div>
+
+                <div className={styles.favoritesContent}>
+                  <div className={styles.musicList}>
+                    {filteredMusic.map((music, index) => (
+                      <div
+                        key={music.id}
+                        className={`${styles.musicListItem} ${currentMusic?.id === music.id ? styles.active : ""}`}
+                        onClick={() => handleSelectMusic(music)}
+                      >
+                        <div className={styles.musicListInfo}>
+                          <div className={styles.trackNumber}>
+                            {currentMusic?.id === music.id && isPlaying ? (
+                              <div className={styles.playingAnimation}>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                              </div>
+                            ) : (
+                              <span>{index + 1}</span>
+                            )}
+                          </div>
+                          <div className={styles.musicCover}>
+                            {renderMusicCover(music, styles.musicCoverImg)}
+                          </div>
+                          <div className={styles.musicListDetails}>
+                            <h4>{music.title}</h4>
+                            <p>{music.artist}</p>
+                          </div>
+                        </div>
+                        <div className={styles.musicListMeta}>
+                          <span className={styles.fileSize}>
+                            {formatFileSize(music.fileSize)}
+                          </span>
+                        </div>
+                        <div className={styles.musicListActions}>
+                          <span className={styles.duration}>
+                            {formatTime(music.duration)}
+                          </span>
+                          <Button
+                            type="text"
+                            icon={
+                              music.liked ? <HeartFilled /> : <HeartOutlined />
+                            }
+                            onClick={(e) => toggleLike(music.id, e)}
+                            className={`${styles.likeButton} ${music.liked ? styles.liked : ""}`}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* 首页内容 */}
+            {activeTab === "home" && (
+              <div className={styles.homeTab}>
+                {/* 统计信息 */}
+                <div className={styles.statsContainer}>
+                  <Card className={styles.statCard}>
+                    <Statistic
+                      title="总音乐数"
+                      value={currentPlaylist.musics.length}
+                    />
+                  </Card>
+                  <Card className={styles.statCard}>
+                    <Statistic
+                      title="总时长"
+                      value={Math.round(
+                        currentPlaylist.musics.reduce(
+                          (acc, music) => acc + music.duration,
+                          0
+                        ) / 60
+                      )}
+                      suffix="分钟"
+                    />
+                  </Card>
+                  <Card className={styles.statCard}>
+                    <Statistic
+                      title="存储空间"
+                      value={
+                        Math.round(
+                          currentPlaylist.musics.reduce(
+                            (acc, music) => acc + (music.fileSize || 0),
+                            0
+                          ) * 100
+                        ) / 100
+                      }
+                      suffix="MB"
+                    />
+                  </Card>
+                </div>
+
+                <h2>最近添加</h2>
+                <div className={styles.musicGrid}>
+                  {currentPlaylist.musics.slice(0, 8).map((music) => (
+                    <div
+                      key={music.id}
+                      className={styles.musicCard}
+                      onClick={() => handleSelectMusic(music)}
+                    >
+                      <div className={styles.musicCover}>
+                        <img src={music.cover} alt={music.title} />
+                        <div className={styles.playOverlay}>
+                          <Button
+                            type="text"
+                            icon={
+                              isPlaying && currentMusic?.id === music.id ? (
+                                <PauseCircleFilled />
+                              ) : (
+                                <PlayCircleFilled />
+                              )
+                            }
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (currentMusic?.id === music.id) {
+                                togglePlay();
+                              } else {
+                                handleSelectMusic(music);
+                              }
+                            }}
+                          />
+                        </div>
+                        <div className={styles.musicBadge}>
+                          <Tag color="blue">
+                            {formatFileSize(music.fileSize)}
+                          </Tag>
+                        </div>
+                      </div>
+                      <div className={styles.musicInfo}>
+                        <h4>{music.title}</h4>
+                        <p>{music.artist}</p>
+                        <div className={styles.musicMeta}>
+                          <span>{music.album}</span>
+                          <span>{formatTime(music.duration)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 专辑页面内容 */}
+            {activeTab === "albums" && !selectedAlbum && (
+              <div className={styles.albumsTab}>
+                <h2>专辑 ({albums.length})</h2>
+                <div className={styles.albumsGrid}>
+                  {albums.map((album) => (
+                    <div
+                      key={album.id}
+                      className={styles.albumCard}
+                      onClick={() => handleSelectAlbum(album)}
+                    >
+                      <div className={styles.albumCover}>
+                        {renderAlbumCover(album)}
+                        <div className={styles.albumOverlay}>
+                          <Button
+                            type="text"
+                            icon={<PlayCircleFilled />}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (album.musics.length > 0) {
+                                handleSelectMusic(album.musics[0]);
+                              }
+                            }}
+                          />
+                        </div>
+                        <div className={styles.albumTrackCount}>
+                          {album.musics.length} 首
+                        </div>
+                      </div>
+                      <div className={styles.albumInfo}>
+                        <h4>{album.name}</h4>
+                        <p>{album.artist}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 专辑详情页面 */}
+            {activeTab === "album-detail" && selectedAlbum && (
+              <div className={styles.albumDetailTab}>
+                <div className={styles.albumHeader}>
+                  <Button
+                    type="text"
+                    onClick={handleBackToAlbums}
+                    className={styles.backBtn}
+                  >
+                    ← 返回专辑
+                  </Button>
+                  <div className={styles.albumHero}>
+                    <img src={selectedAlbum.cover} alt={selectedAlbum.name} />
+                    <div className={styles.albumDetails}>
+                      <h1>{selectedAlbum.name}</h1>
+                      <p>
+                        {selectedAlbum.artist} • {selectedAlbum.year} •{" "}
+                        {selectedAlbum.musics.length} 首歌曲
+                      </p>
+                      <div className={styles.albumStats}>
+                        <span>
+                          总时长:{" "}
+                          {formatTime(
+                            selectedAlbum.musics.reduce(
+                              (acc, music) => acc + music.duration,
+                              0
+                            )
+                          )}
+                        </span>
+                        <span>
+                          文件大小:{" "}
+                          {formatFileSize(
+                            selectedAlbum.musics.reduce(
+                              (acc, music) => acc + (music.fileSize || 0),
+                              0
+                            )
+                          )}
+                        </span>
+                      </div>
+                      <div className={styles.albumActions}>
+                        <Button
+                          type="primary"
+                          icon={<PlayCircleFilled />}
+                          onClick={() => {
+                            if (selectedAlbum.musics.length > 0) {
+                              handleSelectMusic(selectedAlbum.musics[0]);
+                            }
+                          }}
+                        >
+                          播放全部
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.albumTracks}>
+                  <h3>歌曲列表</h3>
+                  {selectedAlbum.musics.map((music, index) => (
+                    <div
+                      key={music.id}
+                      className={`${styles.trackItem} ${currentMusic?.id === music.id ? styles.active : ""}`}
+                      onClick={() => handleSelectMusic(music)}
+                    >
+                      <div className={styles.trackNumber}>
+                        {currentMusic?.id === music.id && isPlaying ? (
+                          <div className={styles.playingAnimation}>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                          </div>
+                        ) : (
+                          <span>{index + 1}</span>
+                        )}
+                      </div>
+                      <div className={styles.trackInfo}>
+                        <h4>{music.title}</h4>
+                        <p>{music.artist}</p>
+                      </div>
+                      <div className={styles.trackMeta}>
+                        <Tag size="small">{formatFileSize(music.fileSize)}</Tag>
+                        <span className={styles.duration}>
+                          {formatTime(music.duration)}
+                        </span>
+                      </div>
+                      <div className={styles.trackActions}>
+                        <Button
+                          type="text"
+                          icon={
+                            music.liked ? <HeartFilled /> : <HeartOutlined />
+                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleLike(music.id);
+                          }}
+                          className={music.liked ? styles.liked : ""}
+                        />
+                        <Popconfirm
+                          title="确定要删除这个音乐文件吗？"
+                          description="此操作将从存储中永久删除文件"
+                          onConfirm={(e) => {
+                            e?.stopPropagation();
+                            handleDeleteMusic(music, e as any);
+                          }}
+                          onCancel={(e) => e?.stopPropagation()}
+                          okText="确定"
+                          cancelText="取消"
+                        >
+                          <Button
+                            type="text"
+                            icon={<DeleteOutlined />}
+                            onClick={(e) => e.stopPropagation()}
+                            danger
+                          />
+                        </Popconfirm>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 播放列表页面 */}
+            {activeTab === "playlists" && (
+              <div className={styles.playlistsTab}>
+                <div className={styles.playlistHeader}>
+                  <h2>{currentPlaylist.name}</h2>
+                  <div className={styles.playlistStats}>
+                    <span>{currentPlaylist.musics.length} 首歌曲</span>
+                    <span>•</span>
+                    <span>
+                      {formatTime(
+                        currentPlaylist.musics.reduce(
+                          (acc, music) => acc + music.duration,
+                          0
+                        )
+                      )}
+                    </span>
+                    <span>•</span>
+                    <span>
+                      {formatFileSize(
+                        currentPlaylist.musics.reduce(
+                          (acc, music) => acc + (music.fileSize || 0),
+                          0
+                        )
+                      )}
+                    </span>
+                  </div>
+                </div>
+
+                <div className={styles.playlistContent}>
+                  <div className={styles.musicList}>
+                    {filteredMusic.map((music, index) => (
+                      <div
+                        key={music.id}
+                        className={`${styles.musicListItem} ${currentMusic?.id === music.id ? styles.active : ""}`}
+                        onClick={() => handleSelectMusic(music)}
+                      >
+                        <div className={styles.musicListInfo}>
+                          <div className={styles.trackNumber}>
+                            {currentMusic?.id === music.id && isPlaying ? (
+                              <div className={styles.playingAnimation}>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                              </div>
+                            ) : (
+                              <span>{index + 1}</span>
+                            )}
+                          </div>
+                          {renderMusicCover(music, styles.musicCoverImg)}
+                          <div className={styles.musicListDetails}>
+                            <h4>{music.title}</h4>
+                            <p>
+                              {music.artist} • {music.album}
+                            </p>
+                          </div>
+                        </div>
+                        <div className={styles.musicListMeta}>
+                          <Tag size="small">
+                            {formatFileSize(music.fileSize)}
+                          </Tag>
+                        </div>
+                        <div className={styles.musicListActions}>
+                          <span className={styles.duration}>
+                            {formatTime(music.duration)}
+                          </span>
+                          <Button
+                            type="text"
+                            icon={
+                              music.liked ? <HeartFilled /> : <HeartOutlined />
+                            }
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleLike(music.id);
+                            }}
+                            className={music.liked ? styles.liked : ""}
+                          />
+                          <Popconfirm
+                            title="确定要删除这个音乐文件吗？"
+                            description="此操作将从存储中永久删除文件"
+                            onConfirm={(e) => {
+                              e?.stopPropagation();
+                              handleDeleteMusic(music, e as any);
+                            }}
+                            onCancel={(e) => e?.stopPropagation()}
+                            okText="确定"
+                            cancelText="取消"
+                          >
+                            <Button
+                              type="text"
+                              icon={<DeleteOutlined />}
+                              onClick={(e) => e.stopPropagation()}
+                              danger
+                            />
+                          </Popconfirm>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* 播放控制栏 */}
+      <div className={styles.playerBar}>
+        <div className={styles.playerInfo}>
+          {currentMusic ? (
+            <>
+              {renderMusicCover(currentMusic, styles.playerCoverImg)}
+              <div className={styles.playerTrackInfo}>
+                <h4>{currentMusic.title}</h4>
+                <p>{currentMusic.artist}</p>
+              </div>
+              <Button
+                type="text"
+                icon={currentMusic.liked ? <HeartFilled /> : <HeartOutlined />}
+                onClick={() => toggleLike(currentMusic.id)}
+                className={`${styles.likeButton} ${currentMusic.liked ? styles.liked : ""}`}
+              />
+            </>
+          ) : (
+            <div className={styles.noMusic}>
+              <span>未选择音乐</span>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.playerControls}>
+          <div className={styles.controlButtons}>
+            <Button
+              type="text"
+              icon={<StepBackwardFilled />}
+              onClick={handlePrev}
+              disabled={!currentMusic}
+              className={styles.controlBtn}
+            />
+            <Button
+              type="text"
+              icon={isPlaying ? <PauseCircleFilled /> : <PlayCircleFilled />}
+              onClick={togglePlay}
+              className={`${styles.playPauseBtn} ${styles.controlBtn}`}
+              disabled={currentPlaylist.musics.length === 0}
+            />
+            <Button
+              type="text"
+              icon={<StepForwardFilled />}
+              onClick={handleNext}
+              disabled={!currentMusic}
+              className={styles.controlBtn}
+            />
+          </div>
+
+          <div className={styles.progressContainer}>
+            <span className={styles.time}>{formatTime(currentTime)}</span>
+            <div className={styles.progressBar}>
+              <div
+                className={styles.progress}
+                style={{ width: `${(currentTime / (duration || 1)) * 100}%` }}
+              />
+            </div>
+            <span className={styles.time}>{formatTime(duration)}</span>
+          </div>
+        </div>
+
+        <div className={styles.playerExtra}>
+          <Select
+            value={playMode}
+            onChange={setPlayMode}
+            className={styles.modeSelect}
+            size="small"
+          >
+            <Option value="list">列表循环</Option>
+            <Option value="single">单曲循环</Option>
+            <Option value="random">随机播放</Option>
+          </Select>
+
+          <div className={styles.volumeControl}>
+            <Button
+              type="text"
+              icon={isMuted ? <SoundOutlined /> : <SoundFilled />}
+              onClick={toggleMute}
+              className={styles.volumeBtn}
+            />
+            <div className={styles.volumeBar}>
+              <div
+                className={styles.volumeLevel}
+                style={{ width: `${volume * 100}%` }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 新建歌单模态框 */}
+      <Modal
+        title="新建歌单"
+        open={isModalVisible}
+        onOk={handleCreatePlaylist}
+        onCancel={() => setIsModalVisible(false)}
+        okText="创建"
+        cancelText="取消"
+        className={styles.modal}
+      >
+        <Input
+          placeholder="请输入歌单名称"
+          value={newPlaylistName}
+          onChange={(e) => setNewPlaylistName(e.target.value)}
+          onPressEnter={handleCreatePlaylist}
+        />
+      </Modal>
+    </div>
+  );
+};
+
+export default TechWeddingPlayer;

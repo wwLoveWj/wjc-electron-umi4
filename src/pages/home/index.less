@@ -1,0 +1,140 @@
+/* index.less */
+.screen-recorder-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+
+    .header {
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(90deg, #1890ff 0%, #096dd9 100%);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .content {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        max-width: 1000px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .control-card,
+    .preview-card {
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border: none;
+
+        .ant-card-head-title {
+            font-weight: 600;
+        }
+    }
+
+    .config-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 16px;
+
+        .config-item {
+            display: flex;
+            align-items: center;
+
+            .ant-input,
+            .ant-select-selector {
+                border-radius: 6px;
+            }
+
+            .ant-input {
+                width: 200px;
+                margin-left: 8px;
+            }
+
+            .ant-typography {
+                white-space: nowrap;
+            }
+        }
+    }
+
+    .status {
+        padding: 8px 0;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .preview-container {
+        width: 100%;
+        min-height: 300px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+        border-radius: 8px;
+        border: 2px dashed #d9d9d9;
+
+        .preview-video {
+            max-width: 100%;
+            max-height: 500px;
+            background-color: black;
+            border-radius: 4px;
+        }
+
+        .no-preview {
+            padding: 40px;
+            text-align: center;
+
+            .hint {
+                margin-top: 16px;
+                font-size: 12px;
+            }
+        }
+    }
+
+    .ant-btn {
+        border-radius: 6px;
+        font-weight: 500;
+
+        &.ant-btn-lg {
+            padding: 8px 16px;
+            height: auto;
+        }
+    }
+
+    .ant-divider {
+        margin: 16px 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .screen-recorder-container {
+        .content {
+            padding: 16px;
+        }
+
+        .config-row {
+            flex-direction: column;
+            gap: 12px;
+
+            .config-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+
+                .ant-input {
+                    margin-left: 0;
+                    width: 100%;
+                }
+            }
+        }
+
+        .status {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+    }
+}

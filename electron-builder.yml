@@ -1,0 +1,4 @@
+publish:
+  provider: github
+  owner: wwLoveWj
+  repo: electron-template

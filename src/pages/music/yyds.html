@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Harmony - 科技感婚礼音乐播放器</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.24.8/antd.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* 颜色变量 */
+      :root {
+        --primary-color: #6c5ce7;
+        --secondary-color: #a29bfe;
+        --accent-color: #fd79a8;
+        --background-dark: #0f0f23;
+        --background-card: #1a1a2e;
+        --text-primary: #ffffff;
+        --text-secondary: #b2b2b2;
+        --border-color: #2d2d4d;
+        --hover-color: #252541;
+      }
+
+      /* 霓虹效果 */
+      .neon-glow {
+        box-shadow:
+          0 0 5px var(--primary-color),
+          0 0 10px var(--primary-color),
+          0 0 15px var(--primary-color),
+          0 0 20px var(--primary-color);
+      }
+
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #0f0f23 0%,
+          #1a1a2e 50%,
+          #16213e 100%
+        );
+        color: var(--text-primary);
+        overflow: hidden;
+      }
+
+      .container {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .appLayout {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      /* 侧边栏样式 */
+      .sidebar {
+        width: 240px;
+        background: var(--background-card);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        padding: 20px 0;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        padding: 0 20px 20px;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 20px;
+      }
+
+      .logoIcon {
+        font-size: 24px;
+        margin-right: 10px;
+        color: var(--primary-color);
+      }
+
+      .logoText {
+        font-size: 20px;
+        font-weight: 700;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--accent-color)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .navMenu {
+        padding: 0 10px;
+        margin-bottom: 30px;
+      }
+
+      .navItem {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        color: var(--text-secondary);
+      }
+
+      .navItem:hover {
+        background: var(--hover-color);
+        color: var(--text-primary);
+      }
+
+      .navItem.active {
+        background: var(--primary-color);
+        color: var(--text-primary);
+        box-shadow:
+          0 0 5px var(--primary-color),
+          0 0 10px var(--primary-color),
+          0 0 15px var(--primary-color);
+      }
+
+      .navItem i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+      }
+
+      .playlistsSection {
+        padding: 0 10px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .sectionTitle {
+        font-size: 12px;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        margin-bottom: 15px;
+        padding: 0 10px;
+        letter-spacing: 1px;
+      }
+
+      .playlistItem {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        color: var(--text-secondary);
+      }
+
+      .playlistItem:hover {
+        background: var(--hover-color);
+        color: var(--text-primary);
+      }
+
+      .playlistItem.active {
+        background: var(--primary-color);
+        color: var(--text-primary);
+        box-shadow:
+          0 0 5px var(--primary-color),
+          0 0 10px var(--primary-color);
+      }
+
+      .count {
+        font-size: 12px;
+        color: var(--text-secondary);
+        background: var(--border-color);
+        padding: 2px 6px;
+        border-radius: 10px;
+      }
+
+      .newPlaylistBtn {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-top: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+        color: var(--text-secondary);
+      }
+
+      .newPlaylistBtn:hover {
+        background: var(--hover-color);
+        color: var(--text-primary);
+      }
+
+      .newPlaylistBtn i {
+        margin-right: 10px;
+      }
+
+      /* 主内容区样式 */
+      .mainContent {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .searchBar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 30px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .searchBox {
+        display: flex;
+        align-items: center;
+        background: var(--background-card);
+        border-radius: 25px;
+        padding: 8px 15px;
+        width: 400px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .searchBox i {
+        color: var(--text-secondary);
+      }
+
+      .searchBox input {
+        background: transparent;
+        border: none;
+        color: var(--text-primary);
+        margin-left: 8px;
+        width: 100%;
+        outline: none;
+      }
+
+      .searchBox input::placeholder {
+        color: var(--text-secondary);
+      }
+
+      .uploadBtn {
+        background: var(--primary-color);
+        border: none;
+        border-radius: 20px;
+        color: white;
+        padding: 8px 20px;
+        cursor: pointer;
+        box-shadow:
+          0 0 5px var(--primary-color),
+          0 0 10px var(--primary-color);
+        transition: all 0.3s;
+      }
+
+      .uploadBtn:hover {
+        background: #7b6cf0;
+      }
+
+      .contentArea {
+        flex: 1;
+        padding: 30px;
+        overflow-y: auto;
+      }
+
+      h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        font-weight: 700;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--accent-color)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .storageInfo {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: var(--background-card);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .storageText {
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+
+      .musicList {
+        margin-top: 20px;
+      }
+
+      .musicListItem {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .musicListItem:hover {
+        background: var(--hover-color);
+      }
+
+      .musicListItem.active {
+        background: rgba(108, 92, 231, 0.2);
+        box-shadow:
+          0 0 5px var(--primary-color),
+          0 0 10px var(--primary-color);
+      }
+
+      .musicListInfo {
+        display: flex;
+        align-items: center;
+        flex: 1;
+      }
+
+      .musicIcon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        margin-right: 15px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--accent-color)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .musicListDetails {
+        flex: 1;
+      }
+
+      .musicListDetails h4 {
+        margin: 0 0 5px;
+        font-size: 14px;
+      }
+
+      .musicListDetails p {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 12px;
+      }
+
+      .musicListMeta {
+        color: var(--text-secondary);
+        font-size: 12px;
+        margin-right: 15px;
+      }
+
+      .musicListActions {
+        display: flex;
+        align-items: center;
+      }
+
+      .actionBtn {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 16px;
+        margin-left: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .actionBtn:hover {
+        color: var(--accent-color);
+      }
+
+      .actionBtn.liked {
+        color: var(--accent-color);
+      }
+
+      /* 播放控制栏样式 */
+      .playerBar {
+        height: 80px;
+        background: var(--background-card);
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .playerInfo {
+        display: flex;
+        align-items: center;
+        width: 300px;
+      }
+
+      .playerCover {
+        width: 50px;
+        height: 50px;
+        border-radius: 8px;
+        margin-right: 15px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--accent-color)
+        );
+      }
+
+      .playerTrackInfo {
+        flex: 1;
+      }
+
+      .playerTrackInfo h4 {
+        margin: 0 0 5px;
+        font-size: 14px;
+      }
+
+      .playerTrackInfo p {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 12px;
+      }
+
+      .playerControls {
+        flex: 1;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .controlButtons {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .controlBtn {
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 16px;
+        margin: 0 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .controlBtn:hover:not(:disabled) {
+        color: var(--primary-color);
+      }
+
+      .controlBtn:disabled {
+        color: var(--text-secondary);
+      }
+
+      .playPauseBtn {
+        font-size: 36px;
+        margin: 0 15px;
+      }
+
+      .progressContainer {
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+
+      .time {
+        color: var(--text-secondary);
+        font-size: 12px;
+        min-width: 40px;
+      }
+
+      .progressBar {
+        flex: 1;
+        height: 4px;
+        background: var(--border-color);
+        border-radius: 2px;
+        margin: 0 10px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .progress {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background: var(--primary-color);
+        width: 30%;
+        border-radius: 2px;
+      }
+
+      .playerExtra {
+        display: flex;
+        align-items: center;
+        width: 300px;
+        justify-content: flex-end;
+      }
+
+      .volumeControl {
+        display: flex;
+        align-items: center;
+        width: 120px;
+      }
+
+      .volumeBtn {
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        margin-right: 10px;
+        cursor: pointer;
+      }
+
+      .volumeBar {
+        flex: 1;
+        height: 4px;
+        background: var(--border-color);
+        border-radius: 2px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .volumeLevel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background: var(--primary-color);
+        width: 70%;
+        border-radius: 2px;
+      }
+
+      /* 响应式设计 */
+      @media (max-width: 992px) {
+        .sidebar {
+          width: 70px;
+        }
+
+        .logoText,
+        .navItem span,
+        .playlistItem span,
+        .newPlaylistBtn span {
+          display: none;
+        }
+
+        .logo {
+          justify-content: center;
+        }
+
+        .logoIcon {
+          margin-right: 0;
+          font-size: 28px;
+        }
+
+        .navItem,
+        .playlistItem,
+        .newPlaylistBtn {
+          justify-content: center;
+          padding: 12px;
+        }
+
+        .playlistItem .count {
+          display: none;
+        }
+
+        .mainContent .searchBar .searchBox {
+          width: 300px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .appLayout {
+          flex-direction: column;
+        }
+
+        .sidebar {
+          width: 100%;
+          height: auto;
+          flex-direction: row;
+          padding: 10px;
+        }
+
+        .logo {
+          padding: 0 10px 0 0;
+          border-bottom: none;
+          border-right: 1px solid var(--border-color);
+          margin-bottom: 0;
+          margin-right: 15px;
+        }
+
+        .navMenu {
+          display: flex;
+          margin-bottom: 0;
+          flex: 1;
+        }
+
+        .navItem {
+          flex: 1;
+          justify-content: center;
+          margin-bottom: 0;
+          margin-right: 5px;
+        }
+
+        .playlistsSection {
+          display: none;
+        }
+
+        .playerBar {
+          flex-direction: column;
+          height: auto;
+          padding: 15px;
+        }
+
+        .playerInfo,
+        .playerControls,
+        .playerExtra {
+          width: 100%;
+          margin-bottom: 15px;
+        }
+
+        .playerInfo {
+          justify-content: center;
+        }
+
+        .playerExtra {
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="appLayout">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+          <div class="logo">
+            <div class="logoIcon"><i class="fas fa-music"></i></div>
+            <div class="logoText">Harmony</div>
+          </div>
+
+          <div class="navMenu">
+            <div class="navItem">
+              <i class="fas fa-home"></i>
+              <span>首页</span>
+            </div>
+            <div class="navItem">
+              <i class="fas fa-compact-disc"></i>
+              <span>专辑</span>
+            </div>
+            <div class="navItem">
+              <i class="fas fa-list"></i>
+              <span>播放列表</span>
+            </div>
+            <div class="navItem">
+              <i class="fas fa-music"></i>
+              <span>我的歌曲</span>
+            </div>
+            <div class="navItem active">
+              <i class="fas fa-heart"></i>
+              <span>我的收藏</span>
+            </div>
+          </div>
+
+          <div class="playlistsSection">
+            <div class="sectionTitle">播放列表</div>
+            <div class="playlistItem">
+              <span>婚礼进行曲</span>
+              <div class="count">12</div>
+            </div>
+            <div class="playlistItem">
+              <span>浪漫时刻</span>
+              <div class="count">8</div>
+            </div>
+            <div class="playlistItem">
+              <span>舞会音乐</span>
+              <div class="count">15</div>
+            </div>
+            <div class="newPlaylistBtn">
+              <i class="fas fa-plus"></i>
+              <span>新建歌单</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="mainContent">
+          <div class="searchBar">
+            <div class="searchBox">
+              <i class="fas fa-search"></i>
+              <input type="text" placeholder="搜索音乐..." />
+            </div>
+            <button class="uploadBtn">
+              <i class="fas fa-upload"></i> 上传音乐
+            </button>
+          </div>
+
+          <div class="contentArea">
+            <h2>我的收藏</h2>
+
+            <div class="storageInfo">
+              <div class="storageText">2 首歌曲 · 604 · 507300000000004 MB</div>
+            </div>
+
+            <div class="musicList">
+              <div class="musicListItem">
+                <div class="musicListInfo">
+                  <div class="musicIcon">
+                    <i class="fas fa-music"></i>
+                  </div>
+                  <div class="musicListDetails">
+                    <h4>Android audio 1759480154979</h4>
+                    <p>未知艺术家</p>
+                  </div>
+                </div>
+                <div class="musicListMeta">25.92 MB</div>
+                <div class="musicListActions">
+                  <button class="actionBtn">
+                    <i class="far fa-heart"></i>
+                  </button>
+                  <button class="actionBtn">
+                    <i class="fas fa-ellipsis-v"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="musicListItem active">
+                <div class="musicListInfo">
+                  <div class="musicIcon">
+                    <i class="fas fa-music"></i>
+                  </div>
+                  <div class="musicListDetails">
+                    <h4>周杰伦·周杰胜</h4>
+                    <p>周杰伦</p>
+                  </div>
+                </div>
+                <div class="musicListMeta">24.81 MB</div>
+                <div class="musicListActions">
+                  <button class="actionBtn liked">
+                    <i class="fas fa-heart"></i>
+                  </button>
+                  <button class="actionBtn">
+                    <i class="fas fa-ellipsis-v"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 播放控制栏 -->
+      <div class="playerBar">
+        <div class="playerInfo">
+          <div class="playerCover"></div>
+          <div class="playerTrackInfo">
+            <h4>周杰伦·周杰胜</h4>
+            <p>周杰伦</p>
+          </div>
+          <button class="actionBtn liked"><i class="fas fa-heart"></i></button>
+        </div>
+
+        <div class="playerControls">
+          <div class="controlButtons">
+            <button class="controlBtn"><i class="fas fa-random"></i></button>
+            <button class="controlBtn">
+              <i class="fas fa-step-backward"></i>
+            </button>
+            <button class="controlBtn playPauseBtn">
+              <i class="fas fa-pause"></i>
+            </button>
+            <button class="controlBtn">
+              <i class="fas fa-step-forward"></i>
+            </button>
+            <button class="controlBtn"><i class="fas fa-redo"></i></button>
+          </div>
+
+          <div class="progressContainer">
+            <div class="time">1:23</div>
+            <div class="progressBar">
+              <div class="progress"></div>
+            </div>
+            <div class="time">4:56</div>
+          </div>
+        </div>
+
+        <div class="playerExtra">
+          <div class="volumeControl">
+            <button class="volumeBtn"><i class="fas fa-volume-up"></i></button>
+            <div class="volumeBar">
+              <div class="volumeLevel"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 简单的交互功能
+      document.addEventListener("DOMContentLoaded", function () {
+        // 切换播放/暂停按钮
+        const playPauseBtn = document.querySelector(".playPauseBtn");
+        playPauseBtn.addEventListener("click", function () {
+          const icon = this.querySelector("i");
+          if (icon.classList.contains("fa-play")) {
+            icon.classList.remove("fa-play");
+            icon.classList.add("fa-pause");
+          } else {
+            icon.classList.remove("fa-pause");
+            icon.classList.add("fa-play");
+          }
+        });
+
+        // 切换喜欢状态
+        const likeButtons = document.querySelectorAll(".actionBtn:not(.liked)");
+        likeButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            if (this.classList.contains("liked")) {
+              this.classList.remove("liked");
+              this.querySelector("i").classList.remove("fas");
+              this.querySelector("i").classList.add("far");
+            } else {
+              this.classList.add("liked");
+              this.querySelector("i").classList.remove("far");
+              this.querySelector("i").classList.add("fas");
+            }
+          });
+        });
+
+        // 切换导航项
+        const navItems = document.querySelectorAll(".navItem");
+        navItems.forEach((item) => {
+          item.addEventListener("click", function () {
+            navItems.forEach((i) => i.classList.remove("active"));
+            this.classList.add("active");
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

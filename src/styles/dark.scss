@@ -1,0 +1,737 @@
+/*
+* 深色主题
+* 单页面移除深色主题 document.getElementsByTagName("html")[0].removeAttribute('class')
+*/
+
+$font-color: rgba(#ffffff, 0.7);
+$background-color: #070707;
+$border-color: 1px solid rgba(var(--art-gray-300-rgb), .6);
+
+// --art-border-dashed-color
+/* 覆盖element-plus默认深色背景色 */
+html.dark {
+  // ✅ element-plus
+  // --el-bg-color: $background-color;
+  --antd-text-color-regular: $font-color;
+
+  // ✅ 富文本编辑器
+  // 工具栏背景颜色
+  --w-e-toolbar-bg-color: var(--art-main-bg-color);
+  // 输入区域背景颜色
+  --w-e-textarea-bg-color: var(--art-main-bg-color);
+  // 工具栏文字颜色
+  --w-e-toolbar-color: var(--art-text-gray-600);
+  // 选中菜单颜色
+  --w-e-toolbar-active-bg-color: rgba(var(--art-gray-100-rgb), 0.8);
+  // 弹窗边框颜色
+  --w-e-toolbar-border-color: var(--art-border-dashed-color);
+  // 分割线颜色
+  --w-e-textarea-border-color: var(--art-border-dashed-color);
+  // 链接输入框边框颜色
+  --w-e-modal-button-border-color: var(--art-border-dashed-color);
+  // 表格头颜色
+  --w-e-textarea-slight-bg-color: var(--art-color);
+  // 按钮背景颜色
+  --w-e-modal-button-bg-color: var(--art-color);
+}
+
+.dark {
+  color: $font-color !important;
+  background: $background-color !important;
+
+  /* 全局文字颜色 */
+  body {
+    color: $font-color;
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .lang .btn,
+    .top-bar .user .name,
+    .dark-text {
+      color: $font-color !important;
+    }
+  }
+
+  // 图片降低亮度
+  img {
+    filter: brightness(0.8) saturate(1.25);
+  }
+
+  // [class]:not([class^='my-template-umi-ant-']):not(pre code *):not(.custom-text) {
+  /* 让非 el- 开头的元素继承全局颜色、以及 pre code 元素的颜色 */
+  [class]:not([class^='my-template-umi-ant-']):not([class^='ant-']):not(pre code *):not(.custom-text) {
+    color: inherit !important;
+    // color: var(--art-gray-900) !important;
+    // background: var(--art-main-bg-color);
+  }
+
+  // 搜索条件中的文字label
+  .my-template-umi-ant-col {
+    color: var(--art-gray-900) !important;
+  }
+
+  // drawer的弹窗样式
+  .my-template-umi-ant-drawer-content {
+    color: var(--art-gray-900) !important;
+    background: var(--art-main-bg-color);
+  }
+
+  .my-template-umi-ant-drawer-close {
+    color: var(--art-gray-900) !important;
+  }
+
+  // modal弹窗
+  .ant-modal-content,
+  .ant-modal-header,
+  .ant-btn-default {
+    color: var(--art-gray-900) !important;
+    background: var(--art-main-bg-color);
+  }
+
+  .ant-btn-default:hover span {
+    color: var(--main-color) !important;
+  }
+
+  .ant-modal-title,
+  .ant-modal-close {
+    color: var(--art-gray-900) !important;
+  }
+
+  :where(.css-dev-only-do-not-override-vryruh).ant-form-item .ant-form-item-label>label {
+    color: var(--art-gray-900) !important;
+  }
+
+  // 右侧弹出通知的icon
+  :where(.css-dev-only-do-not-override-vryruh).my-template-umi-ant-notification .my-template-umi-ant-notification-notice-wrapper .my-template-umi-ant-notification-notice-icon-error.anticon {
+    color: #ff4d4f !important;
+  }
+
+  // date组件的下拉,文字暂时不生效 TODO:
+  // my-template-umi-ant-picker-panel-container
+  // .my-template-umi-ant-picker-panel {
+  //   color: #fff !important;
+  //   background: var(--art-main-bg-color) !important;
+  // }
+
+  .my-template-umi-ant-checkbox-wrapper {
+    color: var(--art-gray-900) !important;
+  }
+
+  // 跟随主按钮色样式
+  .my-template-umi-ant-tabs-tab-active {
+    color: var(--main-color) !important;
+  }
+
+  .my-template-umi-ant-menu-item-selected,
+  .my-template-umi-ant-alert-info {
+    color: var(--art-gray-900) !important;
+    background: var(--main-color) !important;
+  }
+
+  .my-template-umi-ant-switch-inner-unchecked {
+    background: rbga(0, 0, 0, 0.4)
+  }
+
+  .my-template-umi-ant-btn-primary {
+    color: var(--art-gray-900) !important;
+    background: var(--main-color) !important;
+  }
+
+  .my-template-umi-ant-btn-color-dangerous:disabled {
+    color: var(--art-gray-900) !important;
+    background: var(--art-main-bg-color) !important;
+    border: $border-color !important;
+  }
+
+  .my-template-umi-ant-btn-color-dangerous {
+    background: red !important;
+  }
+
+  .my-template-umi-ant-btn-variant-link {
+    background: transparent !important;
+  }
+
+  // .my-template-umi-ant-btn-link {}
+
+  // 列表中的a链接
+  .my-template-umi-ant-space-item {
+    a {
+      color: var(--main-color) !important;
+    }
+  }
+
+  // 列表中的删除按钮样式
+  // .my-template-umi-ant-btn-variant-link {
+  //   color: var(--art-gray-900) !important;
+  // }
+
+  // 默认的default按钮色
+  .my-template-umi-ant-btn-default {
+    color: var(--art-gray-900) !important;
+    background: var(--art-main-bg-color) !important;
+    border: $border-color !important;
+  }
+
+  // 分页
+  .my-template-umi-ant-pagination {
+    color: var(--art-gray-900) !important;
+
+    // 选择1，2，3页码
+    .my-template-umi-ant-pagination-item {
+      background: var(--art-main-bg-color) !important;
+      border: $border-color !important;
+
+      a {
+        color: var(--art-gray-900) !important;
+      }
+    }
+
+    // TODO:未生效
+    .my-template-umi-ant-pagination-item-active {
+      border: 1px solid rgba(var(--main-color), .6) !important;
+      color: var(--main-color);
+    }
+  }
+
+  // TODO:未生效
+  // :where(.css-dev-only-do-not-override-vryruh).my-template-umi-ant-pagination .my-template-umi-ant-pagination-item-active {
+  //   border: 1px solid rgba(var(--main-color), .6) !important;
+  //   color: var(--main-color);
+  // }
+
+  // 表格分页
+  .my-template-umi-ant-select-selection-item {
+    color: var(--art-gray-900) !important;
+  }
+
+  // 表格无数据
+  .my-template-umi-ant-empty-description {
+    color: var(--art-gray-900) !important;
+  }
+
+  // ===============================自定义==================================
+  .my-template-umi-ant-form-item-control-input-content {
+    background: var(--art-main-bg-color) !important;
+    // border: $border-color !important;
+  }
+
+  // TODO: 输入框的placeholder颜色
+  input {
+    caret-color: #fff;
+  }
+
+  // 输入框的背景色
+  .my-template-umi-ant-input-affix-wrapper,
+  .my-template-umi-ant-input-number,
+  .my-template-umi-ant-select-selector,
+  .my-template-umi-ant-picker,
+  .my-template-umi-ant-picker-range {
+    background: var(--art-main-bg-color) !important;
+    border: $border-color !important;
+    color: var(--art-gray-900) !important;
+
+    input::placeholder,
+    textarea::placeholder,
+    .my-template-umi-ant-select-selection-placeholder {
+      color: var(--art-gray-500);
+    }
+  }
+
+  // 选择select选中的值
+  .my-template-umi-ant-select-selector {
+    color: var(--art-gray-900) !important;
+  }
+
+  // antd的样式
+  // .my-template-umi-ant-btn {
+  //   color: var(--art-gray-500);
+  // }
+
+  // 面包屑
+  .my-template-umi-ant-breadcrumb-separator {
+    color: var(--art-gray-900) !important;
+  }
+
+  // .my-template-umi-ant-breadcrumb-link .disabled-breadcrumb-item {
+  //   color: var(--art-gray-900) !important;
+  // }
+
+  .my-template-umi-ant-breadcrumb a {
+    color: var(--art-gray-900) !important;
+  }
+
+  // =============================================================
+  // tab组件的tab样式
+  .my-template-umi-ant-tabs-tab-btn[aria-selected=false] {
+    color: var(--art-gray-900) !important;
+  }
+
+  // 除菜单外内容区域
+  .my-template-umi-ant-layout {
+    background: var(--art-bg-color) !important;
+    color: var(--art-gray-900) !important;
+  }
+
+  .my-template-umi-ant-layout-content {
+    //   background: var(--art-main-bg-color);
+    color: var(--art-gray-900) !important;
+  }
+
+  // 卡片Card
+  .my-template-umi-ant-card-body {
+    background: var(--art-main-bg-color);
+    // border: $border-color;
+  }
+
+  // 表格区域
+  .my-template-umi-ant-table-body,
+  .my-template-umi-ant-table-thead {
+    background: var(--art-main-bg-color);
+    border-bottom: $border-color;
+
+    .my-template-umi-ant-table-cell-scrollbar {
+      width: 0px;
+    }
+  }
+
+  .my-template-umi-ant-table-container {
+    // border: $border-color;
+    box-shadow: 10px 10px 30px rgb(255 255 255 / 10%) !important;
+  }
+
+  :where(.css-dev-only-do-not-override-vryruh).my-template-umi-ant-table-wrapper .my-template-umi-ant-table-container table>thead>tr:first-child>*:first-child {
+    border-start-start-radius: 0px !important;
+  }
+
+  :where(.css-dev-only-do-not-override-vryruh).my-template-umi-ant-table-wrapper .my-template-umi-ant-table.my-template-umi-ant-table-small .my-template-umi-ant-table-tbody>tr>td {
+    background: #141414;
+    color: var(--art-gray-900) !important;
+    border-bottom: $border-color;
+  }
+
+  :where(.css-dev-only-do-not-override-vryruh).my-template-umi-ant-form-item .my-template-umi-ant-form-item-label>label {
+    color: var(--art-gray-900) !important;
+  }
+
+  // 头部面包屑
+  .user-page-tabs {
+    background: var(--art-main-bg-color);
+    // border-bottom: $border-color !important;
+
+    .my-template-umi-ant-tabs-tab {
+      color: var(--art-gray-900) !important;
+      background: var(--art-main-bg-color);
+    }
+
+    // 跟随主按钮色样式
+    .my-template-umi-ant-tabs-tab-active {
+      color: var(--main-color) !important;
+    }
+  }
+
+  // -----------------------------------------菜单区域---------------------------------------------
+  .my-template-umi-ant-menu {
+
+    // 子菜单展开区域
+    .my-template-umi-ant-menu-sub {
+      background: var(--art-main-bg-color) !important;
+    }
+  }
+
+  // 有子菜单的父菜单的选中色
+  // :where(.css-dev-only-do-not-override-vryruh).my-template-umi-ant-menu-dark .my-template-umi-ant-menu-submenu-selected>.my-template-umi-ant-menu-submenu-title,
+  // :where(.css-dev-only-do-not-override-vryruh).my-template-umi-ant-menu-dark>.my-template-umi-ant-menu .my-template-umi-ant-menu-submenu-selected>.my-template-umi-ant-menu-submenu-title {
+  //   color: var(--main-color) !important;
+  // }
+
+  .sider-area-menu {
+    background: var(--art-main-bg-color);
+    // color: var(--art-gray-900) !important;
+
+    // .my-template-umi-ant-menu-title-content {
+    //   color: var(--art-gray-900) !important;
+    // }
+
+    // .my-template-umi-ant-layout-sider-dark {
+    //   .my-template-umi-ant-menu-item .my-template-umi-ant-menu-item-selected {
+    //     background: transparent;
+    //   }
+
+    //   //   // 鼠标移入背景色
+    //   .my-template-umi-ant-menu-submenu-title:hover,
+    //   .my-template-umi-ant-menu-item:not(.my-template-umi-ant-menu-item-selected):hover {
+    //     background: rgba(var(--art-gray-200-rgb), 0.6) !important;
+    //   }
+    // }
+  }
+
+  // =================================================================================
+  // ✅ 左侧菜单样式
+  .menu-left {
+    .el-menu-dark {
+
+      // 选中颜色
+      .el-menu-item.is-active {
+        background: transparent;
+      }
+
+      .el-sub-menu__title {
+        .el-icon {
+          color: var(--art-gray-800) !important;
+        }
+      }
+
+      // 鼠标移入背景色
+      .el-sub-menu__title:hover,
+      .el-menu-item:not(.is-active):hover {
+        background: rgba(var(--art-gray-200-rgb), 0.6) !important;
+      }
+
+      [level-item="2"].is-active:not(.el-menu--collapse) {
+        &.is-active {
+          &:before {
+            margin-left: -10px !important;
+          }
+        }
+      }
+
+      .el-menu:not(.el-menu--collapse) {
+
+        // 选中颜色
+        .el-menu-item.is-active {
+          &:before {
+            content: '';
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            background: var(--main-color) !important;
+            transition: all 0.2s;
+            margin-left: -18px;
+          }
+        }
+      }
+    }
+  }
+
+  // 表格 hover 背景色
+  .el-table__body tr:hover>td {
+    background-color: rgba(var(--art-gray-100-rgb), 0.6) !important;
+  }
+
+  // 这个不知道是啥玩意儿 TODO:
+  // .page-content .article-list .item .left .outer>div {
+  //   border-right-color: var(--dark-border-color) !important;
+  // }
+
+  // ✅ 富文本编辑器
+  // 分隔线
+  .w-e-bar-divider {
+    background-color: var(--art-gray-300) !important;
+  }
+
+  // 下拉选择框
+  .w-e-select-list {
+    background-color: var(--art-main-bg-color) !important;
+    border: 1px solid var(--art-border-dashed-color) !important;
+  }
+
+  /* 弹出框 */
+  .w-e-drop-panel {
+    border: 1px solid var(--art-border-dashed-color) !important;
+  }
+
+  /* 工具栏菜单 */
+  .w-e-bar-item-group .w-e-bar-item-menus-container {
+    background-color: var(--art-main-bg-color) !important;
+    border: 1px solid var(--art-border-dashed-color) !important;
+  }
+
+  /* 下拉选择框 hover 样式调整 */
+  .w-e-select-list ul li:hover,
+  /* 工具栏 hover 按钮背景颜色 */
+  .w-e-bar-item button:hover {
+    background-color: var(--art-color) !important;
+  }
+
+  /* 代码块 */
+  .w-e-text-container [data-slate-editor] pre>code {
+    background-color: var(--art-gray-100) !important;
+    border: 1px solid var(--art-border-dashed-color) !important;
+    text-shadow: none !important;
+  }
+
+  /* 引用 */
+  .w-e-text-container [data-slate-editor] blockquote {
+    border-left: 4px solid var(--art-gray-200) !important;
+    background-color: var(--art-color);
+  }
+
+  .editor-wrapper {
+    .w-e-text-container [data-slate-editor] .table-container th:last-of-type {
+      border-right: 1px solid var(--art-gray-200) !important;
+    }
+
+    .w-e-modal {
+      background-color: var(--art-color);
+    }
+  }
+}
+
+// 菜单区域
+.sider-area-menu {
+  background: var(--art-main-bg-color);
+}
+
+// 头部面包屑
+.user-page-tabs {
+
+  //   background: var(--art-main-bg-color);
+
+  .my-template-umi-ant-tabs-tab:hover {
+    color: var(--main-color) !important;
+    border: 1px solid var(--main-color) !important;
+
+    .my-template-umi-ant-tabs-tab-btn,
+    .my-template-umi-ant-tabs-tab-remove span {
+      color: var(--main-color) !important;
+    }
+  }
+
+
+  // .my-template-umi-ant-tabs-tab {
+  //   color: var(--art-gray-900) !important;
+  //   background: var(--art-main-bg-color);
+  // }
+
+  // 跟随主按钮色样式
+  .my-template-umi-ant-tabs-tab-active {
+    color: var(--main-color) !important;
+    border: 1px solid var(--main-color) !important;
+    background: transparent !important;
+
+    .my-template-umi-ant-tabs-tab-btn,
+    .my-template-umi-ant-tabs-tab-remove span {
+      color: var(--main-color) !important;
+    }
+  }
+
+
+}
+
+.my-template-umi-ant-input-suffix {
+  color: var(--main-color) !important;
+  cursor: pointer;
+}
+
+.my-template-umi-ant-menu-item-selected,
+// .my-template-umi-ant-menu-submenu-selected,
+.my-template-umi-ant-alert-info,
+.my-template-umi-ant-alert-icon {
+  color: var(--main-color) !important;
+  background: transparent !important;
+}
+
+
+// TODO:不知道啥时候生效
+:where(.css-dev-only-do-not-override-vryruh).my-template-umi-ant-menu-light .my-template-umi-ant-menu-submenu-selected>.my-template-umi-ant-menu-submenu-title,
+:where(.css-dev-only-do-not-override-vryruh).my-template-umi-ant-menu-light>.my-template-umi-ant-menu .my-template-umi-ant-menu-submenu-selected>.my-template-umi-ant-menu-submenu-title {
+  color: var(--main-color) !important;
+}
+
+// 权限checkbox
+:where(.css-dev-only-do-not-override-vryruh).my-template-umi-ant-checkbox-checked .my-template-umi-ant-checkbox-inner {
+  background: var(--main-color) !important;
+  border: 1px solid var(--main-color) !important;
+}
+
+.my-template-umi-ant-btn-primary {
+  color: #fff !important;
+  background: var(--main-color) !important;
+}
+
+.my-template-umi-ant-space-item {
+  a {
+    color: var(--main-color) !important;
+  }
+}
+
+.my-template-umi-ant-btn-color-dangerous {
+  background: red !important;
+}
+
+.my-template-umi-ant-btn-color-dangerous:disabled {
+  color: var(--art-gray-900) !important;
+  background: var(--art-main-bg-color) !important;
+  border: $border-color !important;
+}
+
+// 对于表格中的link按钮
+.my-template-umi-ant-btn-variant-link {
+  background: transparent !important;
+}
+
+// 头部面包屑
+// .user-page-tabs {
+//   background: var(--art-main-bg-color);
+//   border-bottom: $border-color !important;
+
+//   .my-template-umi-ant-tabs-tab {
+//     color: var(--art-gray-900) !important;
+//     background: var(--art-main-bg-color);
+//   }
+
+//   height: 30px;
+//   padding: 4px 8px;
+//   overflow-y: hidden;
+
+//   // :global {
+//   .my-template-umi-ant-tabs {
+//     height: 30px !important;
+//     line-height: 30px !important;
+//   }
+
+//   .my-template-umi-ant-tabs-nav {
+//     margin: 0 !important;
+//   }
+
+//   .my-template-umi-ant-tabs-nav::before {
+//     border: 0 !important;
+//   }
+
+//   .my-template-umi-ant-tabs-content-holder {
+//     height: 0 !important;
+//   }
+
+//   .my-template-umi-ant-tabs-tab {
+//     height: 22px;
+//     line-height: 22px;
+//     // background: #ffffff !important;
+//     border-radius: 2px;
+//     padding: 0 8px !important;
+//     border: 1px solid #d9d9d9 !important;
+//   }
+
+//   .my-template-umi-ant-tabs-tab-remove {
+//     margin-left: 0px !important;
+//   }
+
+//   .my-template-umi-ant-tabs-tab-remove:hover {
+//     color: #1890ff !important;
+//   }
+
+//   .my-template-umi-ant-tabs-tab-active {
+//     border: 1px solid #1890ff !important;
+
+//     .my-template-umi-ant-tabs-tab-remove {
+//       color: #1890ff !important;
+//     }
+//   }
+
+//   .my-template-umi-ant-tabs-tab+.my-template-umi-ant-tabs-tab {
+//     margin: 0 0 0 8px;
+//   }
+
+//   .my-template-umi-ant-tabs-nav-more {
+//     padding: 0px 16px !important;
+//     height: 22px !important;
+//     line-height: 22px !important;
+//   }
+
+//   .my-template-umi-ant-tabs-ink-bar {
+//     width: 0 !important;
+//   }
+
+// }
+
+.my-template-umi-ant-layout-sider-children {
+  .logo {
+    // border-bottom: $border-color;
+
+    div {
+      // background: var(--main-color);
+      // opacity: 0.6;
+      color: var(--art-gray-900) !important;
+      // width: calc(100% - 24px);
+      height: 40px;
+      line-height: 40px;
+      border-radius: 8px;
+      font-size: 18px;
+      text-align: center;
+    }
+  }
+}
+
+.my-template-umi-ant-layout-sider[theme="dark"] {
+  .my-template-umi-ant-layout-sider-children {
+    .logo {
+      // border-bottom: $border-color;
+
+      div {
+        // background: var(--main-color);
+        // opacity: 0.6;
+        // width: calc(100% - 24px);
+        color: #fff !important;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 8px;
+        font-size: 18px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+// 白色背景下菜单主题暗黑
+.sider-area-menu-dark {
+  background: var(--menu-dark-bg-color);
+
+  .my-template-umi-ant-menu {
+    .my-template-umi-ant-menu-sub {
+      background: #161618 !important;
+    }
+  }
+}
+
+// 有子菜单的父菜单的选中色
+:where(.css-dev-only-do-not-override-vryruh).my-template-umi-ant-menu-dark .my-template-umi-ant-menu-submenu-selected>.my-template-umi-ant-menu-submenu-title,
+:where(.css-dev-only-do-not-override-vryruh).my-template-umi-ant-menu-dark>.my-template-umi-ant-menu .my-template-umi-ant-menu-submenu-selected>.my-template-umi-ant-menu-submenu-title {
+  color: var(--main-color) !important;
+}
+
+// .my-template-umi-ant-space-item {
+//   a {
+//     color: var(--main-color) !important;
+//   }
+// }
+
+// 移动端文字颜色
+// @media screen and (max-width: $device-phone) {
+//   .dark {
+//     $font-color: rgba(#ffffff, 0.8);
+//     --el-text-color-regular: $font-color !important;
+//     color: $font-color !important;
+
+//     body {
+//       color: $font-color !important;
+
+//       h1,
+//       h2,
+//       h3,
+//       h4,
+//       h5,
+//       h6,
+//       .lang .btn,
+//       .top-bar .user .name {
+//         color: $font-color !important;
+//       }
+//     }
+//   }
+// }

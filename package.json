@@ -1,0 +1,61 @@
+{
+  "private": true,
+  "author": "wjc",
+  "name": "my-template-umi",
+  "main": "./electron/main.js",
+  "version": "1.1.2",
+  "description": "一个关于umi4的模板项目",
+  "scripts": {
+    "start": "pnpm dev",
+    "dev": "cross-env UMI_ENV=dev umi dev",
+    "uat": "cross-env UMI_ENV=uat umi build",
+    "sit": "cross-env UMI_ENV=sit umi build",
+    "build": "cross-env UMI_ENV=prod umi build",
+    "build:win": "npm run build && electron-builder --win --config --publish never",
+    "build:linux": "npm run build && electron-builder --linux --config --publish never",
+    "build:mac": "npm run build && electron-builder --mac --config --publish never",
+    "build:mac-arm": "npm run build && electron-builder --arm64 --config --publish never",
+    "build:mac-mas": "npm run build && electron-builder --mac --config electron-builder-mas.yml --publish never",
+    "postinstall": "umi setup",
+    "setup": "umi setup",
+    "start:lint": "pnpm lint && pnpm dev",
+    "analyze": "cross-env ANALYZE=1 umi build",
+    "electron": "cross-env NODE_ENV=development electron .",
+    "yyds": "npx electron-packager . electron-quick-start --win --out ../electron-quick-start --arch=x64 --app-version=1.0.0 --electron-version=29.4.6 --overwrite --ignore=node_modules --asar=true"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.0.0",
+    "ahooks": "^3.9.5",
+    "antd": "^5.27.1",
+    "archiver": "^7.0.1",
+    "axios": "^1.11.0",
+    "dayjs": "^1.11.18",
+    "events": "^3.3.0",
+    "lodash-es": "^4.17.21",
+    "magical-antd-ui": "^1.0.0",
+    "md5": "^2.3.0",
+    "music-metadata": "^11.9.0",
+    "node-notifier": "^10.0.1",
+    "node-schedule": "^2.1.1",
+    "nodemailer": "^7.0.6",
+    "qs": "^6.14.0",
+    "react-screenshots": "^0.5.22",
+    "sass": "^1.91.0",
+    "umi": "^4.4.12",
+    "vstores": "^0.0.17"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.33",
+    "@types/react-dom": "^18.0.11",
+    "@umijs/plugins": "^4.4.12",
+    "cross-env": "^10.0.0",
+    "electron-builder": "^26.0.12",
+    "electron-updater": "^6.6.2",
+    "typescript": "^5.0.3",
+    "electron": "^38.2.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "engineStrict": true
+}
