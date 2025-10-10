@@ -21,6 +21,9 @@ import {
   InfoCircleOutlined,
   DeleteOutlined,
   CheckOutlined,
+  RedoOutlined, // 列表循环
+  RetweetOutlined, // 单曲循环
+  SwapOutlined, // 随机播放
 } from "@ant-design/icons";
 import {
   Row,
@@ -186,6 +189,45 @@ const TechWeddingPlayer: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const screens = useBreakpoint();
 
+  // 切换播放模式
+  const togglePlayMode = () => {
+    const modes: Array<"list" | "single" | "random"> = [
+      "list",
+      "single",
+      "random",
+    ];
+    const currentIndex = modes.indexOf(playMode);
+    const nextIndex = (currentIndex + 1) % modes.length;
+    setPlayMode(modes[nextIndex]);
+  };
+
+  // 获取播放模式图标
+  const getPlayModeIcon = () => {
+    switch (playMode) {
+      case "list":
+        return <RedoOutlined />; // 列表循环图标
+      case "single":
+        return <RetweetOutlined />; // 单曲循环图标
+      case "random":
+        return <SwapOutlined />; // 随机播放图标
+      default:
+        return <RedoOutlined />;
+    }
+  };
+
+  // 获取播放模式提示文本
+  const getPlayModeTooltip = () => {
+    switch (playMode) {
+      case "list":
+        return "列表循环";
+      case "single":
+        return "单曲循环";
+      case "random":
+        return "随机播放";
+      default:
+        return "列表循环";
+    }
+  };
   // ===========================播放控制栏==========================================================
   // 处理进度条点击
   const handleProgressClick = (e: React.MouseEvent) => {
@@ -1437,64 +1479,33 @@ const TechWeddingPlayer: React.FC = () => {
       </div>
       {/* 播放控制栏 */}
       <div className={styles.playerBar}>
-        <div className={styles.playerLeft}>
-          {/* 播放模式切换 */}
-          {/* <div className={styles.playModeControls}>
-            <Tooltip title="列表循环">
-              <Button
-                type="text"
-                icon={<StepBackwardFilled />}
-                className={`${styles.modeButton} ${playMode === "list" ? styles.active : ""}`}
-                onClick={() => setPlayMode("list")}
-              />
-            </Tooltip>
-            <Tooltip title="单曲循环">
-              <Button
-                type="text"
-                icon={<StepForwardFilled />}
-                className={`${styles.modeButton} ${playMode === "single" ? styles.active : ""}`}
-                onClick={() => setPlayMode("single")}
-              />
-            </Tooltip>
-            <Tooltip title="随机播放">
-              <Button
-                type="text"
-                icon={<DownloadOutlined />}
-                className={`${styles.modeButton} ${playMode === "random" ? styles.active : ""}`}
-                onClick={() => setPlayMode("random")}
-              />
-            </Tooltip>
-          </div> */}
-
-          {/* 当前播放信息 */}
-          <div className={styles.playerInfo}>
-            {currentMusic ? (
-              <>
-                {renderMusicCover(currentMusic, styles.playerCoverImg)}
-                <div className={styles.playerTrackInfo}>
-                  <h4>{currentMusic.title}</h4>
-                  <p>{currentMusic.artist}</p>
-                </div>
-                <Button
-                  type="text"
-                  icon={
-                    currentMusic.liked ? <HeartFilled /> : <HeartOutlined />
-                  }
-                  onClick={() => toggleLike(currentMusic.id)}
-                  className={`${styles.likeButton} ${currentMusic.liked ? styles.liked : ""}`}
-                />
-              </>
-            ) : (
-              <div className={styles.noMusic}>
-                <span>未选择音乐</span>
+        <div className={styles.playerInfo}>
+          {currentMusic ? (
+            <>
+              {renderMusicCover(currentMusic, styles.playerCoverImg)}
+              <div className={styles.playerTrackInfo}>
+                <h4>{currentMusic.title}</h4>
+                <p>{currentMusic.artist}</p>
               </div>
-            )}
-          </div>
+            </>
+          ) : (
+            <div className={styles.noMusic}>
+              <span>未选择音乐</span>
+            </div>
+          )}
         </div>
 
-        <div className={styles.playerCenter}>
-          {/* 播放控制按钮 */}
+        <div className={styles.playerControls}>
           <div className={styles.controlButtons}>
+            {/* 播放模式切换按钮 - 在上一首按钮左侧 */}
+            <Tooltip title={getPlayModeTooltip()}>
+              <Button
+                type="text"
+                icon={getPlayModeIcon()}
+                onClick={togglePlayMode}
+                className={styles.modeButton}
+              />
+            </Tooltip>
             <Button
               type="text"
               icon={<StepBackwardFilled />}
@@ -1516,6 +1527,14 @@ const TechWeddingPlayer: React.FC = () => {
               disabled={!currentMusic}
               className={styles.controlBtn}
             />
+            {currentMusic && (
+              <Button
+                type="text"
+                icon={currentMusic.liked ? <HeartFilled /> : <HeartOutlined />}
+                onClick={() => toggleLike(currentMusic.id)}
+                className={`${styles.likeButton} ${currentMusic.liked ? styles.liked : ""}`}
+              />
+            )}
           </div>
 
           {/* 可拖动的进度条 */}
@@ -1540,7 +1559,7 @@ const TechWeddingPlayer: React.FC = () => {
           </div>
         </div>
 
-        <div className={styles.playerRight}>
+        <div className={styles.playerExtra}>
           {/* 音量控制 */}
           <div className={styles.volumeControl}>
             <Button

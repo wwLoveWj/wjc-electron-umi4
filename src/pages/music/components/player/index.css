@@ -1637,6 +1637,18 @@ img {
     font-size: 16px;
   }
 }
+.playerBar .controlButtons .likeButton {
+  color: #b2b2b2;
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+.playerBar .controlButtons .likeButton:hover {
+  color: #ff4d4f;
+  transform: scale(1.1);
+}
+.playerBar .controlButtons .likeButton.liked {
+  color: #ff4d4f;
+}
 .playerBar .controlButtons .controlBtn {
   background: none;
   border: none;
@@ -2007,28 +2019,12 @@ img {
   padding: 0 20px;
   z-index: 1000;
 }
-.playerLeft {
-  display: flex;
-  align-items: center;
-  flex: 1;
-}
-.playModeControls {
-  display: flex;
-  margin-right: 20px;
-}
-.modeButton {
-  color: #666;
-  margin: 0 5px;
-}
-.modeButton.active {
-  color: #1890ff;
-}
 .playerInfo {
   display: flex;
   align-items: center;
   flex: 1;
 }
-.playerCenter {
+.playerControls {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2039,11 +2035,37 @@ img {
   display: flex;
   align-items: center;
   margin-bottom: 8px;
+  position: relative;
+}
+.controlButtons .likeButton {
+  color: #b2b2b2;
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+.controlButtons .likeButton:hover {
+  color: #ff4d4f;
+  transform: scale(1.1);
+}
+.controlButtons .likeButton.liked {
+  color: #ff4d4f;
+}
+/* 播放模式按钮 - 在上一首按钮左侧 */
+.modeButton {
+  position: absolute;
+  left: -40px;
+  font-size: 16px;
+  width: 32px;
+  height: 32px;
+  color: #666;
+}
+.modeButton:hover {
+  color: #1890ff;
 }
 .playPauseBtn {
   font-size: 24px;
   width: 40px;
   height: 40px;
+  margin: 0 12px;
 }
 .controlBtn {
   font-size: 18px;
@@ -2082,6 +2104,10 @@ img {
   border-radius: 50%;
   opacity: 0;
   transition: opacity 0.2s;
+  cursor: grab;
+}
+.progressHandle:active {
+  cursor: grabbing;
 }
 .progressBar:hover .progressHandle {
   opacity: 1;
@@ -2091,11 +2117,12 @@ img {
   color: #666;
   min-width: 40px;
 }
-.playerRight {
+.playerExtra {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   flex: 1;
+  min-width: 120px;
 }
 .volumeControl {
   display: flex;
@@ -2127,6 +2154,10 @@ img {
   border-radius: 50%;
   opacity: 0;
   transition: opacity 0.2s;
+  cursor: grab;
+}
+.volumeHandle:active {
+  cursor: grabbing;
 }
 .volumeBar:hover .volumeHandle {
   opacity: 1;
