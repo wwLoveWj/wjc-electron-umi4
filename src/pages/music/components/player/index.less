@@ -2738,3 +2738,61 @@ img {
     color: #999;
     font-style: italic;
 }
+
+
+// 修复删除按钮的hover颜色
+.deleteButton {
+    color: #999;
+
+    &:hover {
+        color: #ff4d4f !important; // 红色hover效果
+        background-color: rgba(255, 77, 79, 0.1) !important;
+    }
+}
+
+// 修复移动按钮的hover颜色（如果有移动按钮）
+.moveButton {
+    color: #999;
+
+    &:hover {
+        color: #1890ff !important; // 蓝色hover效果
+        background-color: rgba(24, 144, 255, 0.1) !important;
+    }
+}
+
+// 修复爱心收藏按钮样式
+.likeButton {
+    color: #999;
+
+    &:hover {
+        color: #ff4d4f !important;
+    }
+
+    // 收藏状态下的样式
+    &.liked {
+        color: #ff4d4f !important; // 红色
+
+        &:hover {
+            color: #ff7875 !important; // 浅一点的红色
+        }
+    }
+}
+
+// 确保在音乐列表中的爱心按钮也有正确的样式
+.musicListItem {
+    .likeButton {
+        color: #999;
+
+        &:hover {
+            color: #ff4d4f;
+        }
+
+        &.liked {
+            color: #ff4d4f;
+
+            &:hover {
+                color: #ff7875;
+            }
+        }
+    }
+}

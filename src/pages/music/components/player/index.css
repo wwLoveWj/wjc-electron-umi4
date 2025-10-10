@@ -2185,3 +2185,41 @@ img {
   color: #999;
   font-style: italic;
 }
+.deleteButton {
+  color: #999;
+}
+.deleteButton:hover {
+  color: #ff4d4f !important;
+  background-color: rgba(255, 77, 79, 0.1) !important;
+}
+.moveButton {
+  color: #999;
+}
+.moveButton:hover {
+  color: #1890ff !important;
+  background-color: rgba(24, 144, 255, 0.1) !important;
+}
+.likeButton {
+  color: #999;
+}
+.likeButton:hover {
+  color: #ff4d4f !important;
+}
+.likeButton.liked {
+  color: #ff4d4f !important;
+}
+.likeButton.liked:hover {
+  color: #ff7875 !important;
+}
+.musicListItem .likeButton {
+  color: #999;
+}
+.musicListItem .likeButton:hover {
+  color: #ff4d4f;
+}
+.musicListItem .likeButton.liked {
+  color: #ff4d4f;
+}
+.musicListItem .likeButton.liked:hover {
+  color: #ff7875;
+}

@@ -913,12 +913,12 @@ const TechWeddingPlayer: React.FC = () => {
               }}
             >
               <HeartFilled />
-              <span>我的收藏</span>
+              <span>播放列表</span>
             </div>
           </div>
 
           <div className={styles.playlistsSection}>
-            <div className={styles.sectionTitle}>播放列表</div>
+            <div className={styles.sectionTitle}>我的歌单</div>
             {playlists
               .filter((p) => p.id !== "default")
               .map((playlist) => (
@@ -1036,7 +1036,7 @@ const TechWeddingPlayer: React.FC = () => {
             {activeTab === "favorites" && (
               <div className={styles.favoritesTab}>
                 <div className={styles.favoritesHeader}>
-                  <h2>我的收藏</h2>
+                  <h2>播放列表</h2>
                   <div className={styles.favoritesStats}>
                     <span>{currentPlaylist.musics.length} 首歌曲</span>
                     <span>·</span>
@@ -1444,7 +1444,7 @@ const TechWeddingPlayer: React.FC = () => {
                                 e.stopPropagation();
                                 toggleLike(music.id);
                               }}
-                              className={music.liked ? styles.liked : ""}
+                              className={`${styles.likeButton} ${music.liked ? styles.liked : ""}`}
                             />
                             {currentPlaylist.id !== "default" && (
                               <Popconfirm
@@ -1463,6 +1463,7 @@ const TechWeddingPlayer: React.FC = () => {
                                   icon={<DeleteOutlined />}
                                   onClick={(e) => e.stopPropagation()}
                                   danger
+                                  className={styles.deleteButton}
                                 />
                               </Popconfirm>
                             )}
