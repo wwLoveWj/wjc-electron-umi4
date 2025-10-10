@@ -57,6 +57,7 @@ import {
 import { Playlist, Music, Album } from "../../type";
 import { AddMusicModal } from "./addMusicModal";
 import { EmptyPlaylistState } from "./EmptyPlaylistState";
+import CustomTitleBar from "@/components/CustomTitleBar";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -973,6 +974,7 @@ const TechWeddingPlayer: React.FC = () => {
 
   return (
     <div className={styles.container}>
+      <CustomTitleBar />
       {/* 隐藏的audio元素 */}
       <audio ref={audioRef} preload="metadata" />
       <div className={styles.appLayout}>

@@ -6,6 +6,7 @@ import { WjLayout } from "magical-antd-ui";
 import { menuRoutes } from "@/routes/menuRoutes"; // 配置的菜单项
 import { useEffect } from "react";
 import { storage } from "@/utils/storage";
+import CustomTitleBar from "@/components/CustomTitleBar";
 
 const currentMenuTheme = "dark";
 export default function Layout() {
@@ -48,18 +49,21 @@ export default function Layout() {
     }
   }, [loginInfo?.isLogin]);
   return (
-    <WjLayout
-      isShowHeader={false}
-      avatarItems={avatarItems}
-      // rolesList={rolesList}
-      routes={menuRoutes}
-      home="/home"
-      projectName={PROJECT_CONFIG.TITLE}
-      headerStyle={{
-        background: `var(--art-main-bg-color)`,
-        color: `var(--art-text-gray-700)`,
-      }}
-      themeMenu={currentMenuTheme}
-    />
+    <>
+      <CustomTitleBar />
+      <WjLayout
+        isShowHeader={false}
+        avatarItems={avatarItems}
+        // rolesList={rolesList}
+        routes={menuRoutes}
+        home="/home"
+        projectName={PROJECT_CONFIG.TITLE}
+        headerStyle={{
+          background: `var(--art-main-bg-color)`,
+          color: `var(--art-text-gray-700)`,
+        }}
+        themeMenu={currentMenuTheme}
+      />
+    </>
   );
 }

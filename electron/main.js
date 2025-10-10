@@ -22,6 +22,14 @@ const nodemailer = require("nodemailer");
 const mm = require("music-metadata"); // 用于解析音频文件元数据
 const archiver = require("archiver"); // 用于创建zip文件
 const { updater } = require("./buildConfig/updater.ts");
+// 检查是否安装了 electron-store
+let Store;
+try {
+  Store = require("electron-store");
+} catch (error) {
+  console.log("electron-store not available, using fallback storage");
+}
+const store = new Store();
 
 class TodoScheduler {
   constructor() {
@@ -159,8 +167,9 @@ function createWindow() {
     // autoHideMenuBar: false, // 确保菜单栏不自动隐藏
     // 以下两行是用来控制标题隐藏的
     titleBarStyle: "hidden",
-    ...(process.platform !== "darwin" ? { titleBarOverlay: true } : {}),
-    frame: true, //隐藏所有的边框，最小化那些
+    // backgroundColor: "red",
+    // ...(process.platform !== "darwin" ? { titleBarOverlay: true } : {}),
+    // frame: true, //隐藏所有的边框，最小化那些
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
@@ -178,12 +187,26 @@ function createWindow() {
       )
     ),
   });
+  if (win) {
+    // 恢复置顶状态
+    const alwaysOnTop = store.get("window.alwaysOnTop", false);
+    if (alwaysOnTop) {
+      win.setAlwaysOnTop(true);
+    }
+    // 监听窗口状态变化
+    win.on("maximize", () => {
+      win.webContents.send("window-state-changed", true);
+    });
 
+    win.on("unmaximize", () => {
+      win.webContents.send("window-state-changed", false);
+    });
+  }
   // 启用 Chrome DevTools Protocol
   win.webContents.debugger.attach("1.3");
   // 加载应用
   if (process.env.NODE_ENV === "development") {
-    win.loadURL("http://localhost:8000");
+    win.loadURL("http://localhost:8000/music/player");
     // win.loadFile("./electron/index.html");
   } else {
     win.loadFile(path.join(__dirname, "../dist/index.html"));
@@ -230,6 +253,17 @@ app.whenReady().then(() => {
     }
   });
 
+  // 注册置顶切换快捷键 (Ctrl+Shift+P)
+  globalShortcut.register("CommandOrControl+Shift+P", () => {
+    const window = BrowserWindow.getFocusedWindow();
+    if (window) {
+      const isAlwaysOnTop = window.isAlwaysOnTop();
+      window.setAlwaysOnTop(!isAlwaysOnTop);
+      // 通知渲染进程状态变化
+      window.webContents.send("always-on-top-changed", !isAlwaysOnTop);
+    }
+  });
+
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -239,6 +273,7 @@ app.whenReady().then(() => {
 
 // 在应用退出时注销快捷键
 app.on("will-quit", () => {
+  // 注销所有快捷键
   globalShortcut.unregisterAll();
 });
 
@@ -316,22 +351,50 @@ ipcMain.handle("show-open-dialog", async (event, options) => {
   }
 });
 
-// 自定义标题栏窗口控制指令监听
+// 自定义标题栏窗口控制指令监听=============================================
+// 处理窗口控制 IPC 通信
 ipcMain.handle("window-minimize", () => {
-  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.minimize();
+  const window = BrowserWindow.getFocusedWindow();
+  if (window) window.minimize();
 });
+
 ipcMain.handle("window-maximize", () => {
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    if (mainWindow.isMaximized()) {
-      mainWindow.unmaximize();
+  const window = BrowserWindow.getFocusedWindow();
+  if (window) {
+    if (window.isMaximized()) {
+      window.unmaximize();
     } else {
-      mainWindow.maximize();
+      window.maximize();
     }
   }
 });
+
 ipcMain.handle("window-close", () => {
-  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.close();
+  const window = BrowserWindow.getFocusedWindow();
+  if (window) window.close();
 });
+
+ipcMain.handle("window-is-maximized", () => {
+  const window = BrowserWindow.getFocusedWindow();
+  return window ? window.isMaximized() : false;
+});
+
+// 新增：窗口置顶功能
+ipcMain.handle("window-set-always-on-top", (event, flag) => {
+  const window = BrowserWindow.getFocusedWindow();
+  if (window) {
+    window.setAlwaysOnTop(flag);
+    store.set("window.alwaysOnTop", flag); // 保存偏好设置
+    return true;
+  }
+  return false;
+});
+
+ipcMain.handle("window-is-always-on-top", () => {
+  const window = BrowserWindow.getFocusedWindow();
+  return window ? window.isAlwaysOnTop() : false;
+});
+// =============================================================
 
 ipcMainFn();
 

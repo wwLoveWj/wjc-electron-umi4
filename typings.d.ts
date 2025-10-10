@@ -4,6 +4,16 @@ declare interface Window {
   __QIANKUN_DEVELOPMENT__?: boolean;
   Zone?: CallableFunction;
   electronAPI: {
+    minimizeWindow: () => Promise<void>;
+    maximizeWindow: () => Promise<void>;
+    closeWindow: () => Promise<void>;
+    isWindowMaximized: () => Promise<boolean>;
+    setAlwaysOnTop: (flag: boolean) => Promise<boolean>;
+    isAlwaysOnTop: () => Promise<boolean>;
+    onWindowStateChange: (
+      callback: (event: any, isMaximized: boolean) => void
+    ) => () => void;
+
     scheduleTask: (task: any) => Promise<string>;
     cancelTask: (jobId: string) => Promise<boolean>;
     getScheduledTasks: () => Promise<string[]>;

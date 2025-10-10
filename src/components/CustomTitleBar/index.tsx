@@ -11,11 +11,18 @@ import {
 import { Button, Space, Tooltip } from "antd";
 import styles from "./index.less";
 
+let removeListener;
 const CustomTitleBar: React.FC = () => {
   const [isMaximized, setIsMaximized] = useState(false);
   const [isAlwaysOnTop, setIsAlwaysOnTop] = useState(false);
 
   useEffect(() => {
+    // 监听置顶状态变化（来自快捷键）
+    if (window.electronAPI && window.electronAPI.onAlwaysOnTopChange) {
+      removeListener = window.electronAPI.onAlwaysOnTopChange((event, flag) => {
+        setIsAlwaysOnTop(flag);
+      });
+    }
     // 检查窗口初始状态
     const checkWindowState = async () => {
       if (window.electronAPI) {
@@ -39,6 +46,11 @@ const CustomTitleBar: React.FC = () => {
 
       return removeListener;
     }
+
+    return () => {
+      if (removeListener) removeListener();
+      // 清理其他监听器...
+    };
   }, []);
 
   const handleMinimize = () => {
