@@ -1,0 +1,68 @@
+.glass-effect {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  margin: 40px 0;
+}
+.emptyState .emptyIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6c5ce7, #fd79a8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.3), 0 0 10px rgba(108, 92, 231, 0.3), 0 0 15px rgba(108, 92, 231, 0.3), 0 0 20px rgba(108, 92, 231, 0.3);
+}
+.emptyState .emptyIcon .musicNote {
+  font-size: 32px;
+  color: white;
+  animation: float 3s ease-in-out infinite;
+}
+.emptyState h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #ffffff;
+  font-weight: 600;
+}
+.emptyState p {
+  color: #b2b2b2;
+  margin-bottom: 24px;
+  font-size: 14px;
+  max-width: 300px;
+  line-height: 1.5;
+}
+.emptyState .addMusicBtn {
+  background: #6c5ce7;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 24px;
+  height: auto;
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.5), 0 0 10px rgba(108, 92, 231, 0.5), 0 0 15px rgba(108, 92, 231, 0.5), 0 0 20px rgba(108, 92, 231, 0.5);
+}
+.emptyState .addMusicBtn:hover {
+  background: #8072ea;
+  transform: translateY(-2px);
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}

@@ -53,33 +53,12 @@ import {
 } from "@/utils/imageUtils";
 import { Playlist, Music, Album } from "../../type";
 import { AddMusicModal } from "./addMusicModal";
+import { EmptyPlaylistState } from "./EmptyPlaylistState";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
 const { useBreakpoint } = Grid;
 const { Countdown } = Statistic;
-
-// 空状态组件
-const EmptyPlaylistState: React.FC<{
-  playlistName: string;
-  onAddMusic: () => void;
-}> = ({ playlistName, onAddMusic }) => (
-  <div className={styles.emptyState}>
-    <div className={styles.emptyIcon}>
-      <div className={styles.musicNote}>♪</div>
-    </div>
-    <h3>{playlistName} 是空的</h3>
-    <p>将音乐添加到这个歌单，开始打造您的专属收藏</p>
-    <Button
-      type="primary"
-      icon={<PlusOutlined />}
-      onClick={onAddMusic}
-      className={styles.addMusicBtn}
-    >
-      从播放列表添加
-    </Button>
-  </div>
-);
 
 // 格式化时间函数
 const formatTime = (seconds: number) => {

@@ -141,13 +141,13 @@
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
-.mainContent .searchBar .searchBox :global(.ant-input) {
+.mainContent .searchBar .searchBox :global(.my-template-umi-ant-input) {
   background: transparent;
   border: none;
   color: #ffffff;
   margin-left: 8px;
 }
-.mainContent .searchBar .searchBox :global(.ant-input)::placeholder {
+.mainContent .searchBar .searchBox :global(.my-template-umi-ant-input)::placeholder {
   color: #b2b2b2;
 }
 .mainContent .searchBar .uploadBtn {
@@ -221,11 +221,11 @@
   opacity: 0;
   transition: opacity 0.3s;
 }
-.mainContent .contentArea .homeTab .musicGrid .musicCard .musicCover .playOverlay :global(.ant-btn) {
+.mainContent .contentArea .homeTab .musicGrid .musicCard .musicCover .playOverlay :global(.my-template-umi-ant-btn) {
   color: white;
   font-size: 40px;
 }
-.mainContent .contentArea .homeTab .musicGrid .musicCard .musicCover .playOverlay :global(.ant-btn):hover {
+.mainContent .contentArea .homeTab .musicGrid .musicCard .musicCover .playOverlay :global(.my-template-umi-ant-btn):hover {
   color: #6c5ce7;
 }
 .mainContent .contentArea .homeTab .musicGrid .musicCard .musicInfo {
@@ -327,11 +327,11 @@
   opacity: 0;
   transition: opacity 0.3s;
 }
-.mainContent .contentArea .albumsTab .albumsGrid .albumCard .albumCover .albumOverlay :global(.ant-btn) {
+.mainContent .contentArea .albumsTab .albumsGrid .albumCard .albumCover .albumOverlay :global(.my-template-umi-ant-btn) {
   color: white;
   font-size: 40px;
 }
-.mainContent .contentArea .albumsTab .albumsGrid .albumCard .albumCover .albumOverlay :global(.ant-btn):hover {
+.mainContent .contentArea .albumsTab .albumsGrid .albumCard .albumCover .albumOverlay :global(.my-template-umi-ant-btn):hover {
   color: #6c5ce7;
 }
 .mainContent .contentArea .albumsTab .albumsGrid .albumCard .albumInfo {
@@ -387,24 +387,24 @@
   margin: 0 0 20px;
   font-size: 16px;
 }
-.mainContent .contentArea .albumDetailTab .albumHeader .albumHero .albumDetails .albumActions :global(.ant-btn) {
+.mainContent .contentArea .albumDetailTab .albumHeader .albumHero .albumDetails .albumActions :global(.my-template-umi-ant-btn) {
   margin-right: 10px;
   border-radius: 20px;
 }
-.mainContent .contentArea .albumDetailTab .albumHeader .albumHero .albumDetails .albumActions :global(.ant-btn):first-child {
+.mainContent .contentArea .albumDetailTab .albumHeader .albumHero .albumDetails .albumActions :global(.my-template-umi-ant-btn):first-child {
   background: #6c5ce7;
   border: none;
   box-shadow: 0 0 5px rgba(108, 92, 231, 0.5), 0 0 10px rgba(108, 92, 231, 0.5), 0 0 15px rgba(108, 92, 231, 0.5), 0 0 20px rgba(108, 92, 231, 0.5);
 }
-.mainContent .contentArea .albumDetailTab .albumHeader .albumHero .albumDetails .albumActions :global(.ant-btn):first-child:hover {
+.mainContent .contentArea .albumDetailTab .albumHeader .albumHero .albumDetails .albumActions :global(.my-template-umi-ant-btn):first-child:hover {
   background: #8072ea;
 }
-.mainContent .contentArea .albumDetailTab .albumHeader .albumHero .albumDetails .albumActions :global(.ant-btn):last-child {
+.mainContent .contentArea .albumDetailTab .albumHeader .albumHero .albumDetails .albumActions :global(.my-template-umi-ant-btn):last-child {
   background: transparent;
   border: 1px solid #2d2d4d;
   color: #ffffff;
 }
-.mainContent .contentArea .albumDetailTab .albumHeader .albumHero .albumDetails .albumActions :global(.ant-btn):last-child:hover {
+.mainContent .contentArea .albumDetailTab .albumHeader .albumHero .albumDetails .albumActions :global(.my-template-umi-ant-btn):last-child:hover {
   border-color: #6c5ce7;
   color: #6c5ce7;
 }
@@ -473,11 +473,11 @@
   display: flex;
   align-items: center;
 }
-.mainContent .contentArea .albumDetailTab .albumTracks .trackItem .trackActions :global(.ant-btn) {
+.mainContent .contentArea .albumDetailTab .albumTracks .trackItem .trackActions :global(.my-template-umi-ant-btn) {
   color: #b2b2b2;
 }
-.mainContent .contentArea .albumDetailTab .albumTracks .trackItem .trackActions :global(.ant-btn):hover,
-.mainContent .contentArea .albumDetailTab .albumTracks .trackItem .trackActions :global(.ant-btn).liked {
+.mainContent .contentArea .albumDetailTab .albumTracks .trackItem .trackActions :global(.my-template-umi-ant-btn):hover,
+.mainContent .contentArea .albumDetailTab .albumTracks .trackItem .trackActions :global(.my-template-umi-ant-btn).liked {
   color: #fd79a8;
 }
 .mainContent .contentArea .albumDetailTab .albumTracks .trackItem .trackActions .duration {
@@ -535,11 +535,11 @@
   display: flex;
   align-items: center;
 }
-.mainContent .contentArea .playlistsTab .playlistContent .currentPlaylist .musicList .musicListItem .musicListActions :global(.ant-btn) {
+.mainContent .contentArea .playlistsTab .playlistContent .currentPlaylist .musicList .musicListItem .musicListActions :global(.my-template-umi-ant-btn) {
   color: #b2b2b2;
 }
-.mainContent .contentArea .playlistsTab .playlistContent .currentPlaylist .musicList .musicListItem .musicListActions :global(.ant-btn):hover,
-.mainContent .contentArea .playlistsTab .playlistContent .currentPlaylist .musicList .musicListItem .musicListActions :global(.ant-btn).liked {
+.mainContent .contentArea .playlistsTab .playlistContent .currentPlaylist .musicList .musicListItem .musicListActions :global(.my-template-umi-ant-btn):hover,
+.mainContent .contentArea .playlistsTab .playlistContent .currentPlaylist .musicList .musicListItem .musicListActions :global(.my-template-umi-ant-btn).liked {
   color: #fd79a8;
 }
 .mainContent .contentArea .playlistsTab .playlistContent .currentPlaylist .musicList .musicListItem .musicListActions .duration {
@@ -584,11 +584,11 @@
   color: #b2b2b2;
   font-size: 12px;
 }
-.playerBar .playerInfo :global(.ant-btn) {
+.playerBar .playerInfo :global(.my-template-umi-ant-btn) {
   color: #b2b2b2;
 }
-.playerBar .playerInfo :global(.ant-btn):hover,
-.playerBar .playerInfo :global(.ant-btn).liked {
+.playerBar .playerInfo :global(.my-template-umi-ant-btn):hover,
+.playerBar .playerInfo :global(.my-template-umi-ant-btn).liked {
   color: #fd79a8;
 }
 .playerBar .playerInfo .noMusic {
@@ -607,17 +607,17 @@
   align-items: center;
   margin-bottom: 10px;
 }
-.playerBar .playerControls .controlButtons :global(.ant-btn) {
+.playerBar .playerControls .controlButtons :global(.my-template-umi-ant-btn) {
   color: #ffffff;
   font-size: 16px;
 }
-.playerBar .playerControls .controlButtons :global(.ant-btn):hover:not(:disabled) {
+.playerBar .playerControls .controlButtons :global(.my-template-umi-ant-btn):hover:not(:disabled) {
   color: #6c5ce7;
 }
-.playerBar .playerControls .controlButtons :global(.ant-btn):disabled {
+.playerBar .playerControls .controlButtons :global(.my-template-umi-ant-btn):disabled {
   color: #b2b2b2;
 }
-.playerBar .playerControls .controlButtons :global(.ant-btn).playPauseBtn {
+.playerBar .playerControls .controlButtons :global(.my-template-umi-ant-btn).playPauseBtn {
   font-size: 36px;
   margin: 0 15px;
 }
@@ -635,10 +635,10 @@
   flex: 1;
   margin: 0 10px;
 }
-.playerBar .playerControls .progressContainer .progressSlider :global(.ant-slider-track) {
+.playerBar .playerControls .progressContainer .progressSlider :global(.my-template-umi-ant-slider-track) {
   background: #6c5ce7;
 }
-.playerBar .playerControls .progressContainer .progressSlider :global(.ant-slider-handle) {
+.playerBar .playerControls .progressContainer .progressSlider :global(.my-template-umi-ant-slider-handle) {
   border: 2px solid #6c5ce7;
   box-shadow: 0 0 5px rgba(108, 92, 231, 0.5), 0 0 10px rgba(108, 92, 231, 0.5), 0 0 15px rgba(108, 92, 231, 0.5), 0 0 20px rgba(108, 92, 231, 0.5);
 }
@@ -651,7 +651,7 @@
 .playerBar .playerExtra .modeSelect {
   margin-right: 20px;
 }
-.playerBar .playerExtra .modeSelect :global(.ant-select-selector) {
+.playerBar .playerExtra .modeSelect :global(.my-template-umi-ant-select-selector) {
   background: #0f0f23 !important;
   border: 1px solid #2d2d4d !important;
   color: #ffffff !important;
@@ -661,58 +661,62 @@
   align-items: center;
   width: 120px;
 }
-.playerBar .playerExtra .volumeControl :global(.ant-btn) {
+.playerBar .playerExtra .volumeControl :global(.my-template-umi-ant-btn) {
   color: #ffffff;
   margin-right: 10px;
 }
-.playerBar .playerExtra .volumeControl :global(.ant-btn):hover {
+.playerBar .playerExtra .volumeControl :global(.my-template-umi-ant-btn):hover {
   color: #6c5ce7;
 }
 .playerBar .playerExtra .volumeControl .volumeSlider {
   flex: 1;
 }
-.playerBar .playerExtra .volumeControl .volumeSlider :global(.ant-slider-track) {
+.playerBar .playerExtra .volumeControl .volumeSlider :global(.my-template-umi-ant-slider-track) {
   background: #6c5ce7;
 }
-.playerBar .playerExtra .volumeControl .volumeSlider :global(.ant-slider-handle) {
+.playerBar .playerExtra .volumeControl .volumeSlider :global(.my-template-umi-ant-slider-handle) {
   border: 2px solid #6c5ce7;
 }
-.modal :global(.ant-modal-content) {
+.modal :global(.my-template-umi-ant-modal-content) {
   background: #1a1a2e;
   color: #ffffff;
 }
-.modal :global(.ant-modal-content) :global(.ant-modal-header) {
+.modal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-header) {
   background: #1a1a2e;
   border-bottom: 1px solid #2d2d4d;
+  padding-bottom: 12px;
 }
-.modal :global(.ant-modal-content) :global(.ant-modal-header) :global(.ant-modal-title) {
+.modal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-header) :global(.my-template-umi-ant-modal-title) {
   color: #ffffff;
 }
-.modal :global(.ant-modal-content) :global(.ant-modal-body) :global(.ant-input) {
+.modal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-body) :global(.my-template-umi-ant-input) {
   background: #0f0f23;
   border: 1px solid #2d2d4d;
   color: #ffffff;
 }
-.modal :global(.ant-modal-content) :global(.ant-modal-body) :global(.ant-input)::placeholder {
+.modal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-body) :global(.my-template-umi-ant-input)::placeholder {
   color: #b2b2b2;
 }
-.modal :global(.ant-modal-content) :global(.ant-modal-footer) {
+.modal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-footer) {
   border-top: 1px solid #2d2d4d;
 }
-.modal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):first-child {
+.modal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-footer) :global(.my-template-umi-ant-btn) {
+  margin-top: 20px;
+}
+.modal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-footer) :global(.my-template-umi-ant-btn):first-child {
   background: transparent;
   border: 1px solid #2d2d4d;
   color: #ffffff;
 }
-.modal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):first-child:hover {
+.modal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-footer) :global(.my-template-umi-ant-btn):first-child:hover {
   border-color: #6c5ce7;
   color: #6c5ce7;
 }
-.modal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):last-child {
+.modal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-footer) :global(.my-template-umi-ant-btn):last-child {
   background: #6c5ce7;
   border: none;
 }
-.modal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):last-child:hover {
+.modal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-footer) :global(.my-template-umi-ant-btn):last-child:hover {
   background: #8072ea;
 }
 @keyframes soundWave {
@@ -1397,69 +1401,6 @@ img {
   border-left: 3px solid #6c5ce7;
   box-shadow: 0 0 5px rgba(108, 92, 231, 0.2), 0 0 10px rgba(108, 92, 231, 0.2), 0 0 15px rgba(108, 92, 231, 0.2), 0 0 20px rgba(108, 92, 231, 0.2);
 }
-.emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  margin: 40px 0;
-}
-.emptyState .emptyIcon {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #6c5ce7, #fd79a8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 24px;
-  box-shadow: 0 0 5px rgba(108, 92, 231, 0.3), 0 0 10px rgba(108, 92, 231, 0.3), 0 0 15px rgba(108, 92, 231, 0.3), 0 0 20px rgba(108, 92, 231, 0.3);
-}
-.emptyState .emptyIcon .musicNote {
-  font-size: 32px;
-  color: white;
-  animation: float 3s ease-in-out infinite;
-}
-.emptyState h3 {
-  font-size: 20px;
-  margin-bottom: 12px;
-  color: #ffffff;
-  font-weight: 600;
-}
-.emptyState p {
-  color: #b2b2b2;
-  margin-bottom: 24px;
-  font-size: 14px;
-  max-width: 300px;
-  line-height: 1.5;
-}
-.emptyState .addMusicBtn {
-  background: #6c5ce7;
-  border: none;
-  border-radius: 20px;
-  padding: 8px 24px;
-  height: auto;
-  box-shadow: 0 0 5px rgba(108, 92, 231, 0.5), 0 0 10px rgba(108, 92, 231, 0.5), 0 0 15px rgba(108, 92, 231, 0.5), 0 0 20px rgba(108, 92, 231, 0.5);
-}
-.emptyState .addMusicBtn:hover {
-  background: #8072ea;
-  transform: translateY(-2px);
-}
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
 .playlistItem {
   transition: all 0.3s ease;
 }
@@ -1523,41 +1464,6 @@ img {
   .emptyState p {
     font-size: 13px;
   }
-}
-.addMusicModal :global(.ant-modal-content) {
-  background: #1a1a2e;
-  color: #ffffff;
-}
-.addMusicModal :global(.ant-modal-content) :global(.ant-modal-header) {
-  background: #1a1a2e;
-  border-bottom: 1px solid #2d2d4d;
-}
-.addMusicModal :global(.ant-modal-content) :global(.ant-modal-header) :global(.ant-modal-title) {
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: 600;
-}
-.addMusicModal :global(.ant-modal-content) :global(.ant-modal-body) {
-  padding: 0;
-}
-.addMusicModal :global(.ant-modal-content) :global(.ant-modal-footer) {
-  border-top: 1px solid #2d2d4d;
-}
-.addMusicModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):first-child {
-  background: transparent;
-  border: 1px solid #2d2d4d;
-  color: #ffffff;
-}
-.addMusicModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):first-child:hover {
-  border-color: #6c5ce7;
-  color: #6c5ce7;
-}
-.addMusicModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):last-child {
-  background: #6c5ce7;
-  border: none;
-}
-.addMusicModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):last-child:hover {
-  background: #8072ea;
 }
 .modalContent {
   display: flex;
@@ -1707,69 +1613,6 @@ img {
 }
 .addMusicButton:hover {
   background: #8072ea;
-}
-.emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  margin: 40px 0;
-}
-.emptyState .emptyIcon {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #6c5ce7, #fd79a8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 24px;
-  box-shadow: 0 0 5px rgba(108, 92, 231, 0.3), 0 0 10px rgba(108, 92, 231, 0.3), 0 0 15px rgba(108, 92, 231, 0.3), 0 0 20px rgba(108, 92, 231, 0.3);
-}
-.emptyState .emptyIcon .musicNote {
-  font-size: 32px;
-  color: white;
-  animation: float 3s ease-in-out infinite;
-}
-.emptyState h3 {
-  font-size: 20px;
-  margin-bottom: 12px;
-  color: #ffffff;
-  font-weight: 600;
-}
-.emptyState p {
-  color: #b2b2b2;
-  margin-bottom: 24px;
-  font-size: 14px;
-  max-width: 300px;
-  line-height: 1.5;
-}
-.emptyState .addMusicBtn {
-  background: #6c5ce7;
-  border: none;
-  border-radius: 20px;
-  padding: 8px 24px;
-  height: auto;
-  box-shadow: 0 0 5px rgba(108, 92, 231, 0.5), 0 0 10px rgba(108, 92, 231, 0.5), 0 0 15px rgba(108, 92, 231, 0.5), 0 0 20px rgba(108, 92, 231, 0.5);
-}
-.emptyState .addMusicBtn:hover {
-  background: #8072ea;
-  transform: translateY(-2px);
-}
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
 }
 .playlistItem {
   transition: all 0.3s ease;

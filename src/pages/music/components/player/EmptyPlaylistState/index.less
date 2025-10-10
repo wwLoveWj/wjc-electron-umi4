@@ -1,0 +1,98 @@
+// 空状态样式
+// 颜色变量
+@primary-color: #6c5ce7;
+@secondary-color: #a29bfe;
+@accent-color: #fd79a8;
+@background-dark: #0f0f23;
+@background-card: #1a1a2e;
+@text-primary: #ffffff;
+@text-secondary: #b2b2b2;
+@border-color: #2d2d4d;
+@hover-color: #252541;
+
+.glass-effect {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+// 霓虹效果
+.neon-glow(@color) {
+    box-shadow:
+        0 0 5px @color,
+        0 0 10px @color,
+        0 0 15px @color,
+        0 0 20px @color;
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    .glass-effect;
+    border-radius: 12px;
+    margin: 40px 0;
+
+    .emptyIcon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, @primary-color, @accent-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+        .neon-glow(fade(@primary-color, 30%));
+
+        .musicNote {
+            font-size: 32px;
+            color: white;
+            animation: float 3s ease-in-out infinite;
+        }
+    }
+
+    h3 {
+        font-size: 20px;
+        margin-bottom: 12px;
+        color: @text-primary;
+        font-weight: 600;
+    }
+
+    p {
+        color: @text-secondary;
+        margin-bottom: 24px;
+        font-size: 14px;
+        max-width: 300px;
+        line-height: 1.5;
+    }
+
+    .addMusicBtn {
+        background: @primary-color;
+        border: none;
+        border-radius: 20px;
+        padding: 8px 24px;
+        height: auto;
+        .neon-glow(fade(@primary-color, 50%));
+
+        &:hover {
+            background: lighten(@primary-color, 5%);
+            transform: translateY(-2px);
+        }
+    }
+}
+
+// 浮动动画
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}

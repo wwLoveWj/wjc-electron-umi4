@@ -184,7 +184,7 @@
             width: 400px;
             .glass-effect;
 
-            :global(.ant-input) {
+            :global(.my-template-umi-ant-input) {
                 background: transparent;
                 border: none;
                 color: @text-primary;
@@ -274,7 +274,7 @@
                             opacity: 0;
                             transition: opacity 0.3s;
 
-                            :global(.ant-btn) {
+                            :global(.my-template-umi-ant-btn) {
                                 color: white;
                                 font-size: 40px;
 
@@ -400,7 +400,7 @@
                             opacity: 0;
                             transition: opacity 0.3s;
 
-                            :global(.ant-btn) {
+                            :global(.my-template-umi-ant-btn) {
                                 color: white;
                                 font-size: 40px;
 
@@ -478,7 +478,7 @@
                         }
 
                         .albumActions {
-                            :global(.ant-btn) {
+                            :global(.my-template-umi-ant-btn) {
                                 margin-right: 10px;
                                 border-radius: 20px;
 
@@ -583,7 +583,7 @@
                         display: flex;
                         align-items: center;
 
-                        :global(.ant-btn) {
+                        :global(.my-template-umi-ant-btn) {
                             color: @text-secondary;
 
                             &:hover,
@@ -664,7 +664,7 @@
                                 display: flex;
                                 align-items: center;
 
-                                :global(.ant-btn) {
+                                :global(.my-template-umi-ant-btn) {
                                     color: @text-secondary;
 
                                     &:hover,
@@ -727,7 +727,7 @@
             }
         }
 
-        :global(.ant-btn) {
+        :global(.my-template-umi-ant-btn) {
             color: @text-secondary;
 
             &:hover,
@@ -754,7 +754,7 @@
             align-items: center;
             margin-bottom: 10px;
 
-            :global(.ant-btn) {
+            :global(.my-template-umi-ant-btn) {
                 color: @text-primary;
                 font-size: 16px;
 
@@ -788,11 +788,11 @@
                 flex: 1;
                 margin: 0 10px;
 
-                :global(.ant-slider-track) {
+                :global(.my-template-umi-ant-slider-track) {
                     background: @primary-color;
                 }
 
-                :global(.ant-slider-handle) {
+                :global(.my-template-umi-ant-slider-handle) {
                     border: 2px solid @primary-color;
                     .neon-glow(fade(@primary-color, 50%));
                 }
@@ -809,7 +809,7 @@
         .modeSelect {
             margin-right: 20px;
 
-            :global(.ant-select-selector) {
+            :global(.my-template-umi-ant-select-selector) {
                 background: @background-dark !important;
                 border: 1px solid @border-color !important;
                 color: @text-primary !important;
@@ -821,7 +821,7 @@
             align-items: center;
             width: 120px;
 
-            :global(.ant-btn) {
+            :global(.my-template-umi-ant-btn) {
                 color: @text-primary;
                 margin-right: 10px;
 
@@ -833,11 +833,11 @@
             .volumeSlider {
                 flex: 1;
 
-                :global(.ant-slider-track) {
+                :global(.my-template-umi-ant-slider-track) {
                     background: @primary-color;
                 }
 
-                :global(.ant-slider-handle) {
+                :global(.my-template-umi-ant-slider-handle) {
                     border: 2px solid @primary-color;
                 }
             }
@@ -847,21 +847,22 @@
 
 // 模态框样式
 .modal {
-    :global(.ant-modal-content) {
+    :global(.my-template-umi-ant-modal-content) {
         background: @background-card;
         color: @text-primary;
 
-        :global(.ant-modal-header) {
+        :global(.my-template-umi-ant-modal-header) {
             background: @background-card;
             border-bottom: 1px solid @border-color;
+            padding-bottom: 12px;
 
-            :global(.ant-modal-title) {
+            :global(.my-template-umi-ant-modal-title) {
                 color: @text-primary;
             }
         }
 
-        :global(.ant-modal-body) {
-            :global(.ant-input) {
+        :global(.my-template-umi-ant-modal-body) {
+            :global(.my-template-umi-ant-input) {
                 background: @background-dark;
                 border: 1px solid @border-color;
                 color: @text-primary;
@@ -872,10 +873,12 @@
             }
         }
 
-        :global(.ant-modal-footer) {
+        :global(.my-template-umi-ant-modal-footer) {
             border-top: 1px solid @border-color;
 
-            :global(.ant-btn) {
+            :global(.my-template-umi-ant-btn) {
+                margin-top: 20px;
+
                 &:first-child {
                     background: transparent;
                     border: 1px solid @border-color;
@@ -1775,80 +1778,6 @@ img {
     }
 }
 
-
-// 空状态样式
-.emptyState {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    text-align: center;
-    .glass-effect;
-    border-radius: 12px;
-    margin: 40px 0;
-
-    .emptyIcon {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, @primary-color, @accent-color);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 24px;
-        .neon-glow(fade(@primary-color, 30%));
-
-        .musicNote {
-            font-size: 32px;
-            color: white;
-            animation: float 3s ease-in-out infinite;
-        }
-    }
-
-    h3 {
-        font-size: 20px;
-        margin-bottom: 12px;
-        color: @text-primary;
-        font-weight: 600;
-    }
-
-    p {
-        color: @text-secondary;
-        margin-bottom: 24px;
-        font-size: 14px;
-        max-width: 300px;
-        line-height: 1.5;
-    }
-
-    .addMusicBtn {
-        background: @primary-color;
-        border: none;
-        border-radius: 20px;
-        padding: 8px 24px;
-        height: auto;
-        .neon-glow(fade(@primary-color, 50%));
-
-        &:hover {
-            background: lighten(@primary-color, 5%);
-            transform: translateY(-2px);
-        }
-    }
-}
-
-// 浮动动画
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
 // 播放列表项悬停效果增强
 .playlistItem {
     transition: all 0.3s ease;
@@ -1928,57 +1857,6 @@ img {
 
         p {
             font-size: 13px;
-        }
-    }
-}
-
-
-
-// 添加音乐模态框样式
-.addMusicModal {
-    :global(.ant-modal-content) {
-        background: @background-card;
-        color: @text-primary;
-
-        :global(.ant-modal-header) {
-            background: @background-card;
-            border-bottom: 1px solid @border-color;
-
-            :global(.ant-modal-title) {
-                color: @text-primary;
-                font-size: 18px;
-                font-weight: 600;
-            }
-        }
-
-        :global(.ant-modal-body) {
-            padding: 0;
-        }
-
-        :global(.ant-modal-footer) {
-            border-top: 1px solid @border-color;
-
-            :global(.ant-btn) {
-                &:first-child {
-                    background: transparent;
-                    border: 1px solid @border-color;
-                    color: @text-primary;
-
-                    &:hover {
-                        border-color: @primary-color;
-                        color: @primary-color;
-                    }
-                }
-
-                &:last-child {
-                    background: @primary-color;
-                    border: none;
-
-                    &:hover {
-                        background: lighten(@primary-color, 5%);
-                    }
-                }
-            }
         }
     }
 }
@@ -2155,79 +2033,6 @@ img {
 
     &:hover {
         background: lighten(@primary-color, 5%);
-    }
-}
-
-// 空状态样式
-.emptyState {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    text-align: center;
-    .glass-effect;
-    border-radius: 12px;
-    margin: 40px 0;
-
-    .emptyIcon {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, @primary-color, @accent-color);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 24px;
-        .neon-glow(fade(@primary-color, 30%));
-
-        .musicNote {
-            font-size: 32px;
-            color: white;
-            animation: float 3s ease-in-out infinite;
-        }
-    }
-
-    h3 {
-        font-size: 20px;
-        margin-bottom: 12px;
-        color: @text-primary;
-        font-weight: 600;
-    }
-
-    p {
-        color: @text-secondary;
-        margin-bottom: 24px;
-        font-size: 14px;
-        max-width: 300px;
-        line-height: 1.5;
-    }
-
-    .addMusicBtn {
-        background: @primary-color;
-        border: none;
-        border-radius: 20px;
-        padding: 8px 24px;
-        height: auto;
-        .neon-glow(fade(@primary-color, 50%));
-
-        &:hover {
-            background: lighten(@primary-color, 5%);
-            transform: translateY(-2px);
-        }
-    }
-}
-
-// 浮动动画
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-10px);
     }
 }
 
