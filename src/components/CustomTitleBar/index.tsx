@@ -12,7 +12,7 @@ import { Button, Space, Tooltip } from "antd";
 import styles from "./index.less";
 
 let removeListener;
-const CustomTitleBar: React.FC = () => {
+const CustomTitleBar: React.FC = ({ children }) => {
   const [isMaximized, setIsMaximized] = useState(false);
   const [isAlwaysOnTop, setIsAlwaysOnTop] = useState(false);
 
@@ -84,7 +84,11 @@ const CustomTitleBar: React.FC = () => {
   return (
     <div className={styles.titleBar}>
       <div className={styles.dragRegion}>
-        <span className={styles.appTitle}>Harmony Music Player</span>
+        {children ? (
+          children
+        ) : (
+          <span className={styles.appTitle}>Harmony Music Player</span>
+        )}
       </div>
 
       <div className={styles.windowControls}>

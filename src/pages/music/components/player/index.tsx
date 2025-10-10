@@ -974,104 +974,12 @@ const TechWeddingPlayer: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <CustomTitleBar />
-      {/* 隐藏的audio元素 */}
-      <audio ref={audioRef} preload="metadata" />
-      <div className={styles.appLayout}>
-        {/* 侧边导航 */}
-        <div className={styles.sidebar}>
+      <CustomTitleBar>
+        <div className={styles?.musicTitle}>
           <div className={styles.logo}>
             <div className={styles.logoIcon}>♫</div>
             <span className={styles.logoText}>Harmony</span>
           </div>
-
-          <div className={styles.navMenu}>
-            <div
-              className={`${styles.navItem} ${activeTab === "home" ? styles.active : ""}`}
-              onClick={() => setActiveTab("home")}
-            >
-              <HomeOutlined />
-              <span>首页</span>
-            </div>
-            <div
-              className={`${styles.navItem} ${activeTab === "albums" || activeTab === "album-detail" ? styles.active : ""}`}
-              onClick={() => {
-                setActiveTab("albums");
-                setSelectedAlbum(null);
-              }}
-            >
-              <AimOutlined />
-              <span>专辑</span>
-            </div>
-            <div
-              className={`${styles.navItem} ${activeTab === "favorites" ? styles.active : ""}`}
-              onClick={() => {
-                setActiveTab("favorites");
-                setCurrentPlaylistId("default");
-              }}
-            >
-              <HeartFilled />
-              <span>播放列表</span>
-            </div>
-          </div>
-
-          <div className={styles.playlistsSection}>
-            <div className={styles.sectionTitle}>我的歌单</div>
-            {playlists
-              .filter((p) => p.id !== "default")
-              .map((playlist) => (
-                <div
-                  key={playlist.id}
-                  className={`${styles.playlistItem} ${
-                    currentPlaylistId === playlist.id ? styles.active : ""
-                  }`}
-                  onClick={() => handlePlaylistClick(playlist.id)}
-                >
-                  <div className={styles.playlistName}>{playlist.name}</div>
-                  <div className={styles.playlistCount}>
-                    {playlist.musics.length}
-                  </div>
-                </div>
-              ))}
-            <div
-              className={styles.newPlaylistBtn}
-              onClick={() => setIsModalVisible(true)}
-            >
-              <PlusOutlined />
-              <span>新建歌单</span>
-            </div>
-          </div>
-
-          {/* 存储路径信息 */}
-          <div className={styles.storageInfo}>
-            <div className={styles.sectionTitle}>存储位置</div>
-            <div className={styles.storagePath}>
-              <FolderOutlined />
-              <Tooltip title={storagePath}>
-                <span className={styles.pathText}>
-                  {storagePath.length > 30
-                    ? `${storagePath.substring(0, 30)}...`
-                    : storagePath}
-                </span>
-              </Tooltip>
-            </div>
-            <div className={styles.storageActions}>
-              <Button
-                size="small"
-                icon={<FolderOpenOutlined />}
-                onClick={handleOpenStorageDirectory}
-              >
-                打开
-              </Button>
-              <Button size="small" onClick={handleSelectStorageDirectory}>
-                更改
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* 主内容区 */}
-        <div className={styles.mainContent}>
           {/* 搜索栏 */}
           <div className={styles.searchBar}>
             <div className={styles.searchBox}>
@@ -1105,438 +1013,140 @@ const TechWeddingPlayer: React.FC = () => {
               </Button>
             </div>
           </div>
-
-          {/* 上传进度显示 */}
-          {uploading && (
-            <div className={styles.uploadProgress}>
-              <div className={styles.progressHeader}>
-                <span>上传文件中...</span>
-                <span>{uploadProgress}%</span>
+        </div>
+      </CustomTitleBar>
+      <div className={styles?.musicMain}>
+        {/* 隐藏的audio元素 */}
+        <audio ref={audioRef} preload="metadata" />
+        <div className={styles.appLayout}>
+          {/* 侧边导航 */}
+          <div className={styles.sidebar}>
+            <div className={styles.navMenu}>
+              <div
+                className={`${styles.navItem} ${activeTab === "home" ? styles.active : ""}`}
+                onClick={() => setActiveTab("home")}
+              >
+                <HomeOutlined />
+                <span>首页</span>
               </div>
-              <Progress
-                percent={uploadProgress}
-                status="active"
-                strokeColor={{
-                  "0%": "#6c5ce7",
-                  "100%": "#a29bfe",
+              <div
+                className={`${styles.navItem} ${activeTab === "albums" || activeTab === "album-detail" ? styles.active : ""}`}
+                onClick={() => {
+                  setActiveTab("albums");
+                  setSelectedAlbum(null);
                 }}
-              />
-              {uploadInfo.total > 0 && (
-                <div className={styles.uploadStats}>
-                  正在处理 {uploadInfo.current} / {uploadInfo.total} 个文件
-                </div>
-              )}
+              >
+                <AimOutlined />
+                <span>专辑</span>
+              </div>
+              <div
+                className={`${styles.navItem} ${activeTab === "favorites" ? styles.active : ""}`}
+                onClick={() => {
+                  setActiveTab("favorites");
+                  setCurrentPlaylistId("default");
+                }}
+              >
+                <HeartFilled />
+                <span>播放列表</span>
+              </div>
             </div>
-          )}
 
-          {/* 内容区域 */}
-          <div className={styles.contentArea}>
-            {activeTab === "favorites" && (
-              <div className={styles.favoritesTab}>
-                <div className={styles.favoritesHeader}>
-                  <h2>播放列表</h2>
-                  <div className={styles.favoritesStats}>
-                    <span>{currentPlaylist.musics.length} 首歌曲</span>
-                    <span>·</span>
-                    <span>604 MB</span>
-                    <span>·</span>
-                    <span>507300000000004 MB</span>
-                  </div>
-                </div>
-
-                <div className={styles.favoritesContent}>
-                  <div className={styles.musicList}>
-                    {filteredMusic.map((music, index) => (
-                      <div
-                        key={music.id}
-                        className={`${styles.musicListItem} ${currentMusic?.id === music.id ? styles.active : ""}`}
-                        onClick={() => handleSelectMusic(music)}
-                      >
-                        <div className={styles.musicListInfo}>
-                          <div className={styles.trackNumber}>
-                            {currentMusic?.id === music.id && isPlaying ? (
-                              <div className={styles.playingAnimation}>
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                              </div>
-                            ) : (
-                              <span>{index + 1}</span>
-                            )}
-                          </div>
-                          <div className={styles.musicCover}>
-                            {renderMusicCover(music, styles.musicCoverImg)}
-                          </div>
-                          <div className={styles.musicListDetails}>
-                            <h4>{music.title}</h4>
-                            <p>{music.artist}</p>
-                          </div>
-                        </div>
-                        <div className={styles.musicListMeta}>
-                          <span className={styles.fileSize}>
-                            {formatFileSize(music.fileSize)}
-                          </span>
-                        </div>
-                        <div className={styles.musicListActions}>
-                          <span className={styles.duration}>
-                            {formatTime(music.duration)}
-                          </span>
-                          <>
-                            <Button
-                              type="text"
-                              icon={
-                                music.liked ? (
-                                  <HeartFilled />
-                                ) : (
-                                  <HeartOutlined />
-                                )
-                              }
-                              onClick={(e) => toggleLike(music.id, e)}
-                              className={`${styles.likeButton} ${music.liked ? styles.liked : ""}`}
-                            />
-                            <Popconfirm
-                              title={`确定要从"${currentPlaylist.name}"中移除这首歌曲吗？`}
-                              description={
-                                <div>
-                                  <p>
-                                    此操作将从播放列表中移除歌曲，并且会从存储文件夹中删除对应的音频文件。
-                                  </p>
-                                  <p>
-                                    <strong>歌曲:</strong> {music.title}
-                                  </p>
-                                  <p>
-                                    <strong>艺术家:</strong> {music.artist}
-                                  </p>
-                                </div>
-                              }
-                              onConfirm={(e) => {
-                                e?.stopPropagation();
-                                handleRemoveFromPlaylist(music.id, e as any);
-                              }}
-                              disabled
-                              onCancel={(e) => e?.stopPropagation()}
-                              okText="确定删除"
-                              cancelText="取消"
-                              okType="danger"
-                              placement="leftTop"
-                            >
-                              <Button
-                                type="text"
-                                icon={<DeleteOutlined />}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleRemoveFromPlaylist(music.id, e as any);
-                                }}
-                                title="从播放列表移除并删除文件"
-                                className={styles.deleteButton}
-                              />
-                            </Popconfirm>
-                          </>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-            {/* 首页内容 */}
-            {activeTab === "home" && (
-              <div className={styles.homeTab}>
-                {/* 统计信息 */}
-                <div className={styles.statsContainer}>
-                  <Card className={styles.statCard}>
-                    <Statistic
-                      title="总音乐数"
-                      value={currentPlaylist.musics.length}
-                    />
-                  </Card>
-                  <Card className={styles.statCard}>
-                    <Statistic
-                      title="总时长"
-                      value={Math.round(
-                        currentPlaylist.musics.reduce(
-                          (acc, music) => acc + music.duration,
-                          0
-                        ) / 60
-                      )}
-                      suffix="分钟"
-                    />
-                  </Card>
-                  <Card className={styles.statCard}>
-                    <Statistic
-                      title="存储空间"
-                      value={
-                        Math.round(
-                          currentPlaylist.musics.reduce(
-                            (acc, music) => acc + (music.fileSize || 0),
-                            0
-                          ) * 100
-                        ) / 100
-                      }
-                      suffix="MB"
-                    />
-                  </Card>
-                </div>
-
-                <h2>最近添加</h2>
-                <div className={styles.musicGrid}>
-                  {currentPlaylist.musics.slice(0, 8).map((music) => (
-                    <div
-                      key={music.id}
-                      className={styles.musicCard}
-                      onClick={() => handleSelectMusic(music)}
-                    >
-                      <div className={styles.musicCover}>
-                        <img src={music.cover} alt={music.title} />
-                        <div className={styles.playOverlay}>
-                          <Button
-                            type="text"
-                            icon={
-                              isPlaying && currentMusic?.id === music.id ? (
-                                <PauseCircleFilled />
-                              ) : (
-                                <PlayCircleFilled />
-                              )
-                            }
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (currentMusic?.id === music.id) {
-                                togglePlay();
-                              } else {
-                                handleSelectMusic(music);
-                              }
-                            }}
-                          />
-                        </div>
-                        <div className={styles.musicBadge}>
-                          <Tag color="blue">
-                            {formatFileSize(music.fileSize)}
-                          </Tag>
-                        </div>
-                      </div>
-                      <div className={styles.musicInfo}>
-                        <h4>{music.title}</h4>
-                        <p>{music.artist}</p>
-                        <div className={styles.musicMeta}>
-                          <span>{music.album}</span>
-                          <span>{formatTime(music.duration)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 专辑页面内容 */}
-            {activeTab === "albums" && !selectedAlbum && (
-              <div className={styles.albumsTab}>
-                <h2>专辑 ({albums.length})</h2>
-                <div className={styles.albumsGrid}>
-                  {albums.map((album) => (
-                    <div
-                      key={album.id}
-                      className={styles.albumCard}
-                      onClick={() => handleSelectAlbum(album)}
-                    >
-                      <div className={styles.albumCover}>
-                        {renderAlbumCover(album)}
-                        <div className={styles.albumOverlay}>
-                          <Button
-                            type="text"
-                            icon={<PlayCircleFilled />}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (album.musics.length > 0) {
-                                handleSelectMusic(album.musics[0]);
-                              }
-                            }}
-                          />
-                        </div>
-                        <div className={styles.albumTrackCount}>
-                          {album.musics.length} 首
-                        </div>
-                      </div>
-                      <div className={styles.albumInfo}>
-                        <h4>{album.name}</h4>
-                        <p>{album.artist}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 专辑详情页面 */}
-            {activeTab === "album-detail" && selectedAlbum && (
-              <div className={styles.albumDetailTab}>
-                <div className={styles.albumHeader}>
-                  <Button
-                    type="text"
-                    onClick={handleBackToAlbums}
-                    className={styles.backBtn}
+            <div className={styles.playlistsSection}>
+              <div className={styles.sectionTitle}>我的歌单</div>
+              {playlists
+                .filter((p) => p.id !== "default")
+                .map((playlist) => (
+                  <div
+                    key={playlist.id}
+                    className={`${styles.playlistItem} ${
+                      currentPlaylistId === playlist.id ? styles.active : ""
+                    }`}
+                    onClick={() => handlePlaylistClick(playlist.id)}
                   >
-                    ← 返回专辑
-                  </Button>
-                  <div className={styles.albumHero}>
-                    <img src={selectedAlbum.cover} alt={selectedAlbum.name} />
-                    <div className={styles.albumDetails}>
-                      <h1>{selectedAlbum.name}</h1>
-                      <p>
-                        {selectedAlbum.artist} • {selectedAlbum.year} •{" "}
-                        {selectedAlbum.musics.length} 首歌曲
-                      </p>
-                      <div className={styles.albumStats}>
-                        <span>
-                          总时长:{" "}
-                          {formatTime(
-                            selectedAlbum.musics.reduce(
-                              (acc, music) => acc + music.duration,
-                              0
-                            )
-                          )}
-                        </span>
-                        <span>
-                          文件大小:
-                          {formatFileSize(
-                            selectedAlbum.musics.reduce(
-                              (acc, music) => acc + (music.fileSize || 0),
-                              0
-                            )
-                          )}
-                        </span>
-                      </div>
-                      <div className={styles.albumActions}>
-                        <Button
-                          type="primary"
-                          icon={<PlayCircleFilled />}
-                          onClick={() => {
-                            if (selectedAlbum.musics.length > 0) {
-                              handleSelectMusic(selectedAlbum.musics[0]);
-                            }
-                          }}
-                        >
-                          播放全部
-                        </Button>
-                      </div>
+                    <div className={styles.playlistName}>{playlist.name}</div>
+                    <div className={styles.playlistCount}>
+                      {playlist.musics.length}
                     </div>
                   </div>
-                </div>
+                ))}
+              <div
+                className={styles.newPlaylistBtn}
+                onClick={() => setIsModalVisible(true)}
+              >
+                <PlusOutlined />
+                <span>新建歌单</span>
+              </div>
+            </div>
 
-                <div className={styles.albumTracks}>
-                  <h3>歌曲列表</h3>
-                  {selectedAlbum.musics.map((music, index) => (
-                    <div
-                      key={music.id}
-                      className={`${styles.trackItem} ${currentMusic?.id === music.id ? styles.active : ""}`}
-                      onClick={() => handleSelectMusic(music)}
-                    >
-                      <div className={styles.trackNumber}>
-                        {currentMusic?.id === music.id && isPlaying ? (
-                          <div className={styles.playingAnimation}>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                          </div>
-                        ) : (
-                          <span>{index + 1}</span>
-                        )}
-                      </div>
-                      <div className={styles.trackInfo}>
-                        <h4>{music.title}</h4>
-                        <p>{music.artist}</p>
-                      </div>
-                      <div className={styles.trackMeta}>
-                        <Tag size="small">{formatFileSize(music.fileSize)}</Tag>
-                        <span className={styles.duration}>
-                          {formatTime(music.duration)}
-                        </span>
-                      </div>
-                      <div className={styles.trackActions}>
-                        <Button
-                          type="text"
-                          icon={
-                            music.liked ? <HeartFilled /> : <HeartOutlined />
-                          }
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleLike(music.id);
-                          }}
-                          className={music.liked ? styles.liked : ""}
-                        />
-                        <Popconfirm
-                          title="确定要删除这个音乐文件吗？"
-                          description="此操作将从存储中永久删除文件"
-                          onConfirm={(e) => {
-                            e?.stopPropagation();
-                            handleDeleteMusic(music, e as any);
-                          }}
-                          onCancel={(e) => e?.stopPropagation()}
-                          okText="确定"
-                          cancelText="取消"
-                        >
-                          <Button
-                            type="text"
-                            icon={<DeleteOutlined />}
-                            onClick={(e) => e.stopPropagation()}
-                            danger
-                            className={styles.deleteButton}
-                          />
-                        </Popconfirm>
-                      </div>
-                    </div>
-                  ))}
+            {/* 存储路径信息 */}
+            <div className={styles.storageInfo}>
+              <div className={styles.sectionTitle}>存储位置</div>
+              <div className={styles.storagePath}>
+                <FolderOutlined />
+                <Tooltip title={storagePath}>
+                  <span className={styles.pathText}>
+                    {storagePath.length > 30
+                      ? `${storagePath.substring(0, 30)}...`
+                      : storagePath}
+                  </span>
+                </Tooltip>
+              </div>
+              <div className={styles.storageActions}>
+                <Button
+                  size="small"
+                  icon={<FolderOpenOutlined />}
+                  onClick={handleOpenStorageDirectory}
+                >
+                  打开
+                </Button>
+                <Button size="small" onClick={handleSelectStorageDirectory}>
+                  更改
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* 主内容区 */}
+          <div className={styles.mainContent}>
+            {/* 上传进度显示 */}
+            {uploading && (
+              <div className={styles.uploadProgress}>
+                <div className={styles.progressHeader}>
+                  <span>上传文件中...</span>
+                  <span>{uploadProgress}%</span>
                 </div>
+                <Progress
+                  percent={uploadProgress}
+                  status="active"
+                  strokeColor={{
+                    "0%": "#6c5ce7",
+                    "100%": "#a29bfe",
+                  }}
+                />
+                {uploadInfo.total > 0 && (
+                  <div className={styles.uploadStats}>
+                    正在处理 {uploadInfo.current} / {uploadInfo.total} 个文件
+                  </div>
+                )}
               </div>
             )}
 
-            {/* 播放列表页面 */}
-            {activeTab === "playlists" && (
-              <div className={styles.playlistsTab}>
-                <div className={styles.playlistHeader}>
-                  <div className={styles.playlistTitleSection}>
-                    <h2>{currentPlaylist.name}</h2>
-                    <div className={styles.playlistStats}>
+            {/* 内容区域 */}
+            <div className={styles.contentArea}>
+              {activeTab === "favorites" && (
+                <div className={styles.favoritesTab}>
+                  <div className={styles.favoritesHeader}>
+                    <h2>播放列表</h2>
+                    <div className={styles.favoritesStats}>
                       <span>{currentPlaylist.musics.length} 首歌曲</span>
-                      <span>•</span>
-                      <span>
-                        {formatTime(
-                          currentPlaylist.musics.reduce(
-                            (acc, music) => acc + music.duration,
-                            0
-                          )
-                        )}
-                      </span>
-                      <span>•</span>
-                      <span>
-                        {formatFileSize(
-                          currentPlaylist.musics.reduce(
-                            (acc, music) => acc + (music.fileSize || 0),
-                            0
-                          )
-                        )}
-                      </span>
+                      <span>·</span>
+                      <span>604 MB</span>
+                      <span>·</span>
+                      <span>507300000000004 MB</span>
                     </div>
                   </div>
-                  {currentPlaylist.id !== "default" && (
-                    <Button
-                      type="primary"
-                      icon={<PlusOutlined />}
-                      onClick={() => setIsAddMusicModalVisible(true)}
-                      className={styles.addMusicButton}
-                    >
-                      添加音乐
-                    </Button>
-                  )}
-                </div>
 
-                <div className={styles.playlistContent}>
-                  {currentPlaylist.musics.length === 0 ? (
-                    <EmptyPlaylistState
-                      playlistName={currentPlaylist.name}
-                      onAddMusic={() => setIsAddMusicModalVisible(true)}
-                    />
-                  ) : (
+                  <div className={styles.favoritesContent}>
                     <div className={styles.musicList}>
                       {filteredMusic.map((music, index) => (
                         <div
@@ -1583,148 +1193,548 @@ const TechWeddingPlayer: React.FC = () => {
                                     <HeartOutlined />
                                   )
                                 }
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleLike(music.id);
-                                }}
+                                onClick={(e) => toggleLike(music.id, e)}
                                 className={`${styles.likeButton} ${music.liked ? styles.liked : ""}`}
                               />
-                              {currentPlaylist.id !== "default" && (
-                                <Popconfirm
-                                  title="确定要从歌单中移除这首音乐吗？"
-                                  description="此操作不会删除音乐文件"
-                                  onConfirm={(e) => {
-                                    e?.stopPropagation();
-                                    handleRemovePlaylist(music.id, e as any);
+                              <Popconfirm
+                                title={`确定要从"${currentPlaylist.name}"中移除这首歌曲吗？`}
+                                description={
+                                  <div>
+                                    <p>
+                                      此操作将从播放列表中移除歌曲，并且会从存储文件夹中删除对应的音频文件。
+                                    </p>
+                                    <p>
+                                      <strong>歌曲:</strong> {music.title}
+                                    </p>
+                                    <p>
+                                      <strong>艺术家:</strong> {music.artist}
+                                    </p>
+                                  </div>
+                                }
+                                onConfirm={(e) => {
+                                  e?.stopPropagation();
+                                  handleRemoveFromPlaylist(music.id, e as any);
+                                }}
+                                disabled
+                                onCancel={(e) => e?.stopPropagation()}
+                                okText="确定删除"
+                                cancelText="取消"
+                                okType="danger"
+                                placement="leftTop"
+                              >
+                                <Button
+                                  type="text"
+                                  icon={<DeleteOutlined />}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRemoveFromPlaylist(
+                                      music.id,
+                                      e as any
+                                    );
                                   }}
-                                  onCancel={(e) => e?.stopPropagation()}
-                                  okText="确定"
-                                  cancelText="取消"
-                                >
-                                  <Button
-                                    type="text"
-                                    icon={<DeleteOutlined />}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className={styles.deleteButton}
-                                  />
-                                </Popconfirm>
-                              )}
+                                  title="从播放列表移除并删除文件"
+                                  className={styles.deleteButton}
+                                />
+                              </Popconfirm>
                             </>
                           </div>
                         </div>
                       ))}
                     </div>
-                  )}
+                  </div>
+                </div>
+              )}
+              {/* 首页内容 */}
+              {activeTab === "home" && (
+                <div className={styles.homeTab}>
+                  {/* 统计信息 */}
+                  <div className={styles.statsContainer}>
+                    <Card className={styles.statCard}>
+                      <Statistic
+                        title="总音乐数"
+                        value={currentPlaylist.musics.length}
+                      />
+                    </Card>
+                    <Card className={styles.statCard}>
+                      <Statistic
+                        title="总时长"
+                        value={Math.round(
+                          currentPlaylist.musics.reduce(
+                            (acc, music) => acc + music.duration,
+                            0
+                          ) / 60
+                        )}
+                        suffix="分钟"
+                      />
+                    </Card>
+                    <Card className={styles.statCard}>
+                      <Statistic
+                        title="存储空间"
+                        value={
+                          Math.round(
+                            currentPlaylist.musics.reduce(
+                              (acc, music) => acc + (music.fileSize || 0),
+                              0
+                            ) * 100
+                          ) / 100
+                        }
+                        suffix="MB"
+                      />
+                    </Card>
+                  </div>
+
+                  <h2>最近添加</h2>
+                  <div className={styles.musicGrid}>
+                    {currentPlaylist.musics.slice(0, 8).map((music) => (
+                      <div
+                        key={music.id}
+                        className={styles.musicCard}
+                        onClick={() => handleSelectMusic(music)}
+                      >
+                        <div className={styles.musicCover}>
+                          <img src={music.cover} alt={music.title} />
+                          <div className={styles.playOverlay}>
+                            <Button
+                              type="text"
+                              icon={
+                                isPlaying && currentMusic?.id === music.id ? (
+                                  <PauseCircleFilled />
+                                ) : (
+                                  <PlayCircleFilled />
+                                )
+                              }
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (currentMusic?.id === music.id) {
+                                  togglePlay();
+                                } else {
+                                  handleSelectMusic(music);
+                                }
+                              }}
+                            />
+                          </div>
+                          <div className={styles.musicBadge}>
+                            <Tag color="blue">
+                              {formatFileSize(music.fileSize)}
+                            </Tag>
+                          </div>
+                        </div>
+                        <div className={styles.musicInfo}>
+                          <h4>{music.title}</h4>
+                          <p>{music.artist}</p>
+                          <div className={styles.musicMeta}>
+                            <span>{music.album}</span>
+                            <span>{formatTime(music.duration)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 专辑页面内容 */}
+              {activeTab === "albums" && !selectedAlbum && (
+                <div className={styles.albumsTab}>
+                  <h2>专辑 ({albums.length})</h2>
+                  <div className={styles.albumsGrid}>
+                    {albums.map((album) => (
+                      <div
+                        key={album.id}
+                        className={styles.albumCard}
+                        onClick={() => handleSelectAlbum(album)}
+                      >
+                        <div className={styles.albumCover}>
+                          {renderAlbumCover(album)}
+                          <div className={styles.albumOverlay}>
+                            <Button
+                              type="text"
+                              icon={<PlayCircleFilled />}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (album.musics.length > 0) {
+                                  handleSelectMusic(album.musics[0]);
+                                }
+                              }}
+                            />
+                          </div>
+                          <div className={styles.albumTrackCount}>
+                            {album.musics.length} 首
+                          </div>
+                        </div>
+                        <div className={styles.albumInfo}>
+                          <h4>{album.name}</h4>
+                          <p>{album.artist}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 专辑详情页面 */}
+              {activeTab === "album-detail" && selectedAlbum && (
+                <div className={styles.albumDetailTab}>
+                  <div className={styles.albumHeader}>
+                    <Button
+                      type="text"
+                      onClick={handleBackToAlbums}
+                      className={styles.backBtn}
+                    >
+                      ← 返回专辑
+                    </Button>
+                    <div className={styles.albumHero}>
+                      <img src={selectedAlbum.cover} alt={selectedAlbum.name} />
+                      <div className={styles.albumDetails}>
+                        <h1>{selectedAlbum.name}</h1>
+                        <p>
+                          {selectedAlbum.artist} • {selectedAlbum.year} •{" "}
+                          {selectedAlbum.musics.length} 首歌曲
+                        </p>
+                        <div className={styles.albumStats}>
+                          <span>
+                            总时长:{" "}
+                            {formatTime(
+                              selectedAlbum.musics.reduce(
+                                (acc, music) => acc + music.duration,
+                                0
+                              )
+                            )}
+                          </span>
+                          <span>
+                            文件大小:
+                            {formatFileSize(
+                              selectedAlbum.musics.reduce(
+                                (acc, music) => acc + (music.fileSize || 0),
+                                0
+                              )
+                            )}
+                          </span>
+                        </div>
+                        <div className={styles.albumActions}>
+                          <Button
+                            type="primary"
+                            icon={<PlayCircleFilled />}
+                            onClick={() => {
+                              if (selectedAlbum.musics.length > 0) {
+                                handleSelectMusic(selectedAlbum.musics[0]);
+                              }
+                            }}
+                          >
+                            播放全部
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={styles.albumTracks}>
+                    <h3>歌曲列表</h3>
+                    {selectedAlbum.musics.map((music, index) => (
+                      <div
+                        key={music.id}
+                        className={`${styles.trackItem} ${currentMusic?.id === music.id ? styles.active : ""}`}
+                        onClick={() => handleSelectMusic(music)}
+                      >
+                        <div className={styles.trackNumber}>
+                          {currentMusic?.id === music.id && isPlaying ? (
+                            <div className={styles.playingAnimation}>
+                              <span></span>
+                              <span></span>
+                              <span></span>
+                            </div>
+                          ) : (
+                            <span>{index + 1}</span>
+                          )}
+                        </div>
+                        <div className={styles.trackInfo}>
+                          <h4>{music.title}</h4>
+                          <p>{music.artist}</p>
+                        </div>
+                        <div className={styles.trackMeta}>
+                          <Tag size="small">
+                            {formatFileSize(music.fileSize)}
+                          </Tag>
+                          <span className={styles.duration}>
+                            {formatTime(music.duration)}
+                          </span>
+                        </div>
+                        <div className={styles.trackActions}>
+                          <Button
+                            type="text"
+                            icon={
+                              music.liked ? <HeartFilled /> : <HeartOutlined />
+                            }
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleLike(music.id);
+                            }}
+                            className={music.liked ? styles.liked : ""}
+                          />
+                          <Popconfirm
+                            title="确定要删除这个音乐文件吗？"
+                            description="此操作将从存储中永久删除文件"
+                            onConfirm={(e) => {
+                              e?.stopPropagation();
+                              handleDeleteMusic(music, e as any);
+                            }}
+                            onCancel={(e) => e?.stopPropagation()}
+                            okText="确定"
+                            cancelText="取消"
+                          >
+                            <Button
+                              type="text"
+                              icon={<DeleteOutlined />}
+                              onClick={(e) => e.stopPropagation()}
+                              danger
+                              className={styles.deleteButton}
+                            />
+                          </Popconfirm>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 播放列表页面 */}
+              {activeTab === "playlists" && (
+                <div className={styles.playlistsTab}>
+                  <div className={styles.playlistHeader}>
+                    <div className={styles.playlistTitleSection}>
+                      <h2>{currentPlaylist.name}</h2>
+                      <div className={styles.playlistStats}>
+                        <span>{currentPlaylist.musics.length} 首歌曲</span>
+                        <span>•</span>
+                        <span>
+                          {formatTime(
+                            currentPlaylist.musics.reduce(
+                              (acc, music) => acc + music.duration,
+                              0
+                            )
+                          )}
+                        </span>
+                        <span>•</span>
+                        <span>
+                          {formatFileSize(
+                            currentPlaylist.musics.reduce(
+                              (acc, music) => acc + (music.fileSize || 0),
+                              0
+                            )
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                    {currentPlaylist.id !== "default" && (
+                      <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={() => setIsAddMusicModalVisible(true)}
+                        className={styles.addMusicButton}
+                      >
+                        添加音乐
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className={styles.playlistContent}>
+                    {currentPlaylist.musics.length === 0 ? (
+                      <EmptyPlaylistState
+                        playlistName={currentPlaylist.name}
+                        onAddMusic={() => setIsAddMusicModalVisible(true)}
+                      />
+                    ) : (
+                      <div className={styles.musicList}>
+                        {filteredMusic.map((music, index) => (
+                          <div
+                            key={music.id}
+                            className={`${styles.musicListItem} ${currentMusic?.id === music.id ? styles.active : ""}`}
+                            onClick={() => handleSelectMusic(music)}
+                          >
+                            <div className={styles.musicListInfo}>
+                              <div className={styles.trackNumber}>
+                                {currentMusic?.id === music.id && isPlaying ? (
+                                  <div className={styles.playingAnimation}>
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                  </div>
+                                ) : (
+                                  <span>{index + 1}</span>
+                                )}
+                              </div>
+                              <div className={styles.musicCover}>
+                                {renderMusicCover(music, styles.musicCoverImg)}
+                              </div>
+                              <div className={styles.musicListDetails}>
+                                <h4>{music.title}</h4>
+                                <p>{music.artist}</p>
+                              </div>
+                            </div>
+                            <div className={styles.musicListMeta}>
+                              <span className={styles.fileSize}>
+                                {formatFileSize(music.fileSize)}
+                              </span>
+                            </div>
+                            <div className={styles.musicListActions}>
+                              <span className={styles.duration}>
+                                {formatTime(music.duration)}
+                              </span>
+                              <>
+                                <Button
+                                  type="text"
+                                  icon={
+                                    music.liked ? (
+                                      <HeartFilled />
+                                    ) : (
+                                      <HeartOutlined />
+                                    )
+                                  }
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleLike(music.id);
+                                  }}
+                                  className={`${styles.likeButton} ${music.liked ? styles.liked : ""}`}
+                                />
+                                {currentPlaylist.id !== "default" && (
+                                  <Popconfirm
+                                    title="确定要从歌单中移除这首音乐吗？"
+                                    description="此操作不会删除音乐文件"
+                                    onConfirm={(e) => {
+                                      e?.stopPropagation();
+                                      handleRemovePlaylist(music.id, e as any);
+                                    }}
+                                    onCancel={(e) => e?.stopPropagation()}
+                                    okText="确定"
+                                    cancelText="取消"
+                                  >
+                                    <Button
+                                      type="text"
+                                      icon={<DeleteOutlined />}
+                                      onClick={(e) => e.stopPropagation()}
+                                      className={styles.deleteButton}
+                                    />
+                                  </Popconfirm>
+                                )}
+                              </>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        {/* 播放控制栏 */}
+        <div className={styles.playerBar}>
+          <div className={styles.playerInfo}>
+            {currentMusic ? (
+              <>
+                {renderMusicCover(currentMusic, styles.playerCoverImg)}
+                <div className={styles.playerTrackInfo}>
+                  <h4>{currentMusic.title}</h4>
+                  <p>{currentMusic.artist}</p>
+                </div>
+              </>
+            ) : (
+              <div className={styles.noMusic}>
+                <span>未选择音乐</span>
+              </div>
+            )}
+          </div>
+
+          <div className={styles.playerControls}>
+            <div className={styles.controlButtons}>
+              {/* 播放模式切换按钮 - 在上一首按钮左侧 */}
+              <Tooltip title={getPlayModeTooltip()}>
+                <Button
+                  type="text"
+                  icon={getPlayModeIcon()}
+                  onClick={togglePlayMode}
+                  className={styles.modeButton}
+                />
+              </Tooltip>
+              <Button
+                type="text"
+                icon={<StepBackwardFilled />}
+                onClick={handlePrev}
+                disabled={!currentMusic}
+                className={styles.controlBtn}
+              />
+              <Button
+                type="text"
+                icon={isPlaying ? <PauseCircleFilled /> : <PlayCircleFilled />}
+                onClick={togglePlay}
+                className={`${styles.playPauseBtn} ${styles.controlBtn}`}
+                disabled={currentPlaylist.musics.length === 0}
+              />
+              <Button
+                type="text"
+                icon={<StepForwardFilled />}
+                onClick={handleNext}
+                disabled={!currentMusic}
+                className={styles.controlBtn}
+              />
+              {currentMusic && (
+                <Button
+                  type="text"
+                  icon={
+                    currentMusic.liked ? <HeartFilled /> : <HeartOutlined />
+                  }
+                  onClick={() => toggleLike(currentMusic.id)}
+                  className={`${styles.likeButton} ${currentMusic.liked ? styles.liked : ""}`}
+                />
+              )}
+            </div>
+
+            {/* 可拖动的进度条 */}
+            <div className={styles.progressContainer}>
+              <span className={styles.time}>{formatTime(currentTime)}</span>
+              <div
+                className={styles.progressBar}
+                onClick={handleProgressClick}
+                ref={progressBarRef}
+              >
+                <div
+                  className={styles.progress}
+                  style={{ width: `${(currentTime / (duration || 1)) * 100}%` }}
+                >
+                  <div
+                    className={styles.progressHandle}
+                    onMouseDown={handleProgressDragStart}
+                  />
                 </div>
               </div>
-            )}
-          </div>
-        </div>
-      </div>
-      {/* 播放控制栏 */}
-      <div className={styles.playerBar}>
-        <div className={styles.playerInfo}>
-          {currentMusic ? (
-            <>
-              {renderMusicCover(currentMusic, styles.playerCoverImg)}
-              <div className={styles.playerTrackInfo}>
-                <h4>{currentMusic.title}</h4>
-                <p>{currentMusic.artist}</p>
-              </div>
-            </>
-          ) : (
-            <div className={styles.noMusic}>
-              <span>未选择音乐</span>
+              <span className={styles.time}>{formatTime(duration)}</span>
             </div>
-          )}
-        </div>
+          </div>
 
-        <div className={styles.playerControls}>
-          <div className={styles.controlButtons}>
-            {/* 播放模式切换按钮 - 在上一首按钮左侧 */}
-            <Tooltip title={getPlayModeTooltip()}>
+          <div className={styles.playerExtra}>
+            {/* 音量控制 */}
+            <div className={styles.volumeControl}>
               <Button
                 type="text"
-                icon={getPlayModeIcon()}
-                onClick={togglePlayMode}
-                className={styles.modeButton}
+                icon={isMuted ? <SoundOutlined /> : <SoundFilled />}
+                onClick={toggleMute}
+                className={styles.volumeBtn}
               />
-            </Tooltip>
-            <Button
-              type="text"
-              icon={<StepBackwardFilled />}
-              onClick={handlePrev}
-              disabled={!currentMusic}
-              className={styles.controlBtn}
-            />
-            <Button
-              type="text"
-              icon={isPlaying ? <PauseCircleFilled /> : <PlayCircleFilled />}
-              onClick={togglePlay}
-              className={`${styles.playPauseBtn} ${styles.controlBtn}`}
-              disabled={currentPlaylist.musics.length === 0}
-            />
-            <Button
-              type="text"
-              icon={<StepForwardFilled />}
-              onClick={handleNext}
-              disabled={!currentMusic}
-              className={styles.controlBtn}
-            />
-            {currentMusic && (
-              <Button
-                type="text"
-                icon={currentMusic.liked ? <HeartFilled /> : <HeartOutlined />}
-                onClick={() => toggleLike(currentMusic.id)}
-                className={`${styles.likeButton} ${currentMusic.liked ? styles.liked : ""}`}
-              />
-            )}
-          </div>
-
-          {/* 可拖动的进度条 */}
-          <div className={styles.progressContainer}>
-            <span className={styles.time}>{formatTime(currentTime)}</span>
-            <div
-              className={styles.progressBar}
-              onClick={handleProgressClick}
-              ref={progressBarRef}
-            >
               <div
-                className={styles.progress}
-                style={{ width: `${(currentTime / (duration || 1)) * 100}%` }}
+                className={styles.volumeBar}
+                onClick={handleVolumeClick}
+                ref={volumeBarRef}
               >
                 <div
-                  className={styles.progressHandle}
-                  onMouseDown={handleProgressDragStart}
-                />
-              </div>
-            </div>
-            <span className={styles.time}>{formatTime(duration)}</span>
-          </div>
-        </div>
-
-        <div className={styles.playerExtra}>
-          {/* 音量控制 */}
-          <div className={styles.volumeControl}>
-            <Button
-              type="text"
-              icon={isMuted ? <SoundOutlined /> : <SoundFilled />}
-              onClick={toggleMute}
-              className={styles.volumeBtn}
-            />
-            <div
-              className={styles.volumeBar}
-              onClick={handleVolumeClick}
-              ref={volumeBarRef}
-            >
-              <div
-                className={styles.volumeLevel}
-                style={{ width: `${volume * 100}%` }}
-              >
-                <div
-                  className={styles.volumeHandle}
-                  onMouseDown={handleVolumeDragStart}
-                />
+                  className={styles.volumeLevel}
+                  style={{ width: `${volume * 100}%` }}
+                >
+                  <div
+                    className={styles.volumeHandle}
+                    onMouseDown={handleVolumeDragStart}
+                  />
+                </div>
               </div>
             </div>
           </div>

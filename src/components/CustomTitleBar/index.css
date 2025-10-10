@@ -1,9 +1,5 @@
 .titleBar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 32px;
+  height: 50px;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   display: flex;
   align-items: center;
@@ -17,6 +13,7 @@
 .dragRegion {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   flex: 1;
   -webkit-app-region: drag;
 }
@@ -32,7 +29,7 @@
   -webkit-app-region: no-drag;
   /* 按钮区域不允许拖拽 */
 }
-.controlButton {
+.windowControls .controlButton {
   width: 28px;
   height: 28px;
   display: flex;
@@ -43,26 +40,28 @@
   transition: all 0.2s ease;
   border: none;
 }
-.controlButton:hover {
+.windowControls .controlButton:hover {
   opacity: 1;
-  background: rgba(255, 255, 255, 0.1);
+  color: #6c5ce7 !important;
+  background: rgba(255, 255, 255, 0.1) !important;
 }
-.controlButton:active {
-  background: rgba(255, 255, 255, 0.2);
+.windowControls .controlButton:active {
+  color: #6c5ce7 !important;
+  background: rgba(255, 255, 255, 0.2) !important;
 }
-.pinned {
+.windowControls .pinned {
   color: #1890ff !important;
   opacity: 1;
 }
-.pinned:hover {
+.windowControls .pinned:hover {
   color: #40a9ff !important;
   background: rgba(24, 144, 255, 0.1);
 }
-.closeButton:hover {
+.windowControls .closeButton:hover {
   background: #ff4d4f !important;
-  color: #fff;
+  color: #fff !important;
 }
-.closeButton:active {
+.windowControls .closeButton:active {
   background: #d9363e !important;
 }
 @media (max-width: 768px) {
