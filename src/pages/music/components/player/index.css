@@ -1397,3 +1397,459 @@ img {
   border-left: 3px solid #6c5ce7;
   box-shadow: 0 0 5px rgba(108, 92, 231, 0.2), 0 0 10px rgba(108, 92, 231, 0.2), 0 0 15px rgba(108, 92, 231, 0.2), 0 0 20px rgba(108, 92, 231, 0.2);
 }
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  margin: 40px 0;
+}
+.emptyState .emptyIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6c5ce7, #fd79a8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.3), 0 0 10px rgba(108, 92, 231, 0.3), 0 0 15px rgba(108, 92, 231, 0.3), 0 0 20px rgba(108, 92, 231, 0.3);
+}
+.emptyState .emptyIcon .musicNote {
+  font-size: 32px;
+  color: white;
+  animation: float 3s ease-in-out infinite;
+}
+.emptyState h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #ffffff;
+  font-weight: 600;
+}
+.emptyState p {
+  color: #b2b2b2;
+  margin-bottom: 24px;
+  font-size: 14px;
+  max-width: 300px;
+  line-height: 1.5;
+}
+.emptyState .addMusicBtn {
+  background: #6c5ce7;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 24px;
+  height: auto;
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.5), 0 0 10px rgba(108, 92, 231, 0.5), 0 0 15px rgba(108, 92, 231, 0.5), 0 0 20px rgba(108, 92, 231, 0.5);
+}
+.emptyState .addMusicBtn:hover {
+  background: #8072ea;
+  transform: translateY(-2px);
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.playlistItem {
+  transition: all 0.3s ease;
+}
+.playlistItem:hover {
+  transform: translateX(5px);
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.2), 0 0 10px rgba(108, 92, 231, 0.2), 0 0 15px rgba(108, 92, 231, 0.2), 0 0 20px rgba(108, 92, 231, 0.2);
+}
+.playlistItem.active {
+  background: rgba(108, 92, 231, 0.2);
+  border-left: 3px solid #6c5ce7;
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.2), 0 0 10px rgba(108, 92, 231, 0.2), 0 0 15px rgba(108, 92, 231, 0.2), 0 0 20px rgba(108, 92, 231, 0.2);
+}
+.newPlaylistBtn {
+  transition: all 0.3s ease;
+  border: 1px dashed #2d2d4d;
+  margin-top: 10px;
+}
+.newPlaylistBtn:hover {
+  border-color: #6c5ce7;
+  color: #6c5ce7;
+  transform: translateX(5px);
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.2), 0 0 10px rgba(108, 92, 231, 0.2), 0 0 15px rgba(108, 92, 231, 0.2), 0 0 20px rgba(108, 92, 231, 0.2);
+}
+.playlistHeader {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #2d2d4d;
+}
+.playlistHeader h2 {
+  margin-bottom: 8px;
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #6c5ce7, #fd79a8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.playlistHeader .playlistStats {
+  color: #b2b2b2;
+  font-size: 16px;
+}
+.playlistHeader .playlistStats span {
+  margin: 0 8px;
+}
+.playlistHeader .playlistStats span:first-child {
+  margin-left: 0;
+}
+@media (max-width: 768px) {
+  .emptyState {
+    padding: 40px 15px;
+  }
+  .emptyState .emptyIcon {
+    width: 60px;
+    height: 60px;
+  }
+  .emptyState .emptyIcon .musicNote {
+    font-size: 24px;
+  }
+  .emptyState h3 {
+    font-size: 18px;
+  }
+  .emptyState p {
+    font-size: 13px;
+  }
+}
+.addMusicModal :global(.ant-modal-content) {
+  background: #1a1a2e;
+  color: #ffffff;
+}
+.addMusicModal :global(.ant-modal-content) :global(.ant-modal-header) {
+  background: #1a1a2e;
+  border-bottom: 1px solid #2d2d4d;
+}
+.addMusicModal :global(.ant-modal-content) :global(.ant-modal-header) :global(.ant-modal-title) {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+}
+.addMusicModal :global(.ant-modal-content) :global(.ant-modal-body) {
+  padding: 0;
+}
+.addMusicModal :global(.ant-modal-content) :global(.ant-modal-footer) {
+  border-top: 1px solid #2d2d4d;
+}
+.addMusicModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):first-child {
+  background: transparent;
+  border: 1px solid #2d2d4d;
+  color: #ffffff;
+}
+.addMusicModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):first-child:hover {
+  border-color: #6c5ce7;
+  color: #6c5ce7;
+}
+.addMusicModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):last-child {
+  background: #6c5ce7;
+  border: none;
+}
+.addMusicModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):last-child:hover {
+  background: #8072ea;
+}
+.modalContent {
+  display: flex;
+  height: 500px;
+  gap: 20px;
+}
+.availableMusicSection {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+}
+.availableMusicSection h4 {
+  margin: 0 0 16px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 0 16px;
+}
+.musicSelectionList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 16px;
+}
+.musicSelectionItem {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 1px solid #2d2d4d;
+}
+.musicSelectionItem:hover {
+  background: #252541;
+  border-color: #6c5ce7;
+}
+.musicSelectionItem.selected {
+  background: rgba(108, 92, 231, 0.1);
+  border-color: #6c5ce7;
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.2), 0 0 10px rgba(108, 92, 231, 0.2), 0 0 15px rgba(108, 92, 231, 0.2), 0 0 20px rgba(108, 92, 231, 0.2);
+}
+.musicSelectionCheckbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #2d2d4d;
+  border-radius: 4px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+.selected .musicSelectionCheckbox {
+  background: #6c5ce7;
+  border-color: #6c5ce7;
+}
+.selected .musicSelectionCheckbox :global(.anticon) {
+  color: white;
+  font-size: 12px;
+}
+.musicSelectionCover {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  margin-right: 12px;
+  object-fit: cover;
+}
+.musicSelectionInfo {
+  flex: 1;
+  min-width: 0;
+}
+.musicSelectionTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.musicSelectionArtist {
+  font-size: 12px;
+  color: #b2b2b2;
+}
+.musicSelectionMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.musicSelectionDuration {
+  font-size: 12px;
+  color: #b2b2b2;
+}
+.selectedMusicSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #2d2d4d;
+  padding: 0 16px;
+}
+.selectedMusicSection h4 {
+  margin: 0 0 16px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+}
+.noSelection {
+  text-align: center;
+  color: #b2b2b2;
+  font-style: italic;
+  padding: 40px 0;
+}
+.selectedMusicList {
+  flex: 1;
+  overflow-y: auto;
+}
+.selectedMusicItem {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  background: rgba(108, 92, 231, 0.05);
+  border: 1px solid rgba(108, 92, 231, 0.1);
+}
+.selectedMusicItem img {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  margin-right: 8px;
+  object-fit: cover;
+}
+.selectedMusicItem span {
+  font-size: 12px;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.addMusicButton {
+  background: #6c5ce7;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.5), 0 0 10px rgba(108, 92, 231, 0.5), 0 0 15px rgba(108, 92, 231, 0.5), 0 0 20px rgba(108, 92, 231, 0.5);
+}
+.addMusicButton:hover {
+  background: #8072ea;
+}
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  margin: 40px 0;
+}
+.emptyState .emptyIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6c5ce7, #fd79a8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.3), 0 0 10px rgba(108, 92, 231, 0.3), 0 0 15px rgba(108, 92, 231, 0.3), 0 0 20px rgba(108, 92, 231, 0.3);
+}
+.emptyState .emptyIcon .musicNote {
+  font-size: 32px;
+  color: white;
+  animation: float 3s ease-in-out infinite;
+}
+.emptyState h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #ffffff;
+  font-weight: 600;
+}
+.emptyState p {
+  color: #b2b2b2;
+  margin-bottom: 24px;
+  font-size: 14px;
+  max-width: 300px;
+  line-height: 1.5;
+}
+.emptyState .addMusicBtn {
+  background: #6c5ce7;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 24px;
+  height: auto;
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.5), 0 0 10px rgba(108, 92, 231, 0.5), 0 0 15px rgba(108, 92, 231, 0.5), 0 0 20px rgba(108, 92, 231, 0.5);
+}
+.emptyState .addMusicBtn:hover {
+  background: #8072ea;
+  transform: translateY(-2px);
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.playlistItem {
+  transition: all 0.3s ease;
+}
+.playlistItem:hover {
+  transform: translateX(5px);
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.2), 0 0 10px rgba(108, 92, 231, 0.2), 0 0 15px rgba(108, 92, 231, 0.2), 0 0 20px rgba(108, 92, 231, 0.2);
+}
+.playlistItem.active {
+  background: rgba(108, 92, 231, 0.2);
+  border-left: 3px solid #6c5ce7;
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.2), 0 0 10px rgba(108, 92, 231, 0.2), 0 0 15px rgba(108, 92, 231, 0.2), 0 0 20px rgba(108, 92, 231, 0.2);
+}
+.newPlaylistBtn {
+  transition: all 0.3s ease;
+  border: 1px dashed #2d2d4d;
+  margin-top: 10px;
+}
+.newPlaylistBtn:hover {
+  border-color: #6c5ce7;
+  color: #6c5ce7;
+  transform: translateX(5px);
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.2), 0 0 10px rgba(108, 92, 231, 0.2), 0 0 15px rgba(108, 92, 231, 0.2), 0 0 20px rgba(108, 92, 231, 0.2);
+}
+.playlistHeader {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #2d2d4d;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.playlistHeader h2 {
+  margin-bottom: 8px;
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #6c5ce7, #fd79a8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.playlistHeader .playlistStats {
+  color: #b2b2b2;
+  font-size: 16px;
+}
+.playlistHeader .playlistStats span {
+  margin: 0 8px;
+}
+.playlistHeader .playlistStats span:first-child {
+  margin-left: 0;
+}
+@media (max-width: 768px) {
+  .emptyState {
+    padding: 40px 15px;
+  }
+  .emptyState .emptyIcon {
+    width: 60px;
+    height: 60px;
+  }
+  .emptyState .emptyIcon .musicNote {
+    font-size: 24px;
+  }
+  .emptyState h3 {
+    font-size: 18px;
+  }
+  .emptyState p {
+    font-size: 13px;
+  }
+  .modalContent {
+    flex-direction: column;
+    height: auto;
+  }
+  .selectedMusicSection {
+    border-left: none;
+    border-top: 1px solid #2d2d4d;
+    padding-top: 16px;
+    margin-top: 16px;
+  }
+  .playlistHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}

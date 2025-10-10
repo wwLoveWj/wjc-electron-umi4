@@ -1,13 +1,12 @@
 // import { is } from "@electron-toolkit/utils";
-import { BrowserWindow, dialog, shell, ipcMain } from "electron";
-import { autoUpdater } from "electron-updater";
+const { BrowserWindow, dialog, shell, ipcMain } = require("electron");
+const { autoUpdater } = require("electron-updater");
 
-// 自动下载更新
-autoUpdater.autoDownload = false;
-// 退出时自动安装更新
-autoUpdater.autoInstallOnAppQuit = false;
-
-function updater(win: BrowserWindow) {
+function updater(win) {
+  // 自动下载更新
+  autoUpdater.autoDownload = false;
+  // 退出时自动安装更新
+  autoUpdater.autoInstallOnAppQuit = false;
   if (process.env.NODE_ENV === "development") return;
   const checkForUpdates = (manual = false) => {
     autoUpdater.checkForUpdates().catch((error) => {

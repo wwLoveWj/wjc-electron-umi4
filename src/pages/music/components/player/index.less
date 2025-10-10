@@ -1774,3 +1774,563 @@ img {
         }
     }
 }
+
+
+// 空状态样式
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    .glass-effect;
+    border-radius: 12px;
+    margin: 40px 0;
+
+    .emptyIcon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, @primary-color, @accent-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+        .neon-glow(fade(@primary-color, 30%));
+
+        .musicNote {
+            font-size: 32px;
+            color: white;
+            animation: float 3s ease-in-out infinite;
+        }
+    }
+
+    h3 {
+        font-size: 20px;
+        margin-bottom: 12px;
+        color: @text-primary;
+        font-weight: 600;
+    }
+
+    p {
+        color: @text-secondary;
+        margin-bottom: 24px;
+        font-size: 14px;
+        max-width: 300px;
+        line-height: 1.5;
+    }
+
+    .addMusicBtn {
+        background: @primary-color;
+        border: none;
+        border-radius: 20px;
+        padding: 8px 24px;
+        height: auto;
+        .neon-glow(fade(@primary-color, 50%));
+
+        &:hover {
+            background: lighten(@primary-color, 5%);
+            transform: translateY(-2px);
+        }
+    }
+}
+
+// 浮动动画
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+// 播放列表项悬停效果增强
+.playlistItem {
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: translateX(5px);
+        .neon-glow(fade(@primary-color, 20%));
+    }
+
+    &.active {
+        background: fade(@primary-color, 20%);
+        border-left: 3px solid @primary-color;
+        .neon-glow(fade(@primary-color, 20%));
+    }
+}
+
+// 新建歌单按钮样式增强
+.newPlaylistBtn {
+    transition: all 0.3s ease;
+    border: 1px dashed @border-color;
+    margin-top: 10px;
+
+    &:hover {
+        border-color: @primary-color;
+        color: @primary-color;
+        transform: translateX(5px);
+        .neon-glow(fade(@primary-color, 20%));
+    }
+}
+
+// 播放列表头部样式调整
+.playlistHeader {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid @border-color;
+
+    h2 {
+        margin-bottom: 8px;
+        font-size: 28px;
+        font-weight: 700;
+        background: linear-gradient(90deg, @primary-color, @accent-color);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .playlistStats {
+        color: @text-secondary;
+        font-size: 16px;
+
+        span {
+            margin: 0 8px;
+
+            &:first-child {
+                margin-left: 0;
+            }
+        }
+    }
+}
+
+// 响应式调整
+@media (max-width: 768px) {
+    .emptyState {
+        padding: 40px 15px;
+
+        .emptyIcon {
+            width: 60px;
+            height: 60px;
+
+            .musicNote {
+                font-size: 24px;
+            }
+        }
+
+        h3 {
+            font-size: 18px;
+        }
+
+        p {
+            font-size: 13px;
+        }
+    }
+}
+
+
+
+// 添加音乐模态框样式
+.addMusicModal {
+    :global(.ant-modal-content) {
+        background: @background-card;
+        color: @text-primary;
+
+        :global(.ant-modal-header) {
+            background: @background-card;
+            border-bottom: 1px solid @border-color;
+
+            :global(.ant-modal-title) {
+                color: @text-primary;
+                font-size: 18px;
+                font-weight: 600;
+            }
+        }
+
+        :global(.ant-modal-body) {
+            padding: 0;
+        }
+
+        :global(.ant-modal-footer) {
+            border-top: 1px solid @border-color;
+
+            :global(.ant-btn) {
+                &:first-child {
+                    background: transparent;
+                    border: 1px solid @border-color;
+                    color: @text-primary;
+
+                    &:hover {
+                        border-color: @primary-color;
+                        color: @primary-color;
+                    }
+                }
+
+                &:last-child {
+                    background: @primary-color;
+                    border: none;
+
+                    &:hover {
+                        background: lighten(@primary-color, 5%);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.modalContent {
+    display: flex;
+    height: 500px;
+    gap: 20px;
+}
+
+.availableMusicSection {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+
+    h4 {
+        margin: 0 0 16px;
+        color: @text-primary;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 0 16px;
+    }
+}
+
+.musicSelectionList {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 16px;
+}
+
+.musicSelectionItem {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid @border-color;
+
+    &:hover {
+        background: @hover-color;
+        border-color: @primary-color;
+    }
+
+    &.selected {
+        background: fade(@primary-color, 10%);
+        border-color: @primary-color;
+        .neon-glow(fade(@primary-color, 20%));
+    }
+}
+
+.musicSelectionCheckbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid @border-color;
+    border-radius: 4px;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+
+    .selected & {
+        background: @primary-color;
+        border-color: @primary-color;
+
+        :global(.anticon) {
+            color: white;
+            font-size: 12px;
+        }
+    }
+}
+
+.musicSelectionCover {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    margin-right: 12px;
+    object-fit: cover;
+}
+
+.musicSelectionInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.musicSelectionTitle {
+    font-size: 14px;
+    font-weight: 500;
+    color: @text-primary;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.musicSelectionArtist {
+    font-size: 12px;
+    color: @text-secondary;
+}
+
+.musicSelectionMeta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.musicSelectionDuration {
+    font-size: 12px;
+    color: @text-secondary;
+}
+
+.selectedMusicSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid @border-color;
+    padding: 0 16px;
+
+    h4 {
+        margin: 0 0 16px;
+        color: @text-primary;
+        font-size: 16px;
+        font-weight: 600;
+    }
+}
+
+.noSelection {
+    text-align: center;
+    color: @text-secondary;
+    font-style: italic;
+    padding: 40px 0;
+}
+
+.selectedMusicList {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.selectedMusicItem {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    background: fade(@primary-color, 5%);
+    border: 1px solid fade(@primary-color, 10%);
+
+    img {
+        width: 30px;
+        height: 30px;
+        border-radius: 4px;
+        margin-right: 8px;
+        object-fit: cover;
+    }
+
+    span {
+        font-size: 12px;
+        color: @text-primary;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+// 播放列表头部添加音乐按钮
+.addMusicButton {
+    background: @primary-color;
+    border: none;
+    border-radius: 20px;
+    .neon-glow(fade(@primary-color, 50%));
+
+    &:hover {
+        background: lighten(@primary-color, 5%);
+    }
+}
+
+// 空状态样式
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    .glass-effect;
+    border-radius: 12px;
+    margin: 40px 0;
+
+    .emptyIcon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, @primary-color, @accent-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+        .neon-glow(fade(@primary-color, 30%));
+
+        .musicNote {
+            font-size: 32px;
+            color: white;
+            animation: float 3s ease-in-out infinite;
+        }
+    }
+
+    h3 {
+        font-size: 20px;
+        margin-bottom: 12px;
+        color: @text-primary;
+        font-weight: 600;
+    }
+
+    p {
+        color: @text-secondary;
+        margin-bottom: 24px;
+        font-size: 14px;
+        max-width: 300px;
+        line-height: 1.5;
+    }
+
+    .addMusicBtn {
+        background: @primary-color;
+        border: none;
+        border-radius: 20px;
+        padding: 8px 24px;
+        height: auto;
+        .neon-glow(fade(@primary-color, 50%));
+
+        &:hover {
+            background: lighten(@primary-color, 5%);
+            transform: translateY(-2px);
+        }
+    }
+}
+
+// 浮动动画
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+// 播放列表项悬停效果增强
+.playlistItem {
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: translateX(5px);
+        .neon-glow(fade(@primary-color, 20%));
+    }
+
+    &.active {
+        background: fade(@primary-color, 20%);
+        border-left: 3px solid @primary-color;
+        .neon-glow(fade(@primary-color, 20%));
+    }
+}
+
+// 新建歌单按钮样式增强
+.newPlaylistBtn {
+    transition: all 0.3s ease;
+    border: 1px dashed @border-color;
+    margin-top: 10px;
+
+    &:hover {
+        border-color: @primary-color;
+        color: @primary-color;
+        transform: translateX(5px);
+        .neon-glow(fade(@primary-color, 20%));
+    }
+}
+
+// 播放列表头部样式调整
+.playlistHeader {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid @border-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    h2 {
+        margin-bottom: 8px;
+        font-size: 28px;
+        font-weight: 700;
+        background: linear-gradient(90deg, @primary-color, @accent-color);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .playlistStats {
+        color: @text-secondary;
+        font-size: 16px;
+
+        span {
+            margin: 0 8px;
+
+            &:first-child {
+                margin-left: 0;
+            }
+        }
+    }
+}
+
+// 响应式调整
+@media (max-width: 768px) {
+    .emptyState {
+        padding: 40px 15px;
+
+        .emptyIcon {
+            width: 60px;
+            height: 60px;
+
+            .musicNote {
+                font-size: 24px;
+            }
+        }
+
+        h3 {
+            font-size: 18px;
+        }
+
+        p {
+            font-size: 13px;
+        }
+    }
+
+    .modalContent {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .selectedMusicSection {
+        border-left: none;
+        border-top: 1px solid @border-color;
+        padding-top: 16px;
+        margin-top: 16px;
+    }
+
+    .playlistHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+}

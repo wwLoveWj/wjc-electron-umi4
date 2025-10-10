@@ -21,7 +21,7 @@ const notifier = require("node-notifier");
 const nodemailer = require("nodemailer");
 const mm = require("music-metadata"); // 用于解析音频文件元数据
 const archiver = require("archiver"); // 用于创建zip文件
-const { updater } = require("./buildConfig/updater");
+const { updater } = require("./buildConfig/updater.ts");
 
 class TodoScheduler {
   constructor() {

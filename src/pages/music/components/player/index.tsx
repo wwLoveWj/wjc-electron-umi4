@@ -20,6 +20,7 @@ import {
   FolderOutlined,
   InfoCircleOutlined,
   DeleteOutlined,
+  CheckOutlined,
 } from "@ant-design/icons";
 import {
   Row,
@@ -50,44 +51,48 @@ import {
   getMusicCover,
   isValidImageUrl,
 } from "@/utils/imageUtils";
+import { Playlist, Music, Album } from "../../type";
+import { AddMusicModal } from "./addMusicModal";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
 const { useBreakpoint } = Grid;
 const { Countdown } = Statistic;
 
-// 音乐类型定义
-interface Music {
-  id: string;
-  title: string;
-  artist: string;
-  album: string;
-  duration: number;
-  url: string;
-  cover: string;
-  liked: boolean;
-  filePath?: string;
-  fileName?: string;
-  fileSize?: number;
-  addedDate?: string;
-}
+// 空状态组件
+const EmptyPlaylistState: React.FC<{
+  playlistName: string;
+  onAddMusic: () => void;
+}> = ({ playlistName, onAddMusic }) => (
+  <div className={styles.emptyState}>
+    <div className={styles.emptyIcon}>
+      <div className={styles.musicNote}>♪</div>
+    </div>
+    <h3>{playlistName} 是空的</h3>
+    <p>将音乐添加到这个歌单，开始打造您的专属收藏</p>
+    <Button
+      type="primary"
+      icon={<PlusOutlined />}
+      onClick={onAddMusic}
+      className={styles.addMusicBtn}
+    >
+      从播放列表添加
+    </Button>
+  </div>
+);
 
-// 播放列表类型定义
-interface Playlist {
-  id: string;
-  name: string;
-  musics: Music[];
-}
+// 格式化时间函数
+const formatTime = (seconds: number) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+};
 
-// 专辑类型定义
-interface Album {
-  id: string;
-  name: string;
-  artist: string;
-  cover: string;
-  year: string;
-  musics: Music[];
-}
+// 格式化文件大小函数
+const formatFileSize = (size?: number) => {
+  if (!size) return "未知";
+  return `${size.toFixed(2)} MB`;
+};
 
 const TechWeddingPlayer: React.FC = () => {
   const [currentMusic, setCurrentMusic] = useState<Music | null>(null);
@@ -106,6 +111,9 @@ const TechWeddingPlayer: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadInfo, setUploadInfo] = useState({ current: 0, total: 0 });
+
+  // 新增状态
+  const [isAddMusicModalVisible, setIsAddMusicModalVisible] = useState(false);
 
   // 模拟数据 - 根据截图内容
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -136,7 +144,55 @@ const TechWeddingPlayer: React.FC = () => {
           liked: false,
           fileSize: 24.81,
         },
+        {
+          id: "3",
+          title: "婚礼进行曲",
+          artist: "古典音乐",
+          album: "婚礼音乐",
+          duration: 180, // 3:00
+          url: "",
+          cover: "",
+          liked: false,
+          fileSize: 30.02,
+        },
+        {
+          id: "4",
+          title: "浪漫钢琴曲",
+          artist: "钢琴家",
+          album: "浪漫时刻",
+          duration: 210, // 3:30
+          url: "",
+          cover: "",
+          liked: false,
+          fileSize: 14.92,
+        },
+        {
+          id: "5",
+          title: "舞会音乐",
+          artist: "舞曲乐队",
+          album: "舞会精选",
+          duration: 195, // 3:15
+          url: "",
+          cover: "",
+          liked: false,
+          fileSize: 24.16,
+        },
       ],
+    },
+    {
+      id: "wedding",
+      name: "婚礼进行曲",
+      musics: [],
+    },
+    {
+      id: "romantic",
+      name: "浪漫时刻",
+      musics: [],
+    },
+    {
+      id: "dance",
+      name: "舞会音乐",
+      musics: [],
     },
   ]);
 
@@ -151,6 +207,20 @@ const TechWeddingPlayer: React.FC = () => {
   // 获取当前播放列表
   const currentPlaylist =
     playlists.find((p) => p.id === currentPlaylistId) || playlists[0];
+
+  // 获取可添加的音乐（从"我的收藏"中排除已在当前歌单的音乐）
+  const availableMusic = React.useMemo(() => {
+    const defaultPlaylist = playlists.find((p) => p.id === "default");
+    if (!defaultPlaylist) return [];
+
+    const currentPlaylistMusicIds = new Set(
+      currentPlaylist.musics.map((music) => music.id)
+    );
+
+    return defaultPlaylist.musics.filter(
+      (music) => !currentPlaylistMusicIds.has(music.id)
+    );
+  }, [playlists, currentPlaylist]);
 
   // 初始化 - 获取存储路径和本地音乐
   useEffect(() => {
@@ -405,6 +475,9 @@ const TechWeddingPlayer: React.FC = () => {
     setPlaylists([...playlists, newPlaylist]);
     setNewPlaylistName("");
     setIsModalVisible(false);
+    setCurrentPlaylistId(newPlaylist.id);
+    setActiveTab("playlists");
+    message.success(`已创建歌单: ${newPlaylistName}`);
   };
 
   // 处理文件上传
@@ -447,7 +520,7 @@ const TechWeddingPlayer: React.FC = () => {
           }));
 
           const updatedPlaylists = playlists.map((playlist) => {
-            if (playlist.id === currentPlaylistId) {
+            if (playlist.id === "default") {
               return {
                 ...playlist,
                 musics: [...playlist.musics, ...newMusics],
@@ -585,6 +658,24 @@ const TechWeddingPlayer: React.FC = () => {
     }
   };
 
+  // 从歌单中移除音乐
+  const handleRemoveFromPlaylist = (musicId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    const updatedPlaylists = playlists.map((playlist) => {
+      if (playlist.id === currentPlaylistId) {
+        return {
+          ...playlist,
+          musics: playlist.musics.filter((m) => m.id !== musicId),
+        };
+      }
+      return playlist;
+    });
+
+    setPlaylists(updatedPlaylists);
+    message.success("已从歌单中移除");
+  };
+
   // 处理进度条跳转
   const handleProgressChange = (value: number) => {
     setCurrentTime(value);
@@ -599,19 +690,6 @@ const TechWeddingPlayer: React.FC = () => {
       audioRef.current.muted = !isMuted;
       setIsMuted(!isMuted);
     }
-  };
-
-  // 格式化时间
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
-  };
-
-  // 格式化文件大小
-  const formatFileSize = (size?: number) => {
-    if (!size) return "未知";
-    return `${size.toFixed(2)} MB`;
   };
 
   // 过滤音乐
@@ -650,6 +728,41 @@ const TechWeddingPlayer: React.FC = () => {
     />
   );
 
+  // 处理播放列表点击
+  const handlePlaylistClick = (playlistId: string) => {
+    setCurrentPlaylistId(playlistId);
+    setActiveTab("playlists");
+  };
+
+  // 处理添加音乐到歌单
+  const handleAddMusicToPlaylist = (selectedMusicIds: string[]) => {
+    const defaultPlaylist = playlists.find((p) => p.id === "default");
+    if (!defaultPlaylist) {
+      message.error("默认播放列表不存在");
+      return;
+    }
+
+    const musicsToAdd = defaultPlaylist.musics.filter((music) =>
+      selectedMusicIds.includes(music.id)
+    );
+
+    const updatedPlaylists = playlists.map((playlist) => {
+      if (playlist.id === currentPlaylistId) {
+        return {
+          ...playlist,
+          musics: [...playlist.musics, ...musicsToAdd],
+        };
+      }
+      return playlist;
+    });
+
+    setPlaylists(updatedPlaylists);
+    setIsAddMusicModalVisible(false);
+    message.success(
+      `成功添加 ${musicsToAdd.length} 首音乐到 ${currentPlaylist.name}`
+    );
+  };
+
   return (
     <div className={styles.container}>
       {/* 隐藏的audio元素 */}
@@ -681,13 +794,6 @@ const TechWeddingPlayer: React.FC = () => {
               <AimOutlined />
               <span>专辑</span>
             </div>
-            {/* <div
-              className={`${styles.navItem} ${activeTab === "playlists" ? styles.active : ""}`}
-              onClick={() => setActiveTab("playlists")}
-            >
-              <MenuOutlined />
-              <span>播放列表</span>
-            </div> */}
             <div
               className={`${styles.navItem} ${activeTab === "favorites" ? styles.active : ""}`}
               onClick={() => {
@@ -702,27 +808,20 @@ const TechWeddingPlayer: React.FC = () => {
 
           <div className={styles.playlistsSection}>
             <div className={styles.sectionTitle}>播放列表</div>
-            <div
-              className={`${styles.playlistItem} ${currentPlaylistId === "wedding" ? styles.active : ""}`}
-              onClick={() => setCurrentPlaylistId("wedding")}
-            >
-              <span>婚礼进行曲</span>
-              <span className={styles.count}>12</span>
-            </div>
-            <div
-              className={`${styles.playlistItem} ${currentPlaylistId === "romantic" ? styles.active : ""}`}
-              onClick={() => setCurrentPlaylistId("romantic")}
-            >
-              <span>浪漫时刻</span>
-              <span className={styles.count}>8</span>
-            </div>
-            <div
-              className={`${styles.playlistItem} ${currentPlaylistId === "dance" ? styles.active : ""}`}
-              onClick={() => setCurrentPlaylistId("dance")}
-            >
-              <span>舞会音乐</span>
-              <span className={styles.count}>15</span>
-            </div>
+            {playlists
+              .filter((p) => p.id !== "default")
+              .map((playlist) => (
+                <div
+                  key={playlist.id}
+                  className={`${styles.playlistItem} ${
+                    currentPlaylistId === playlist.id ? styles.active : ""
+                  }`}
+                  onClick={() => handlePlaylistClick(playlist.id)}
+                >
+                  <span>{playlist.name}</span>
+                  <span className={styles.count}>{playlist.musics.length}</span>
+                </div>
+              ))}
             <div
               className={styles.newPlaylistBtn}
               onClick={() => setIsModalVisible(true)}
@@ -1162,78 +1261,101 @@ const TechWeddingPlayer: React.FC = () => {
                       )}
                     </span>
                   </div>
+                  {currentPlaylist.id !== "default" && (
+                    <Button
+                      type="primary"
+                      icon={<PlusOutlined />}
+                      onClick={() => setIsAddMusicModalVisible(true)}
+                      className={styles.addMusicButton}
+                    >
+                      添加音乐
+                    </Button>
+                  )}
                 </div>
 
                 <div className={styles.playlistContent}>
-                  <div className={styles.musicList}>
-                    {filteredMusic.map((music, index) => (
-                      <div
-                        key={music.id}
-                        className={`${styles.musicListItem} ${currentMusic?.id === music.id ? styles.active : ""}`}
-                        onClick={() => handleSelectMusic(music)}
-                      >
-                        <div className={styles.musicListInfo}>
-                          <div className={styles.trackNumber}>
-                            {currentMusic?.id === music.id && isPlaying ? (
-                              <div className={styles.playingAnimation}>
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                              </div>
-                            ) : (
-                              <span>{index + 1}</span>
-                            )}
+                  {currentPlaylist.musics.length === 0 ? (
+                    <EmptyPlaylistState
+                      playlistName={currentPlaylist.name}
+                      onAddMusic={() => setIsAddMusicModalVisible(true)}
+                    />
+                  ) : (
+                    <div className={styles.musicList}>
+                      {filteredMusic.map((music, index) => (
+                        <div
+                          key={music.id}
+                          className={`${styles.musicListItem} ${currentMusic?.id === music.id ? styles.active : ""}`}
+                          onClick={() => handleSelectMusic(music)}
+                        >
+                          <div className={styles.musicListInfo}>
+                            <div className={styles.trackNumber}>
+                              {currentMusic?.id === music.id && isPlaying ? (
+                                <div className={styles.playingAnimation}>
+                                  <span></span>
+                                  <span></span>
+                                  <span></span>
+                                </div>
+                              ) : (
+                                <span>{index + 1}</span>
+                              )}
+                            </div>
+                            {renderMusicCover(music, styles.musicCoverImg)}
+                            <div className={styles.musicListDetails}>
+                              <h4>{music.title}</h4>
+                              <p>
+                                {music.artist} • {music.album}
+                              </p>
+                            </div>
                           </div>
-                          {renderMusicCover(music, styles.musicCoverImg)}
-                          <div className={styles.musicListDetails}>
-                            <h4>{music.title}</h4>
-                            <p>
-                              {music.artist} • {music.album}
-                            </p>
+                          <div className={styles.musicListMeta}>
+                            <Tag size="small">
+                              {formatFileSize(music.fileSize)}
+                            </Tag>
                           </div>
-                        </div>
-                        <div className={styles.musicListMeta}>
-                          <Tag size="small">
-                            {formatFileSize(music.fileSize)}
-                          </Tag>
-                        </div>
-                        <div className={styles.musicListActions}>
-                          <span className={styles.duration}>
-                            {formatTime(music.duration)}
-                          </span>
-                          <Button
-                            type="text"
-                            icon={
-                              music.liked ? <HeartFilled /> : <HeartOutlined />
-                            }
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleLike(music.id);
-                            }}
-                            className={music.liked ? styles.liked : ""}
-                          />
-                          <Popconfirm
-                            title="确定要删除这个音乐文件吗？"
-                            description="此操作将从存储中永久删除文件"
-                            onConfirm={(e) => {
-                              e?.stopPropagation();
-                              handleDeleteMusic(music, e as any);
-                            }}
-                            onCancel={(e) => e?.stopPropagation()}
-                            okText="确定"
-                            cancelText="取消"
-                          >
+                          <div className={styles.musicListActions}>
+                            <span className={styles.duration}>
+                              {formatTime(music.duration)}
+                            </span>
                             <Button
                               type="text"
-                              icon={<DeleteOutlined />}
-                              onClick={(e) => e.stopPropagation()}
-                              danger
+                              icon={
+                                music.liked ? (
+                                  <HeartFilled />
+                                ) : (
+                                  <HeartOutlined />
+                                )
+                              }
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleLike(music.id);
+                              }}
+                              className={music.liked ? styles.liked : ""}
                             />
-                          </Popconfirm>
+                            {currentPlaylist.id !== "default" && (
+                              <Popconfirm
+                                title="确定要从歌单中移除这首音乐吗？"
+                                description="此操作不会删除音乐文件"
+                                onConfirm={(e) => {
+                                  e?.stopPropagation();
+                                  handleRemoveFromPlaylist(music.id, e as any);
+                                }}
+                                onCancel={(e) => e?.stopPropagation()}
+                                okText="确定"
+                                cancelText="取消"
+                              >
+                                <Button
+                                  type="text"
+                                  icon={<DeleteOutlined />}
+                                  onClick={(e) => e.stopPropagation()}
+                                  danger
+                                />
+                              </Popconfirm>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -1348,6 +1470,15 @@ const TechWeddingPlayer: React.FC = () => {
           onPressEnter={handleCreatePlaylist}
         />
       </Modal>
+
+      {/* 添加音乐模态框 */}
+      <AddMusicModal
+        visible={isAddMusicModalVisible}
+        onCancel={() => setIsAddMusicModalVisible(false)}
+        onConfirm={handleAddMusicToPlaylist}
+        availableMusic={availableMusic}
+        playlists={playlists}
+      />
     </div>
   );
 };
