@@ -1,0 +1,78 @@
+.titleBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  z-index: 9999;
+  -webkit-app-region: drag;
+  /* 允许拖拽整个标题栏区域 */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.dragRegion {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  -webkit-app-region: drag;
+}
+.appTitle {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.8;
+}
+.windowControls {
+  display: flex;
+  align-items: center;
+  -webkit-app-region: no-drag;
+  /* 按钮区域不允许拖拽 */
+}
+.controlButton {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+  border: none;
+}
+.controlButton:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+}
+.controlButton:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+.pinned {
+  color: #1890ff !important;
+  opacity: 1;
+}
+.pinned:hover {
+  color: #40a9ff !important;
+  background: rgba(24, 144, 255, 0.1);
+}
+.closeButton:hover {
+  background: #ff4d4f !important;
+  color: #fff;
+}
+.closeButton:active {
+  background: #d9363e !important;
+}
+@media (max-width: 768px) {
+  .appTitle {
+    display: none;
+  }
+  .dragRegion {
+    flex: none;
+  }
+  .titleBar {
+    justify-content: flex-end;
+  }
+}

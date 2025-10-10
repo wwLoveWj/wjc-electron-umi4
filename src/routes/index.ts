@@ -39,6 +39,14 @@ const routes: API.MenuRoutesType[] = [
     layout: false,
   },
   {
+    key: "music-player",
+    title: "音乐播放",
+    path: "/music/player",
+    component: "./music/components/player",
+    layout: false,
+    // hidden: true, //隐藏该菜单项，主要是详情、新增、编辑页
+  },
+  {
     path: "/",
     component: "@/layouts/SecurityLayout", // 主页加载layout公共组件
     layout: false,
