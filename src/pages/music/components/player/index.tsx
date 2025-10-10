@@ -179,10 +179,101 @@ const TechWeddingPlayer: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState("");
   const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
-
+  const [isDraggingProgress, setIsDraggingProgress] = useState(false);
+  const [isDraggingVolume, setIsDraggingVolume] = useState(false);
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const volumeBarRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const screens = useBreakpoint();
 
+  // ===========================播放控制栏==========================================================
+  // 处理进度条点击
+  const handleProgressClick = (e: React.MouseEvent) => {
+    if (!progressBarRef.current || !duration) return;
+
+    const rect = progressBarRef.current.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    const newTime = percent * duration;
+
+    setCurrentTime(newTime);
+    if (audioRef.current) {
+      audioRef.current.currentTime = newTime;
+    }
+  };
+
+  // 处理进度条拖动开始
+  const handleProgressDragStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDraggingProgress(true);
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      if (!progressBarRef.current || !duration) return;
+
+      const rect = progressBarRef.current.getBoundingClientRect();
+      let percent = (moveEvent.clientX - rect.left) / rect.width;
+      percent = Math.max(0, Math.min(1, percent)); // 限制在 0-1 范围内
+
+      const newTime = percent * duration;
+      setCurrentTime(newTime);
+    };
+
+    const handleMouseUp = () => {
+      setIsDraggingProgress(false);
+      if (audioRef.current && duration) {
+        audioRef.current.currentTime = currentTime;
+      }
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  // 处理音量条点击
+  const handleVolumeClick = (e: React.MouseEvent) => {
+    if (!volumeBarRef.current) return;
+
+    const rect = volumeBarRef.current.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    const newVolume = Math.max(0, Math.min(1, percent));
+
+    setVolume(newVolume);
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume;
+    }
+  };
+
+  // 处理音量条拖动开始
+  const handleVolumeDragStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDraggingVolume(true);
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      if (!volumeBarRef.current) return;
+
+      const rect = volumeBarRef.current.getBoundingClientRect();
+      let percent = (moveEvent.clientX - rect.left) / rect.width;
+      percent = Math.max(0, Math.min(1, percent)); // 限制在 0-1 范围内
+
+      const newVolume = percent;
+      setVolume(newVolume);
+      if (audioRef.current) {
+        audioRef.current.volume = newVolume;
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDraggingVolume(false);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  // =====================================================================================
   // 获取当前播放列表
   const currentPlaylist =
     playlists.find((p) => p.id === currentPlaylistId) || playlists[0];
@@ -746,7 +837,6 @@ const TechWeddingPlayer: React.FC = () => {
     <div className={styles.container}>
       {/* 隐藏的audio元素 */}
       <audio ref={audioRef} preload="metadata" />
-
       <div className={styles.appLayout}>
         {/* 侧边导航 */}
         <div className={styles.sidebar}>
@@ -1345,32 +1435,65 @@ const TechWeddingPlayer: React.FC = () => {
           </div>
         </div>
       </div>
-
       {/* 播放控制栏 */}
       <div className={styles.playerBar}>
-        <div className={styles.playerInfo}>
-          {currentMusic ? (
-            <>
-              {renderMusicCover(currentMusic, styles.playerCoverImg)}
-              <div className={styles.playerTrackInfo}>
-                <h4>{currentMusic.title}</h4>
-                <p>{currentMusic.artist}</p>
-              </div>
+        <div className={styles.playerLeft}>
+          {/* 播放模式切换 */}
+          {/* <div className={styles.playModeControls}>
+            <Tooltip title="列表循环">
               <Button
                 type="text"
-                icon={currentMusic.liked ? <HeartFilled /> : <HeartOutlined />}
-                onClick={() => toggleLike(currentMusic.id)}
-                className={`${styles.likeButton} ${currentMusic.liked ? styles.liked : ""}`}
+                icon={<StepBackwardFilled />}
+                className={`${styles.modeButton} ${playMode === "list" ? styles.active : ""}`}
+                onClick={() => setPlayMode("list")}
               />
-            </>
-          ) : (
-            <div className={styles.noMusic}>
-              <span>未选择音乐</span>
-            </div>
-          )}
+            </Tooltip>
+            <Tooltip title="单曲循环">
+              <Button
+                type="text"
+                icon={<StepForwardFilled />}
+                className={`${styles.modeButton} ${playMode === "single" ? styles.active : ""}`}
+                onClick={() => setPlayMode("single")}
+              />
+            </Tooltip>
+            <Tooltip title="随机播放">
+              <Button
+                type="text"
+                icon={<DownloadOutlined />}
+                className={`${styles.modeButton} ${playMode === "random" ? styles.active : ""}`}
+                onClick={() => setPlayMode("random")}
+              />
+            </Tooltip>
+          </div> */}
+
+          {/* 当前播放信息 */}
+          <div className={styles.playerInfo}>
+            {currentMusic ? (
+              <>
+                {renderMusicCover(currentMusic, styles.playerCoverImg)}
+                <div className={styles.playerTrackInfo}>
+                  <h4>{currentMusic.title}</h4>
+                  <p>{currentMusic.artist}</p>
+                </div>
+                <Button
+                  type="text"
+                  icon={
+                    currentMusic.liked ? <HeartFilled /> : <HeartOutlined />
+                  }
+                  onClick={() => toggleLike(currentMusic.id)}
+                  className={`${styles.likeButton} ${currentMusic.liked ? styles.liked : ""}`}
+                />
+              </>
+            ) : (
+              <div className={styles.noMusic}>
+                <span>未选择音乐</span>
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className={styles.playerControls}>
+        <div className={styles.playerCenter}>
+          {/* 播放控制按钮 */}
           <div className={styles.controlButtons}>
             <Button
               type="text"
@@ -1395,30 +1518,30 @@ const TechWeddingPlayer: React.FC = () => {
             />
           </div>
 
+          {/* 可拖动的进度条 */}
           <div className={styles.progressContainer}>
             <span className={styles.time}>{formatTime(currentTime)}</span>
-            <div className={styles.progressBar}>
+            <div
+              className={styles.progressBar}
+              onClick={handleProgressClick}
+              ref={progressBarRef}
+            >
               <div
                 className={styles.progress}
                 style={{ width: `${(currentTime / (duration || 1)) * 100}%` }}
-              />
+              >
+                <div
+                  className={styles.progressHandle}
+                  onMouseDown={handleProgressDragStart}
+                />
+              </div>
             </div>
             <span className={styles.time}>{formatTime(duration)}</span>
           </div>
         </div>
 
-        <div className={styles.playerExtra}>
-          <Select
-            value={playMode}
-            onChange={setPlayMode}
-            className={styles.modeSelect}
-            size="small"
-          >
-            <Option value="list">列表循环</Option>
-            <Option value="single">单曲循环</Option>
-            <Option value="random">随机播放</Option>
-          </Select>
-
+        <div className={styles.playerRight}>
+          {/* 音量控制 */}
           <div className={styles.volumeControl}>
             <Button
               type="text"
@@ -1426,16 +1549,24 @@ const TechWeddingPlayer: React.FC = () => {
               onClick={toggleMute}
               className={styles.volumeBtn}
             />
-            <div className={styles.volumeBar}>
+            <div
+              className={styles.volumeBar}
+              onClick={handleVolumeClick}
+              ref={volumeBarRef}
+            >
               <div
                 className={styles.volumeLevel}
                 style={{ width: `${volume * 100}%` }}
-              />
+              >
+                <div
+                  className={styles.volumeHandle}
+                  onMouseDown={handleVolumeDragStart}
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
-
       {/* 新建歌单模态框 */}
       <Modal
         title="新建歌单"
@@ -1453,7 +1584,6 @@ const TechWeddingPlayer: React.FC = () => {
           onPressEnter={handleCreatePlaylist}
         />
       </Modal>
-
       {/* 添加音乐模态框 */}
       <AddMusicModal
         visible={isAddMusicModalVisible}

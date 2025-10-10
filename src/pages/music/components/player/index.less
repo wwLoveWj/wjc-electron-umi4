@@ -2512,3 +2512,188 @@ img {
         gap: 16px;
     }
 }
+
+/* 播放器控制栏样式 */
+.playerBar {
+    height: 80px;
+    backdrop-filter: blur(10px);
+    border-top: 1px solid #e8e8e8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 1000;
+}
+
+.playerLeft {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.playModeControls {
+    display: flex;
+    margin-right: 20px;
+}
+
+.modeButton {
+    color: #666;
+    margin: 0 5px;
+}
+
+.modeButton.active {
+    color: #1890ff;
+}
+
+.playerInfo {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.playerCenter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 2;
+    max-width: 600px;
+}
+
+.controlButtons {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.playPauseBtn {
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+}
+
+.controlBtn {
+    font-size: 18px;
+    width: 32px;
+    height: 32px;
+}
+
+.progressContainer {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 12px;
+}
+
+.progressBar {
+    flex: 1;
+    height: 6px;
+    background: #e8e8e8;
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+}
+
+.progress {
+    height: 100%;
+    background: #1890ff;
+    border-radius: 3px;
+    position: relative;
+    transition: width 0.1s ease;
+}
+
+.progressHandle {
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background: #1890ff;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.progressBar:hover .progressHandle {
+    opacity: 1;
+}
+
+.time {
+    font-size: 12px;
+    color: #666;
+    min-width: 40px;
+}
+
+.playerRight {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+}
+
+.volumeControl {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.volumeBar {
+    width: 80px;
+    height: 4px;
+    background: #e8e8e8;
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+}
+
+.volumeLevel {
+    height: 100%;
+    background: #1890ff;
+    border-radius: 2px;
+    position: relative;
+}
+
+.volumeHandle {
+    position: absolute;
+    right: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background: #1890ff;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.volumeBar:hover .volumeHandle {
+    opacity: 1;
+}
+
+.playerCoverImg {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    margin-right: 12px;
+}
+
+.playerTrackInfo {
+    flex: 1;
+}
+
+.playerTrackInfo h4 {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.playerTrackInfo p {
+    margin: 0;
+    font-size: 12px;
+    color: #666;
+}
+
+.noMusic {
+    color: #999;
+    font-style: italic;
+}
