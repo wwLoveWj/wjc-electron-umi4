@@ -161,6 +161,370 @@
     }
 }
 
+// 播放列表区域样式修复
+.playlistsSection {
+    padding: 0 10px;
+    margin-bottom: 20px;
+
+    .sectionTitle {
+        font-size: 12px;
+        text-transform: uppercase;
+        color: @text-secondary;
+        margin-bottom: 15px;
+        padding: 0 10px;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    .playlistItem {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 1px solid transparent;
+
+        &:hover {
+            background: @hover-color;
+            border-color: fade(@primary-color, 30%);
+        }
+
+        &.active {
+            background: fade(@primary-color, 15%);
+            border-color: fade(@primary-color, 50%);
+            .neon-glow(fade(@primary-color, 20%));
+        }
+
+        .playlistName {
+            flex: 1;
+            font-size: 14px;
+            color: @text-primary;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .playlistCount {
+            font-size: 12px;
+            color: @text-secondary;
+            background: fade(@text-secondary, 10%);
+            padding: 2px 8px;
+            border-radius: 10px;
+            border: 1px solid fade(@text-secondary, 20%);
+            min-width: 24px;
+            text-align: center;
+        }
+    }
+
+    .newPlaylistBtn {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-top: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+        color: @text-secondary;
+        border: 1px dashed @border-color;
+
+        &:hover {
+            background: @hover-color;
+            color: @primary-color;
+            border-color: @primary-color;
+        }
+
+        span {
+            margin-left: 10px;
+        }
+    }
+}
+
+// 播放列表页面样式修复
+.playlistsTab {
+    .playlistHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid @border-color;
+
+        .playlistTitleSection {
+            h2 {
+                margin: 0 0 8px;
+                font-size: 28px;
+                font-weight: 700;
+                background: linear-gradient(90deg, @primary-color, @accent-color);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .playlistStats {
+                color: @text-secondary;
+                font-size: 16px;
+
+                span {
+                    margin: 0 8px;
+
+                    &:first-child {
+                        margin-left: 0;
+                    }
+                }
+            }
+        }
+
+        .addMusicButton {
+            background: @primary-color;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            height: auto;
+            .neon-glow(fade(@primary-color, 50%));
+
+            &:hover {
+                background: lighten(@primary-color, 5%);
+            }
+        }
+    }
+
+    .playlistContent {
+        .musicList {
+            .musicListItem {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 16px 20px;
+                border-radius: 8px;
+                margin-bottom: 8px;
+                cursor: pointer;
+                transition: all 0.3s;
+                .glass-effect;
+                border: 1px solid fade(@border-color, 30%);
+
+                &:hover {
+                    background: @hover-color;
+                    border-color: fade(@primary-color, 30%);
+                }
+
+                &.active {
+                    background: fade(@primary-color, 10%);
+                    border-color: fade(@primary-color, 50%);
+                    .neon-glow(fade(@primary-color, 20%));
+                }
+
+                .musicListInfo {
+                    display: flex;
+                    align-items: center;
+                    flex: 1;
+                    min-width: 0;
+
+                    .trackNumber {
+                        width: 40px;
+                        text-align: center;
+                        margin-right: 20px;
+                        color: @text-secondary;
+                        font-size: 14px;
+                        font-weight: 500;
+
+                        .playingAnimation {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            height: 20px;
+
+                            span {
+                                display: inline-block;
+                                width: 3px;
+                                height: 15px;
+                                background: @primary-color;
+                                margin: 0 1px;
+                                animation: soundWave 1.2s infinite ease-in-out;
+
+                                &:nth-child(2) {
+                                    animation-delay: 0.3s;
+                                }
+
+                                &:nth-child(3) {
+                                    animation-delay: 0.6s;
+                                }
+                            }
+                        }
+                    }
+
+                    .musicCover {
+                        width: 50px;
+                        height: 50px;
+                        margin-right: 15px;
+                        border-radius: 6px;
+                        overflow: hidden;
+                        flex-shrink: 0;
+
+                        .musicCoverImg {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            border-radius: 6px;
+                        }
+                    }
+
+                    .musicListDetails {
+                        flex: 1;
+                        min-width: 0;
+
+                        h4 {
+                            margin: 0 0 5px;
+                            font-size: 14px;
+                            font-weight: 500;
+                            color: @text-primary;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+
+                        p {
+                            margin: 0;
+                            color: @text-secondary;
+                            font-size: 12px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+                    }
+                }
+
+                .musicListMeta {
+                    margin: 0 20px;
+
+                    .fileSize {
+                        color: @text-secondary;
+                        font-size: 12px;
+                        background: fade(@text-secondary, 10%);
+                        padding: 4px 8px;
+                        border-radius: 6px;
+                        border: 1px solid fade(@text-secondary, 20%);
+                    }
+                }
+
+                .musicListActions {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+
+                    .duration {
+                        color: @text-secondary;
+                        font-size: 12px;
+                        min-width: 40px;
+                        text-align: right;
+                    }
+
+                    .likeButton {
+                        color: @text-secondary;
+                        font-size: 16px;
+                        transition: all 0.3s ease;
+
+                        &:hover {
+                            color: #ff4d4f;
+                        }
+
+                        &.liked {
+                            color: #ff4d4f;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 响应式调整
+@media (max-width: 768px) {
+    .playlistsTab {
+        .playlistHeader {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+
+            .playlistTitleSection {
+                h2 {
+                    font-size: 24px;
+                }
+
+                .playlistStats {
+                    font-size: 14px;
+                }
+            }
+        }
+
+        .musicListItem {
+            padding: 12px 15px;
+
+            .musicListInfo {
+                .trackNumber {
+                    width: 30px;
+                    margin-right: 15px;
+                    font-size: 12px;
+                }
+
+                .musicCover {
+                    width: 40px;
+                    height: 40px;
+                    margin-right: 12px;
+                }
+
+                .musicListDetails {
+                    h4 {
+                        font-size: 13px;
+                    }
+
+                    p {
+                        font-size: 11px;
+                    }
+                }
+            }
+
+            .musicListMeta {
+                margin: 0 12px;
+            }
+
+            .musicListActions {
+                gap: 8px;
+
+                .duration {
+                    font-size: 11px;
+                }
+
+                .likeButton {
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+
+    .emptyState {
+        padding: 40px 15px;
+
+        .emptyIcon {
+            width: 60px;
+            height: 60px;
+
+            .musicNote {
+                font-size: 24px;
+            }
+        }
+
+        h3 {
+            font-size: 18px;
+        }
+
+        p {
+            font-size: 13px;
+        }
+    }
+}
+
 // 主内容区样式
 .mainContent {
     flex: 1;
@@ -1036,6 +1400,15 @@
     padding: 15px;
     border-top: 1px solid @border-color;
 
+    .sectionTitle {
+        font-size: 12px;
+        text-transform: uppercase;
+        color: @text-secondary;
+        margin-bottom: 15px;
+        padding: 0 10px;
+        letter-spacing: 1px;
+    }
+
     .storagePath {
         display: flex;
         align-items: center;
@@ -1059,7 +1432,7 @@
         display: flex;
         gap: 8px;
 
-        :global(.ant-btn) {
+        :global(.my-template-umi-ant-btn) {
             flex: 1;
             font-size: 12px;
             height: 28px;
@@ -1105,12 +1478,12 @@
         text-align: center;
         .glass-effect;
 
-        :global(.ant-statistic-title) {
+        :global(.my-template-umi-ant-statistic-title) {
             color: @text-secondary;
             font-size: 14px;
         }
 
-        :global(.ant-statistic-content) {
+        :global(.my-template-umi-ant-statistic-content) {
             color: @primary-color;
             font-size: 24px;
             font-weight: 700;
@@ -1124,7 +1497,7 @@
     top: 8px;
     right: 8px;
 
-    :global(.ant-tag) {
+    :global(.my-template-umi-ant-tag) {
         margin: 0;
         font-size: 10px;
         padding: 2px 6px;
@@ -1198,7 +1571,7 @@
 .musicListMeta {
     margin: 0 15px;
 
-    :global(.ant-tag) {
+    :global(.my-template-umi-ant-tag) {
         margin: 0;
     }
 }
@@ -1230,7 +1603,7 @@
         flex-direction: column;
         gap: 8px;
 
-        :global(.ant-btn) {
+        :global(.my-template-umi-ant-btn) {
             width: 100%;
         }
     }

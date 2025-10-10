@@ -797,8 +797,10 @@ const TechWeddingPlayer: React.FC = () => {
                   }`}
                   onClick={() => handlePlaylistClick(playlist.id)}
                 >
-                  <span>{playlist.name}</span>
-                  <span className={styles.count}>{playlist.musics.length}</span>
+                  <div className={styles.playlistName}>{playlist.name}</div>
+                  <div className={styles.playlistCount}>
+                    {playlist.musics.length}
+                  </div>
                 </div>
               ))}
             <div
@@ -1122,7 +1124,7 @@ const TechWeddingPlayer: React.FC = () => {
                           )}
                         </span>
                         <span>
-                          文件大小:{" "}
+                          文件大小:
                           {formatFileSize(
                             selectedAlbum.musics.reduce(
                               (acc, music) => acc + (music.fileSize || 0),
@@ -1218,27 +1220,29 @@ const TechWeddingPlayer: React.FC = () => {
             {activeTab === "playlists" && (
               <div className={styles.playlistsTab}>
                 <div className={styles.playlistHeader}>
-                  <h2>{currentPlaylist.name}</h2>
-                  <div className={styles.playlistStats}>
-                    <span>{currentPlaylist.musics.length} 首歌曲</span>
-                    <span>•</span>
-                    <span>
-                      {formatTime(
-                        currentPlaylist.musics.reduce(
-                          (acc, music) => acc + music.duration,
-                          0
-                        )
-                      )}
-                    </span>
-                    <span>•</span>
-                    <span>
-                      {formatFileSize(
-                        currentPlaylist.musics.reduce(
-                          (acc, music) => acc + (music.fileSize || 0),
-                          0
-                        )
-                      )}
-                    </span>
+                  <div className={styles.playlistTitleSection}>
+                    <h2>{currentPlaylist.name}</h2>
+                    <div className={styles.playlistStats}>
+                      <span>{currentPlaylist.musics.length} 首歌曲</span>
+                      <span>•</span>
+                      <span>
+                        {formatTime(
+                          currentPlaylist.musics.reduce(
+                            (acc, music) => acc + music.duration,
+                            0
+                          )
+                        )}
+                      </span>
+                      <span>•</span>
+                      <span>
+                        {formatFileSize(
+                          currentPlaylist.musics.reduce(
+                            (acc, music) => acc + (music.fileSize || 0),
+                            0
+                          )
+                        )}
+                      </span>
+                    </div>
                   </div>
                   {currentPlaylist.id !== "default" && (
                     <Button
@@ -1278,18 +1282,18 @@ const TechWeddingPlayer: React.FC = () => {
                                 <span>{index + 1}</span>
                               )}
                             </div>
-                            {renderMusicCover(music, styles.musicCoverImg)}
+                            <div className={styles.musicCover}>
+                              {renderMusicCover(music, styles.musicCoverImg)}
+                            </div>
                             <div className={styles.musicListDetails}>
                               <h4>{music.title}</h4>
-                              <p>
-                                {music.artist} • {music.album}
-                              </p>
+                              <p>{music.artist}</p>
                             </div>
                           </div>
                           <div className={styles.musicListMeta}>
-                            <Tag size="small">
+                            <span className={styles.fileSize}>
                               {formatFileSize(music.fileSize)}
-                            </Tag>
+                            </span>
                           </div>
                           <div className={styles.musicListActions}>
                             <span className={styles.duration}>
