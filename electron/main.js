@@ -686,3 +686,33 @@ ipcMain.handle("delete-music-file", async (event, music) => {
     return { success: false, error: error.message };
   }
 });
+
+// 删除音乐文件
+ipcMain.handle("del-music-file", async (event, music) => {
+  try {
+    if (!music.filePath) {
+      return { success: false, error: "未找到文件路径" };
+    }
+
+    // 检查文件是否存在
+    if (!fs.existsSync(music.filePath)) {
+      return { success: false, error: "文件不存在" };
+    }
+
+    // 删除文件
+    fs.unlinkSync(music.filePath);
+
+    // 可选：同时删除对应的封面图片文件（如果有）
+    if (music.cover && music.cover.startsWith("file://")) {
+      const coverPath = music.cover.replace("file://", "");
+      if (fs.existsSync(coverPath)) {
+        fs.unlinkSync(coverPath);
+      }
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("删除音乐文件失败:", error);
+    return { success: false, error: error.message };
+  }
+});

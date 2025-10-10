@@ -728,6 +728,102 @@ const TechWeddingPlayer: React.FC = () => {
     }
   };
 
+  // 从播放列表移除音乐并删除文件
+  const handleRemoveFromPlaylist = async (
+    musicId: string,
+    e: React.MouseEvent
+  ) => {
+    e.stopPropagation();
+
+    // 找到要删除的音乐
+    const musicToDelete = currentPlaylist.musics.find((m) => m.id === musicId);
+    if (!musicToDelete) {
+      message.error("未找到要删除的音乐");
+      return;
+    }
+
+    // 确认删除
+    Modal.confirm({
+      title: `确定要从"${currentPlaylist.name}"中移除这首歌曲吗？`,
+      content: (
+        <div>
+          <p>
+            此操作将从播放列表中移除歌曲，并且会从存储文件夹中删除对应的音频文件。
+          </p>
+          <p>
+            <strong>歌曲:</strong> {musicToDelete.title}
+          </p>
+          <p>
+            <strong>艺术家:</strong> {musicToDelete.artist}
+          </p>
+          {musicToDelete.filePath && (
+            <p>
+              <strong>文件路径:</strong> {musicToDelete.filePath}
+            </p>
+          )}
+        </div>
+      ),
+      okText: "确定删除",
+      cancelText: "取消",
+      okType: "danger",
+      onOk: async () => {
+        try {
+          let deleteSuccess = true;
+
+          // 如果音乐有文件路径，尝试删除物理文件
+          if (musicToDelete.filePath && window.electronAPI) {
+            try {
+              const result =
+                await window.electronAPI.deleteMusicFile(musicToDelete);
+              if (!result.success) {
+                deleteSuccess = false;
+                console.error("删除文件失败:", result.error);
+              }
+            } catch (fileError) {
+              deleteSuccess = false;
+              console.error("删除文件时出错:", fileError);
+            }
+          }
+
+          // 从播放列表中移除音乐
+          const updatedPlaylists = playlists.map((playlist) => {
+            if (playlist.id === currentPlaylistId) {
+              return {
+                ...playlist,
+                musics: playlist.musics.filter((m) => m.id !== musicId),
+              };
+            }
+            return playlist;
+          });
+
+          setPlaylists(updatedPlaylists);
+
+          // 如果正在播放的是被移除的音乐，停止播放
+          if (currentMusic && currentMusic.id === musicId) {
+            setCurrentMusic(null);
+            setIsPlaying(false);
+            if (audioRef.current) {
+              audioRef.current.src = "";
+            }
+          }
+
+          // 显示成功消息
+          if (deleteSuccess) {
+            message.success("已从播放列表移除并删除文件");
+          } else {
+            message.warning("已从播放列表移除，但文件删除失败");
+          }
+
+          // 重新加载音乐列表以更新界面
+          await loadLocalMusic();
+        } catch (error) {
+          console.error("移除音乐时出错:", error);
+          message.error("移除音乐失败");
+        }
+      },
+    });
+  };
+
   // 删除音乐文件
   const handleDeleteMusic = async (music: Music, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -771,7 +867,7 @@ const TechWeddingPlayer: React.FC = () => {
   };
 
   // 从歌单中移除音乐
-  const handleRemoveFromPlaylist = (musicId: string, e: React.MouseEvent) => {
+  const handleRemovePlaylist = (musicId: string, e: React.MouseEvent) => {
     e.stopPropagation();
 
     const updatedPlaylists = playlists.map((playlist) => {
@@ -1083,14 +1179,57 @@ const TechWeddingPlayer: React.FC = () => {
                           <span className={styles.duration}>
                             {formatTime(music.duration)}
                           </span>
-                          <Button
-                            type="text"
-                            icon={
-                              music.liked ? <HeartFilled /> : <HeartOutlined />
-                            }
-                            onClick={(e) => toggleLike(music.id, e)}
-                            className={`${styles.likeButton} ${music.liked ? styles.liked : ""}`}
-                          />
+                          <>
+                            <Button
+                              type="text"
+                              icon={
+                                music.liked ? (
+                                  <HeartFilled />
+                                ) : (
+                                  <HeartOutlined />
+                                )
+                              }
+                              onClick={(e) => toggleLike(music.id, e)}
+                              className={`${styles.likeButton} ${music.liked ? styles.liked : ""}`}
+                            />
+                            <Popconfirm
+                              title={`确定要从"${currentPlaylist.name}"中移除这首歌曲吗？`}
+                              description={
+                                <div>
+                                  <p>
+                                    此操作将从播放列表中移除歌曲，并且会从存储文件夹中删除对应的音频文件。
+                                  </p>
+                                  <p>
+                                    <strong>歌曲:</strong> {music.title}
+                                  </p>
+                                  <p>
+                                    <strong>艺术家:</strong> {music.artist}
+                                  </p>
+                                </div>
+                              }
+                              onConfirm={(e) => {
+                                e?.stopPropagation();
+                                handleRemoveFromPlaylist(music.id, e as any);
+                              }}
+                              disabled
+                              onCancel={(e) => e?.stopPropagation()}
+                              okText="确定删除"
+                              cancelText="取消"
+                              okType="danger"
+                              placement="leftTop"
+                            >
+                              <Button
+                                type="text"
+                                icon={<DeleteOutlined />}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveFromPlaylist(music.id, e as any);
+                                }}
+                                title="从播放列表移除并删除文件"
+                                className={styles.deleteButton}
+                              />
+                            </Popconfirm>
+                          </>
                         </div>
                       </div>
                     ))}
@@ -1339,6 +1478,7 @@ const TechWeddingPlayer: React.FC = () => {
                             icon={<DeleteOutlined />}
                             onClick={(e) => e.stopPropagation()}
                             danger
+                            className={styles.deleteButton}
                           />
                         </Popconfirm>
                       </div>
@@ -1431,42 +1571,43 @@ const TechWeddingPlayer: React.FC = () => {
                             <span className={styles.duration}>
                               {formatTime(music.duration)}
                             </span>
-                            <Button
-                              type="text"
-                              icon={
-                                music.liked ? (
-                                  <HeartFilled />
-                                ) : (
-                                  <HeartOutlined />
-                                )
-                              }
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleLike(music.id);
-                              }}
-                              className={`${styles.likeButton} ${music.liked ? styles.liked : ""}`}
-                            />
-                            {currentPlaylist.id !== "default" && (
-                              <Popconfirm
-                                title="确定要从歌单中移除这首音乐吗？"
-                                description="此操作不会删除音乐文件"
-                                onConfirm={(e) => {
-                                  e?.stopPropagation();
-                                  handleRemoveFromPlaylist(music.id, e as any);
+                            <>
+                              <Button
+                                type="text"
+                                icon={
+                                  music.liked ? (
+                                    <HeartFilled />
+                                  ) : (
+                                    <HeartOutlined />
+                                  )
+                                }
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleLike(music.id);
                                 }}
-                                onCancel={(e) => e?.stopPropagation()}
-                                okText="确定"
-                                cancelText="取消"
-                              >
-                                <Button
-                                  type="text"
-                                  icon={<DeleteOutlined />}
-                                  onClick={(e) => e.stopPropagation()}
-                                  danger
-                                  className={styles.deleteButton}
-                                />
-                              </Popconfirm>
-                            )}
+                                className={`${styles.likeButton} ${music.liked ? styles.liked : ""}`}
+                              />
+                              {currentPlaylist.id !== "default" && (
+                                <Popconfirm
+                                  title="确定要从歌单中移除这首音乐吗？"
+                                  description="此操作不会删除音乐文件"
+                                  onConfirm={(e) => {
+                                    e?.stopPropagation();
+                                    handleRemovePlaylist(music.id, e as any);
+                                  }}
+                                  onCancel={(e) => e?.stopPropagation()}
+                                  okText="确定"
+                                  cancelText="取消"
+                                >
+                                  <Button
+                                    type="text"
+                                    icon={<DeleteOutlined />}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className={styles.deleteButton}
+                                  />
+                                </Popconfirm>
+                              )}
+                            </>
                           </div>
                         </div>
                       ))}

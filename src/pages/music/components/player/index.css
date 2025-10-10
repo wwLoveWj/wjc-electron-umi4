@@ -2187,6 +2187,7 @@ img {
 }
 .deleteButton {
   color: #999;
+  font-size: 18px;
 }
 .deleteButton:hover {
   color: #ff4d4f !important;
