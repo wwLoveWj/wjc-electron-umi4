@@ -26,7 +26,7 @@
 
 // 上传模态框样式
 .uploadModal {
-    :global(.ant-modal-content) {
+    :global(.my-template-umi-ant-modal-content) {
         background: @background-card;
         color: @text-primary;
         border: 1px solid @border-color;
@@ -34,12 +34,12 @@
         overflow: hidden;
         .glass-effect;
 
-        :global(.ant-modal-header) {
+        :global(.my-template-umi-ant-modal-header) {
             background: @background-card;
             border-bottom: 1px solid @border-color;
             padding: 20px 24px;
 
-            :global(.ant-modal-title) {
+            :global(.my-template-umi-ant-modal-title) {
                 color: @text-primary;
                 font-size: 18px;
                 font-weight: 600;
@@ -49,19 +49,20 @@
             }
         }
 
-        :global(.ant-modal-body) {
+        :global(.my-template-umi-ant-modal-body) {
             padding: 0;
             background: transparent;
         }
 
-        :global(.ant-modal-footer) {
+        :global(.my-template-umi-ant-modal-footer) {
             border-top: 1px solid @border-color;
             padding: 16px 24px;
             background: @background-card;
 
-            :global(.ant-btn) {
+            :global(.my-template-umi-ant-btn) {
                 border-radius: 6px;
                 transition: all 0.3s ease;
+                color: @text-primary;
 
                 &:first-child {
                     background: transparent;
@@ -77,6 +78,7 @@
                 &:last-child {
                     background: @primary-color;
                     border: none;
+                    color: @text-primary;
                     .neon-glow(fade(@primary-color, 50%));
 
                     &:hover {
@@ -311,7 +313,7 @@
                 line-height: 1.2;
             }
 
-            :global(.ant-btn) {
+            :global(.my-template-umi-ant-btn) {
                 padding: 0;
                 height: auto;
                 font-size: 11px;
@@ -326,9 +328,9 @@
 }
 
 // 进度条样式覆盖
-:global(.ant-progress) {
+:global(.my-template-umi-ant-progress) {
     .uploadProgress & {
-        :global(.ant-progress-bg) {
+        :global(.my-template-umi-ant-progress-bg) {
             background: @primary-color;
         }
     }

@@ -3,7 +3,7 @@
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
-.uploadModal :global(.ant-modal-content) {
+.uploadModal :global(.my-template-umi-ant-modal-content) {
   background: #1a1a2e;
   color: #ffffff;
   border: 1px solid #2d2d4d;
@@ -13,12 +13,12 @@
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
-.uploadModal :global(.ant-modal-content) :global(.ant-modal-header) {
+.uploadModal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-header) {
   background: #1a1a2e;
   border-bottom: 1px solid #2d2d4d;
   padding: 20px 24px;
 }
-.uploadModal :global(.ant-modal-content) :global(.ant-modal-header) :global(.ant-modal-title) {
+.uploadModal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-header) :global(.my-template-umi-ant-modal-title) {
   color: #ffffff;
   font-size: 18px;
   font-weight: 600;
@@ -26,34 +26,36 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.uploadModal :global(.ant-modal-content) :global(.ant-modal-body) {
+.uploadModal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-body) {
   padding: 0;
   background: transparent;
 }
-.uploadModal :global(.ant-modal-content) :global(.ant-modal-footer) {
+.uploadModal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-footer) {
   border-top: 1px solid #2d2d4d;
   padding: 16px 24px;
   background: #1a1a2e;
 }
-.uploadModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn) {
+.uploadModal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-footer) :global(.my-template-umi-ant-btn) {
   border-radius: 6px;
   transition: all 0.3s ease;
+  color: #ffffff;
 }
-.uploadModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):first-child {
+.uploadModal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-footer) :global(.my-template-umi-ant-btn):first-child {
   background: transparent;
   border: 1px solid #2d2d4d;
   color: #ffffff;
 }
-.uploadModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):first-child:hover {
+.uploadModal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-footer) :global(.my-template-umi-ant-btn):first-child:hover {
   border-color: #6c5ce7;
   color: #6c5ce7;
 }
-.uploadModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):last-child {
+.uploadModal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-footer) :global(.my-template-umi-ant-btn):last-child {
   background: #6c5ce7;
   border: none;
+  color: #ffffff;
   box-shadow: 0 0 5px rgba(108, 92, 231, 0.5), 0 0 10px rgba(108, 92, 231, 0.5), 0 0 15px rgba(108, 92, 231, 0.5), 0 0 20px rgba(108, 92, 231, 0.5);
 }
-.uploadModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):last-child:hover {
+.uploadModal :global(.my-template-umi-ant-modal-content) :global(.my-template-umi-ant-modal-footer) :global(.my-template-umi-ant-btn):last-child:hover {
   background: #8072ea;
 }
 .uploadContainer {
@@ -242,16 +244,16 @@
   text-align: right;
   line-height: 1.2;
 }
-.fileItem .fileStatus .statusError :global(.ant-btn) {
+.fileItem .fileStatus .statusError :global(.my-template-umi-ant-btn) {
   padding: 0;
   height: auto;
   font-size: 11px;
   color: #6c5ce7;
 }
-.fileItem .fileStatus .statusError :global(.ant-btn):hover {
+.fileItem .fileStatus .statusError :global(.my-template-umi-ant-btn):hover {
   color: #9488ee;
 }
-.uploadProgress :global(.ant-progress) :global(.ant-progress-bg) {
+.uploadProgress :global(.my-template-umi-ant-progress) :global(.my-template-umi-ant-progress-bg) {
   background: #6c5ce7;
 }
 @media (max-width: 768px) {
