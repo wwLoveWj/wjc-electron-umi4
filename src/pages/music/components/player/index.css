@@ -2232,3 +2232,31 @@ img {
   min-width: 40px;
   text-align: right;
 }
+.likeButton {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+.likeButton:hover {
+  background: rgba(108, 92, 231, 0.1);
+  transform: scale(1.1);
+}
+.likeButton.liked {
+  color: #ff4d4f;
+}
+.likeButton.liked:hover {
+  background: rgba(255, 77, 79, 0.1);
+}
+.musicListActions .likeButton {
+  opacity: 0.7;
+}
+.musicListActions .likeButton:hover {
+  opacity: 1;
+}
+.playerInfo .likeButton {
+  margin-left: 10px;
+}

@@ -40,3 +40,10 @@
 2. https://ant.design/components/table-cn#scroll
 3. https://ahooks.js.org/zh-CN/hooks/use-update/
 4. https://www.lodashjs.com/
+
+# 提交仓库打tag
+
+```
+git tag v1.1.7
+git push origin v1.1.7
+```

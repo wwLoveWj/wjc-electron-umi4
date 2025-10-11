@@ -206,7 +206,7 @@ function createWindow() {
   win.webContents.debugger.attach("1.3");
   // 加载应用
   if (process.env.NODE_ENV === "development") {
-    win.loadURL("http://localhost:8000/music/player");
+    win.loadURL("http://localhost:8000/#/music/player");
     // win.loadFile("./electron/index.html");
   } else {
     win.loadFile(path.join(__dirname, "../dist/index.html"));

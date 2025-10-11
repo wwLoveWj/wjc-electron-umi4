@@ -450,18 +450,38 @@ const TechWeddingPlayer: React.FC = () => {
   useEffect(() => {
     if (currentMusic && audioRef.current) {
       const audio = audioRef.current;
-      audio.src = currentMusic.url;
-      audio.load();
 
-      if (isPlaying) {
-        audio.play().catch((error) => {
-          console.error("Play failed:", error);
-          setIsPlaying(false);
-        });
+      // 只有当音乐URL改变时才重新加载音频
+      if (audio.src !== currentMusic.url) {
+        audio.src = currentMusic.url;
+        audio.load();
+
+        if (isPlaying) {
+          audio.play().catch((error) => {
+            console.error("Play failed:", error);
+            setIsPlaying(false);
+          });
+        }
       }
     }
-  }, [currentMusic]);
+  }, [currentMusic?.url]); // 只依赖于音乐的URL，而不是整个currentMusic对象
 
+  // 添加一个新的useEffect来处理喜欢状态的同步显示
+  useEffect(() => {
+    // 这个effect确保当前播放音乐的喜欢状态与播放列表中的状态同步
+    // 但不会触发音频重新加载
+    if (currentMusic) {
+      const allMusics = playlists.flatMap((playlist) => playlist.musics);
+      const updatedMusic = allMusics.find(
+        (music) => music.id === currentMusic.id
+      );
+      if (updatedMusic && updatedMusic.liked !== currentMusic.liked) {
+        setCurrentMusic((prev) =>
+          prev ? { ...prev, liked: updatedMusic.liked } : null
+        );
+      }
+    }
+  }, [playlists]); // 当播放列表更新时同步喜欢状态
   // 当播放状态改变时，控制音频播放/暂停
   useEffect(() => {
     if (!audioRef.current) return;
@@ -558,8 +578,13 @@ const TechWeddingPlayer: React.FC = () => {
     }));
     setPlaylists(updatedPlaylists);
 
+    // 只在当前播放的音乐被点赞时更新currentMusic，但不重新加载音频
     if (currentMusic && currentMusic.id === musicId) {
-      setCurrentMusic({ ...currentMusic, liked: !currentMusic.liked });
+      // 创建一个新的对象，但保持其他属性不变
+      setCurrentMusic({
+        ...currentMusic,
+        liked: !currentMusic.liked,
+      });
     }
   };
 
