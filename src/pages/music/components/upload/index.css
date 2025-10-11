@@ -1,0 +1,292 @@
+.glass-effect {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.uploadModal :global(.ant-modal-content) {
+  background: #1a1a2e;
+  color: #ffffff;
+  border: 1px solid #2d2d4d;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.uploadModal :global(.ant-modal-content) :global(.ant-modal-header) {
+  background: #1a1a2e;
+  border-bottom: 1px solid #2d2d4d;
+  padding: 20px 24px;
+}
+.uploadModal :global(.ant-modal-content) :global(.ant-modal-header) :global(.ant-modal-title) {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  background: linear-gradient(90deg, #6c5ce7, #fd79a8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.uploadModal :global(.ant-modal-content) :global(.ant-modal-body) {
+  padding: 0;
+  background: transparent;
+}
+.uploadModal :global(.ant-modal-content) :global(.ant-modal-footer) {
+  border-top: 1px solid #2d2d4d;
+  padding: 16px 24px;
+  background: #1a1a2e;
+}
+.uploadModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn) {
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+.uploadModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):first-child {
+  background: transparent;
+  border: 1px solid #2d2d4d;
+  color: #ffffff;
+}
+.uploadModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):first-child:hover {
+  border-color: #6c5ce7;
+  color: #6c5ce7;
+}
+.uploadModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):last-child {
+  background: #6c5ce7;
+  border: none;
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.5), 0 0 10px rgba(108, 92, 231, 0.5), 0 0 15px rgba(108, 92, 231, 0.5), 0 0 20px rgba(108, 92, 231, 0.5);
+}
+.uploadModal :global(.ant-modal-content) :global(.ant-modal-footer) :global(.ant-btn):last-child:hover {
+  background: #8072ea;
+}
+.uploadContainer {
+  padding: 24px;
+}
+.uploadArea {
+  border: 2px dashed #2d2d4d;
+  border-radius: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: rgba(15, 15, 35, 0.5);
+  position: relative;
+  cursor: pointer;
+}
+.uploadArea:hover,
+.uploadArea.dragOver {
+  border-color: #6c5ce7;
+  background: rgba(108, 92, 231, 0.05);
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.2), 0 0 10px rgba(108, 92, 231, 0.2), 0 0 15px rgba(108, 92, 231, 0.2), 0 0 20px rgba(108, 92, 231, 0.2);
+}
+.uploadArea .uploadIcon {
+  font-size: 48px;
+  color: #b2b2b2;
+  margin-bottom: 16px;
+}
+.uploadArea:hover .uploadArea .uploadIcon,
+.dragOver .uploadArea .uploadIcon {
+  color: #6c5ce7;
+}
+.uploadArea .uploadText h3 {
+  margin: 0 0 8px;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+}
+.uploadArea .uploadText p {
+  margin: 0;
+  color: #b2b2b2;
+  font-size: 14px;
+}
+.uploadArea .fileInput {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.uploadArea .uploadButton {
+  margin-top: 20px;
+  background: #6c5ce7;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 24px;
+  height: auto;
+  box-shadow: 0 0 5px rgba(108, 92, 231, 0.5), 0 0 10px rgba(108, 92, 231, 0.5), 0 0 15px rgba(108, 92, 231, 0.5), 0 0 20px rgba(108, 92, 231, 0.5);
+}
+.uploadArea .uploadButton:hover {
+  background: #8072ea;
+}
+.uploadList {
+  margin-top: 24px;
+}
+.uploadList .uploadListHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #2d2d4d;
+}
+.uploadList .uploadListHeader h4 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+}
+.uploadList .uploadListHeader .uploadStats {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+}
+.uploadList .uploadListHeader .uploadStats .successCount {
+  color: #52c41a;
+}
+.uploadList .uploadListHeader .uploadStats .errorCount {
+  color: #ff4d4f;
+}
+.uploadList .uploadListHeader .uploadStats .uploadingCount {
+  color: #6c5ce7;
+}
+.uploadList .fileList {
+  max-height: 300px;
+  overflow-y: auto;
+}
+.uploadList .fileList::-webkit-scrollbar {
+  width: 4px;
+}
+.uploadList .fileList::-webkit-scrollbar-track {
+  background: rgba(15, 15, 35, 0.3);
+  border-radius: 2px;
+}
+.uploadList .fileList::-webkit-scrollbar-thumb {
+  background: rgba(108, 92, 231, 0.4);
+  border-radius: 2px;
+}
+.uploadList .fileList::-webkit-scrollbar-thumb:hover {
+  background: rgba(108, 92, 231, 0.6);
+}
+.fileItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: rgba(15, 15, 35, 0.3);
+  border: 1px solid rgba(45, 45, 77, 0.3);
+  transition: all 0.3s ease;
+}
+.fileItem:hover {
+  background: rgba(108, 92, 231, 0.05);
+  border-color: rgba(108, 92, 231, 0.3);
+}
+.fileItem.success {
+  border-color: rgba(82, 196, 26, 0.3);
+  background: rgba(82, 196, 26, 0.05);
+}
+.fileItem.error {
+  border-color: rgba(255, 77, 79, 0.3);
+  background: rgba(255, 77, 79, 0.05);
+}
+.fileItem .fileInfo {
+  flex: 1;
+  min-width: 0;
+}
+.fileItem .fileInfo .fileName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fileItem .fileInfo .fileMeta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #b2b2b2;
+}
+.fileItem .fileInfo .fileMeta span {
+  background: rgba(178, 178, 178, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(178, 178, 178, 0.2);
+}
+.fileItem .fileStatus {
+  min-width: 120px;
+  text-align: right;
+}
+.fileItem .fileStatus .uploadProgress {
+  width: 100px;
+}
+.fileItem .fileStatus .statusSuccess {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  color: #52c41a;
+  font-size: 12px;
+  font-weight: 500;
+}
+.fileItem .fileStatus .statusError {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.fileItem .fileStatus .statusError .errorText {
+  color: #ff4d4f;
+  font-size: 11px;
+  max-width: 200px;
+  text-align: right;
+  line-height: 1.2;
+}
+.fileItem .fileStatus .statusError :global(.ant-btn) {
+  padding: 0;
+  height: auto;
+  font-size: 11px;
+  color: #6c5ce7;
+}
+.fileItem .fileStatus .statusError :global(.ant-btn):hover {
+  color: #9488ee;
+}
+.uploadProgress :global(.ant-progress) :global(.ant-progress-bg) {
+  background: #6c5ce7;
+}
+@media (max-width: 768px) {
+  .uploadContainer {
+    padding: 16px;
+  }
+  .uploadArea {
+    padding: 30px 16px;
+  }
+  .uploadArea .uploadIcon {
+    font-size: 36px;
+  }
+  .uploadArea .uploadText h3 {
+    font-size: 16px;
+  }
+  .uploadArea .uploadText p {
+    font-size: 13px;
+  }
+  .uploadList .uploadListHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .uploadList .uploadListHeader .uploadStats {
+    gap: 12px;
+  }
+  .fileItem {
+    padding: 10px 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .fileItem .fileStatus {
+    min-width: auto;
+    width: 100%;
+    text-align: left;
+  }
+}

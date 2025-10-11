@@ -1,0 +1,385 @@
+// 颜色变量
+@primary-color: #6c5ce7;
+@secondary-color: #a29bfe;
+@accent-color: #fd79a8;
+@background-dark: #0f0f23;
+@background-card: #1a1a2e;
+@text-primary: #ffffff;
+@text-secondary: #b2b2b2;
+@border-color: #2d2d4d;
+@hover-color: #252541;
+
+.glass-effect {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+// 霓虹效果
+.neon-glow(@color) {
+    box-shadow:
+        0 0 5px @color,
+        0 0 10px @color,
+        0 0 15px @color,
+        0 0 20px @color;
+}
+
+// 上传模态框样式
+.uploadModal {
+    :global(.ant-modal-content) {
+        background: @background-card;
+        color: @text-primary;
+        border: 1px solid @border-color;
+        border-radius: 12px;
+        overflow: hidden;
+        .glass-effect;
+
+        :global(.ant-modal-header) {
+            background: @background-card;
+            border-bottom: 1px solid @border-color;
+            padding: 20px 24px;
+
+            :global(.ant-modal-title) {
+                color: @text-primary;
+                font-size: 18px;
+                font-weight: 600;
+                background: linear-gradient(90deg, @primary-color, @accent-color);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        }
+
+        :global(.ant-modal-body) {
+            padding: 0;
+            background: transparent;
+        }
+
+        :global(.ant-modal-footer) {
+            border-top: 1px solid @border-color;
+            padding: 16px 24px;
+            background: @background-card;
+
+            :global(.ant-btn) {
+                border-radius: 6px;
+                transition: all 0.3s ease;
+
+                &:first-child {
+                    background: transparent;
+                    border: 1px solid @border-color;
+                    color: @text-primary;
+
+                    &:hover {
+                        border-color: @primary-color;
+                        color: @primary-color;
+                    }
+                }
+
+                &:last-child {
+                    background: @primary-color;
+                    border: none;
+                    .neon-glow(fade(@primary-color, 50%));
+
+                    &:hover {
+                        background: lighten(@primary-color, 5%);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.uploadContainer {
+    padding: 24px;
+}
+
+// 上传区域样式
+.uploadArea {
+    border: 2px dashed @border-color;
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: fade(@background-dark, 50%);
+    position: relative;
+    cursor: pointer;
+
+    &:hover,
+    &.dragOver {
+        border-color: @primary-color;
+        background: fade(@primary-color, 5%);
+        .neon-glow(fade(@primary-color, 20%));
+    }
+
+    .uploadIcon {
+        font-size: 48px;
+        color: @text-secondary;
+        margin-bottom: 16px;
+
+        .uploadArea:hover &,
+        .dragOver & {
+            color: @primary-color;
+        }
+    }
+
+    .uploadText {
+        h3 {
+            margin: 0 0 8px;
+            color: @text-primary;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        p {
+            margin: 0;
+            color: @text-secondary;
+            font-size: 14px;
+        }
+    }
+
+    .fileInput {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .uploadButton {
+        margin-top: 20px;
+        background: @primary-color;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 24px;
+        height: auto;
+        .neon-glow(fade(@primary-color, 50%));
+
+        &:hover {
+            background: lighten(@primary-color, 5%);
+        }
+    }
+}
+
+// 上传列表样式
+.uploadList {
+    margin-top: 24px;
+
+    .uploadListHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid @border-color;
+
+        h4 {
+            margin: 0;
+            color: @text-primary;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .uploadStats {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+
+            .successCount {
+                color: #52c41a;
+            }
+
+            .errorCount {
+                color: #ff4d4f;
+            }
+
+            .uploadingCount {
+                color: @primary-color;
+            }
+        }
+    }
+
+    .fileList {
+        max-height: 300px;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: fade(@background-dark, 30%);
+            border-radius: 2px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: fade(@primary-color, 40%);
+            border-radius: 2px;
+
+            &:hover {
+                background: fade(@primary-color, 60%);
+            }
+        }
+    }
+}
+
+// 文件项样式
+.fileItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: fade(@background-dark, 30%);
+    border: 1px solid fade(@border-color, 30%);
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: fade(@primary-color, 5%);
+        border-color: fade(@primary-color, 30%);
+    }
+
+    &.success {
+        border-color: fade(#52c41a, 30%);
+        background: fade(#52c41a, 5%);
+    }
+
+    &.error {
+        border-color: fade(#ff4d4f, 30%);
+        background: fade(#ff4d4f, 5%);
+    }
+
+    .fileInfo {
+        flex: 1;
+        min-width: 0;
+
+        .fileName {
+            font-size: 14px;
+            font-weight: 500;
+            color: @text-primary;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .fileMeta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: @text-secondary;
+
+            span {
+                background: fade(@text-secondary, 10%);
+                padding: 2px 6px;
+                border-radius: 4px;
+                border: 1px solid fade(@text-secondary, 20%);
+            }
+        }
+    }
+
+    .fileStatus {
+        min-width: 120px;
+        text-align: right;
+
+        .uploadProgress {
+            width: 100px;
+        }
+
+        .statusSuccess {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+            color: #52c41a;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .statusError {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+
+            .errorText {
+                color: #ff4d4f;
+                font-size: 11px;
+                max-width: 200px;
+                text-align: right;
+                line-height: 1.2;
+            }
+
+            :global(.ant-btn) {
+                padding: 0;
+                height: auto;
+                font-size: 11px;
+                color: @primary-color;
+
+                &:hover {
+                    color: lighten(@primary-color, 10%);
+                }
+            }
+        }
+    }
+}
+
+// 进度条样式覆盖
+:global(.ant-progress) {
+    .uploadProgress & {
+        :global(.ant-progress-bg) {
+            background: @primary-color;
+        }
+    }
+}
+
+// 响应式调整
+@media (max-width: 768px) {
+    .uploadContainer {
+        padding: 16px;
+    }
+
+    .uploadArea {
+        padding: 30px 16px;
+
+        .uploadIcon {
+            font-size: 36px;
+        }
+
+        .uploadText {
+            h3 {
+                font-size: 16px;
+            }
+
+            p {
+                font-size: 13px;
+            }
+        }
+    }
+
+    .uploadList {
+        .uploadListHeader {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+
+            .uploadStats {
+                gap: 12px;
+            }
+        }
+    }
+
+    .fileItem {
+        padding: 10px 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+
+        .fileStatus {
+            min-width: auto;
+            width: 100%;
+            text-align: left;
+        }
+    }
+}

@@ -58,6 +58,7 @@ import { Playlist, Music, Album } from "../../type";
 import { AddMusicModal } from "./addMusicModal";
 import { EmptyPlaylistState } from "./EmptyPlaylistState";
 import CustomTitleBar from "@/components/CustomTitleBar";
+import { MusicUploadModal } from "../upload";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -97,6 +98,14 @@ const TechWeddingPlayer: React.FC = () => {
 
   // 新增状态
   const [isAddMusicModalVisible, setIsAddMusicModalVisible] = useState(false);
+
+  // 添加上传模态框状态
+  const [uploadModalVisible, setUploadModalVisible] = useState(false);
+
+  // 在搜索栏的上传按钮点击处理中修改
+  const handleUploadClick = () => {
+    setUploadModalVisible(true);
+  };
 
   // 模拟数据 - 根据截图内容
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -1028,11 +1037,18 @@ const TechWeddingPlayer: React.FC = () => {
                   </Button>
                 </Tooltip>
               )}
-              <Button
+              {/* <Button
                 icon={<UploadOutlined />}
                 onClick={handleUploadMusic}
                 className={styles.uploadBtn}
                 loading={uploading}
+              >
+                上传音乐
+              </Button> */}
+              <Button
+                icon={<UploadOutlined />}
+                onClick={handleUploadClick}
+                className={styles.uploadBtn}
               >
                 上传音乐
               </Button>
@@ -1789,6 +1805,15 @@ const TechWeddingPlayer: React.FC = () => {
         onConfirm={handleAddMusicToPlaylist}
         availableMusic={availableMusic}
         playlists={playlists}
+      />
+      {/* 上传音频文件到minio */}
+      <MusicUploadModal
+        visible={uploadModalVisible}
+        onCancel={() => setUploadModalVisible(false)}
+        onSuccess={() => {
+          // 上传成功后重新加载音乐
+          loadLocalMusic();
+        }}
       />
     </div>
   );
