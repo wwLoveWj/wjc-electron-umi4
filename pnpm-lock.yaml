@@ -29,6 +29,9 @@ importers:
       electron-store:
         specifier: 8.0.0
         version: 8.0.0
+      electron-updater:
+        specifier: ^6.6.2
+        version: 6.6.2
       events:
         specifier: ^3.3.0
         version: 3.3.0
@@ -87,9 +90,6 @@ importers:
       electron-builder:
         specifier: ^26.0.12
         version: 26.0.12(electron-builder-squirrel-windows@26.0.12)
-      electron-updater:
-        specifier: ^6.6.2
-        version: 6.6.2
       typescript:
         specifier: ^5.0.3
         version: 5.9.2

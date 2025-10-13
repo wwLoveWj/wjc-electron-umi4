@@ -21,6 +21,7 @@
     "start:lint": "pnpm lint && pnpm dev",
     "analyze": "cross-env ANALYZE=1 umi build",
     "electron": "cross-env NODE_ENV=development electron .",
+    "build-electron-win64": "electron-builder -w --x64",
     "yyds": "npx electron-packager . electron-quick-start --win --out ../electron-quick-start --arch=x64 --app-version=1.0.0 --electron-version=29.4.6 --overwrite --ignore=node_modules --asar=true"
   },
   "dependencies": {
@@ -43,6 +44,7 @@
     "react-screenshots": "^0.5.22",
     "sass": "^1.91.0",
     "umi": "^4.4.12",
+    "electron-updater": "^6.6.2",
     "vstores": "^0.0.17"
   },
   "devDependencies": {
@@ -52,11 +54,35 @@
     "cross-env": "^10.0.0",
     "electron": "^38.2.0",
     "electron-builder": "^26.0.12",
-    "electron-updater": "^6.6.2",
     "typescript": "^5.0.3"
   },
   "engines": {
     "node": ">=20.0.0"
   },
-  "engineStrict": true
+  "engineStrict": true,
+  "build": {
+    "appId": "com.yourapp.id",
+    "productName": "musicApp",
+    "directories": {
+      "output": "dist-electron2"
+    },
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*",
+      "package.json",
+      "main.js",
+      "preload.js",
+      "electron/**/*"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "**/node_modules/electron-updater/**",
+      "**/node_modules/node-schedule/**",
+      "**/node_modules/node-notifier/**",
+      "**/node_modules/nodemailer/**",
+      "**/*.node"
+    ],
+    "npmRebuild": false,
+    "nodeGypRebuild": false
+  }
 }
