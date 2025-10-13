@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Modal, message, Button, Progress } from "antd";
 import { CheckOutlined, UploadOutlined } from "@ant-design/icons";
 import styles from "./index.less";
+// import { uploadMinioFilesAPI } from "@/service/api/minio";
 
 // 在文件顶部添加类型定义
 interface UploadedFile {
@@ -92,6 +93,8 @@ export const MusicUploadModal: React.FC<{
       formData.append("fileSize", file.size.toString());
 
       try {
+        // const result = await uploadMinioFilesAPI(formData);
+
         // 调用Minio上传接口
         const response = await fetch("http://localhost:3000/api/minio/upload", {
           method: "POST",
@@ -115,7 +118,7 @@ export const MusicUploadModal: React.FC<{
                   ...f,
                   status: "success",
                   progress: 100,
-                  url: result.url,
+                  url: result?.url,
                   uploadedAt: new Date().toISOString(),
                 }
               : f
