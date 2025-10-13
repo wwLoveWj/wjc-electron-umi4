@@ -1733,7 +1733,6 @@ const TechWeddingPlayer: React.FC = () => {
 
             {/* 可拖动的进度条 */}
             <div className={styles.progressContainer}>
-              <span className={styles.time}>{formatTime(currentTime)}</span>
               <div
                 className={styles.progressBar}
                 onClick={handleProgressClick}
@@ -1749,11 +1748,16 @@ const TechWeddingPlayer: React.FC = () => {
                   />
                 </div>
               </div>
-              <span className={styles.time}>{formatTime(duration)}</span>
             </div>
           </div>
 
           <div className={styles.playerExtra}>
+            {/* 进度条播放进度 */}
+            <div className={styles?.playerProcessTime}>
+              <span className={styles.time}>{formatTime(currentTime)}</span>
+              <span style={{ margin: "0 6px" }}>/</span>
+              <span className={styles.time}>{formatTime(duration)}</span>
+            </div>
             {/* 音量控制 */}
             <div className={styles.volumeControl}>
               <Button
