@@ -505,6 +505,73 @@ const TechWeddingPlayer: React.FC = () => {
     }
   }, [isPlaying]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // 如果焦点在输入框中，不触发播放控制
+      const activeElement = document.activeElement;
+      if (
+        activeElement?.tagName === "INPUT" ||
+        activeElement?.tagName === "TEXTAREA" ||
+        (activeElement as HTMLElement)?.contentEditable === "true"
+      ) {
+        return;
+      }
+
+      switch (e.key) {
+        case "ArrowLeft":
+          // 左箭头：后退5秒
+          e.preventDefault();
+          if (audioRef.current && duration) {
+            const newTime = Math.max(0, currentTime - 5);
+            setCurrentTime(newTime);
+            audioRef.current.currentTime = newTime;
+          }
+          break;
+
+        case "ArrowRight":
+          // 右箭头：前进5秒
+          e.preventDefault();
+          if (audioRef.current && duration) {
+            const newTime = Math.min(duration, currentTime + 5);
+            setCurrentTime(newTime);
+            audioRef.current.currentTime = newTime;
+          }
+          break;
+
+        case "ArrowUp":
+          // 上箭头：上一首
+          e.preventDefault();
+          handlePrev();
+          break;
+
+        case "ArrowDown":
+          // 下箭头：下一首
+          e.preventDefault();
+          handleNext();
+          break;
+
+        case " ":
+          // 空格键：播放/暂停
+          e.preventDefault();
+          if (currentMusic || currentPlaylist.musics.length > 0) {
+            togglePlay();
+          }
+          break;
+
+        default:
+          break;
+      }
+    };
+
+    // 添加事件监听
+    document.addEventListener("keydown", handleKeyDown);
+
+    // 清理函数
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [currentTime, duration, currentMusic, currentPlaylist.musics.length]); // 添加相关依赖
+
   // 当音量改变时，更新音频音量
   useEffect(() => {
     if (audioRef.current) {

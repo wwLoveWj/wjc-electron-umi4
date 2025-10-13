@@ -12,7 +12,11 @@ import { Button, Space, Tooltip } from "antd";
 import styles from "./index.less";
 
 let removeListener;
-const CustomTitleBar: React.FC = ({ children }) => {
+// 或者显式定义 props 接口
+interface MyComponentProps {
+  children: React.ReactNode;
+}
+const CustomTitleBar: React.FC<MyComponentProps> = ({ children }) => {
   const [isMaximized, setIsMaximized] = useState(false);
   const [isAlwaysOnTop, setIsAlwaysOnTop] = useState(false);
 
