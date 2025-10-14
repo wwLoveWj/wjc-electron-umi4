@@ -1,4 +1,4 @@
 publish:
   provider: github
   owner: wwLoveWj
-  repo: electron-template
+  repo: wjc-electron-umi4

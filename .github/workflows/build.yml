@@ -67,5 +67,5 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/') # 只在推送标签时创建release
         with:
           files: "dist/**" # 将dist目录下所有文件添加到release
-        # env:
-        #   GH_TOKEN: ${{ secrets.ELECTRON_TOKEN }}
+        env:
+          GH_TOKEN: ${{ secrets.ELECTRON_TOKEN }}
