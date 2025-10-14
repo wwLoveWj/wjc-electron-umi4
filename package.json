@@ -3,7 +3,7 @@
   "author": "wjc",
   "name": "my-template-umi",
   "main": "./electron/main.js",
-  "version": "2.2.0",
+  "version": "2.2.3",
   "description": "一个关于umi4的模板项目",
   "scripts": {
     "start": "pnpm dev",
@@ -11,7 +11,7 @@
     "uat": "cross-env UMI_ENV=uat umi build",
     "sit": "cross-env UMI_ENV=sit umi build",
     "build": "cross-env UMI_ENV=prod umi build",
-    "build:win": "pnpm build && electron-builder --win --publish never",
+    "build:win": "pnpm build && electron-builder --win --x64",
     "build:linux": "npm run build && electron-builder --linux --config --publish never",
     "build:mac": "npm run build && electron-builder --mac --config --publish never",
     "build:mac-arm": "npm run build && electron-builder --arm64 --config --publish never",
@@ -71,7 +71,7 @@
     "copyright": "Copyright © 2025 wjc",
     "productName": "wjcMusic",
     "directories": {
-      "output": "dist-electron2"
+      "output": "dist"
     },
     "files": [
       "dist/**/*",
