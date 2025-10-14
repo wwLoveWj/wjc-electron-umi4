@@ -1,0 +1,65 @@
+.container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.uploadCard {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.uploadArea {
+  text-align: center;
+  padding: 40px 20px;
+  border: 2px dashed #d9d9d9;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  transition: border-color 0.3s;
+}
+.uploadArea:hover {
+  border-color: #1890ff;
+}
+.uploadButton {
+  height: 48px;
+  font-size: 16px;
+  border-radius: 6px;
+}
+.uploadTip {
+  margin-top: 16px;
+  color: #666;
+  font-size: 14px;
+}
+.fileList {
+  margin-top: 24px;
+}
+.fileItem {
+  padding: 16px;
+  border: 1px solid #f0f0f0;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  transition: box-shadow 0.3s;
+}
+.fileItem:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.fileInfo {
+  flex: 1;
+}
+.fileName {
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.fileMeta {
+  margin-bottom: 12px;
+}
+.fileMeta span {
+  margin-right: 12px;
+  color: #666;
+  font-size: 12px;
+}
+.progress {
+  margin-bottom: 0;
+}
+.fileActions {
+  margin-left: 16px;
+}
