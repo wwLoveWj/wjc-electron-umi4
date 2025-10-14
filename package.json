@@ -11,7 +11,7 @@
     "uat": "cross-env UMI_ENV=uat umi build",
     "sit": "cross-env UMI_ENV=sit umi build",
     "build": "cross-env UMI_ENV=prod umi build",
-    "build:win": "npm run build && electron-builder --win --config --publish never",
+    "build:win": "pnpm build && electron-builder --win --publish never",
     "build:linux": "npm run build && electron-builder --linux --config --publish never",
     "build:mac": "npm run build && electron-builder --mac --config --publish never",
     "build:mac-arm": "npm run build && electron-builder --arm64 --config --publish never",
@@ -61,9 +61,9 @@
   },
   "engineStrict": true,
   "build": {
-    "appId": "com.${author}.electron",
-    "copyright": "Copyright © 2025 ${author}",
-    "productName": "锦城爱听",
+    "appId": "com.wjc.electron",
+    "copyright": "Copyright © 2025 wjc",
+    "productName": "wjcMusic",
     "directories": {
       "output": "dist-electron2"
     },
@@ -105,7 +105,8 @@
       "uninstallerIcon": "./src/assets/favicon.ico",
       "installerHeaderIcon": "./src/assets/favicon.ico",
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": false
+      "createStartMenuShortcut": false,
+      "warningsAsErrors": false
     }
   }
 }
