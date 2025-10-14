@@ -224,6 +224,7 @@ const FileUpload: React.FC = () => {
     }
   };
 
+  // 继续上传
   const resumeUpload = async (fileId: string) => {
     const uploadFile = uploadFiles.find((f) => f.id === fileId);
     if (!uploadFile) return;
