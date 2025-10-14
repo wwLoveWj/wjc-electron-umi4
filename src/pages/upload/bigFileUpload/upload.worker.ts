@@ -54,23 +54,23 @@ self.onmessage = async (e) => {
 
       // const result = await response.json();
 
-      // if (result.success) {
-      uploadedSet.add(chunkIndex);
+      if (result.success) {
+        uploadedSet.add(chunkIndex);
 
-      const progress = Math.round((uploadedSet.size / totalChunks) * 100);
-      self.postMessage({
-        type: "progress",
-        fileId, // 传递 fileId
-        data: {
-          uploadedChunks: Array.from(uploadedSet),
-          progress,
-          currentChunk: chunkIndex,
-          totalChunks,
-        },
-      });
-      // } else {
-      //   throw new Error(result.error || "Upload failed");
-      // }
+        const progress = Math.round((uploadedSet.size / totalChunks) * 100);
+        self.postMessage({
+          type: "progress",
+          fileId, // 传递 fileId
+          data: {
+            uploadedChunks: Array.from(uploadedSet),
+            progress,
+            currentChunk: chunkIndex,
+            totalChunks,
+          },
+        });
+      } else {
+        throw new Error(result.error || "Upload failed");
+      }
     }
 
     // 所有切片上传完成，传递完整文件信息
