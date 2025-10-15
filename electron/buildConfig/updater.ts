@@ -7,6 +7,7 @@ function updater(win) {
   autoUpdater.autoDownload = false;
   // 退出时自动安装更新
   autoUpdater.autoInstallOnAppQuit = false;
+  // 主要目的是为了方便开发者在开发、测试和调试阶段，模拟和应用自动更新流程。开发阶段调试用
   autoUpdater.forceDevUpdateConfig = true;
   // 需要调试本地更新时下面这行请注释
   if (process.env.NODE_ENV === "development") return;
