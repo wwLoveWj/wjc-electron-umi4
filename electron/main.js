@@ -21,6 +21,7 @@ const notifier = require("node-notifier");
 const nodemailer = require("nodemailer");
 const mm = require("music-metadata"); // 用于解析音频文件元数据
 const archiver = require("archiver"); // 用于创建zip文件
+const { autoUpdater } = require("electron-updater");
 const { updater } = require("./buildConfig/updater.ts");
 // 检查是否安装了 electron-store
 let Store;
@@ -135,9 +136,13 @@ class TodoScheduler {
 }
 
 const todoScheduler = new TodoScheduler();
+const isDev = process.env.NODE_ENV;
 // 打印环境变量，用于调试
 console.log("当前环境:", process.env.NODE_ENV);
-
+// 这里是为了在本地做应用升级测试使用
+if (isDev) {
+  autoUpdater.updateConfigPath = path.join(__dirname, "dev-app-update.yml");
+}
 const gotTheLock = app.requestSingleInstanceLock();
 let mainWindow;
 
