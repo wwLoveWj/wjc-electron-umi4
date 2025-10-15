@@ -1,65 +1,269 @@
-.container {
+.containerVideo {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0e17 0%, #13182a 100%);
+  position: relative;
+  overflow: hidden;
+}
+.containerVideo .particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+.containerVideo .contentVideo {
+  position: relative;
+  z-index: 1;
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
 }
-.uploadCard {
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-.uploadArea {
+.containerVideo .header {
   text-align: center;
-  padding: 40px 20px;
-  border: 2px dashed #d9d9d9;
-  border-radius: 8px;
-  margin-bottom: 24px;
-  transition: border-color 0.3s;
+  margin-bottom: 32px;
+  padding: 40px 0 20px;
 }
-.uploadArea:hover {
-  border-color: #1890ff;
+.containerVideo .header .title {
+  color: #00d4ff !important;
+  margin-bottom: 8px !important;
+  font-weight: 700;
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
 }
-.uploadButton {
-  height: 48px;
+.containerVideo .header .title .anticon {
+  margin-right: 12px;
+}
+.containerVideo .header .subtitle {
+  color: #8a8f98;
   font-size: 16px;
-  border-radius: 6px;
 }
-.uploadTip {
-  margin-top: 16px;
-  color: #666;
+.containerVideo .uploadCard {
+  background: rgba(16, 22, 36, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  backdrop-filter: blur(10px);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.containerVideo .uploadArea {
+  border: 2px dashed rgba(0, 212, 255, 0.2);
+  border-radius: 12px;
+  padding: 60px 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: rgba(0, 212, 255, 0.05);
+  position: relative;
+  cursor: pointer;
+}
+.containerVideo .uploadArea:hover,
+.containerVideo .uploadArea.dragOver {
+  border-color: #00d4ff;
+  background: rgba(0, 212, 255, 0.1);
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+}
+.containerVideo .uploadArea:hover .uploadIcon,
+.containerVideo .uploadArea.dragOver .uploadIcon {
+  color: #00d4ff;
+  transform: scale(1.1);
+}
+.containerVideo .uploadArea.dragOver .uploadContent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 212, 255, 0.05);
+  border: 2px solid #00d4ff;
+  border-radius: 10px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 212, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 212, 255, 0);
+  }
+}
+.containerVideo .fileInput {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+.containerVideo .uploadContent {
+  position: relative;
+  z-index: 1;
+}
+.containerVideo .uploadIcon {
+  font-size: 64px;
+  color: #8a8f98;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+}
+.containerVideo .uploadTitle {
+  color: #e0e0e0 !important;
+  margin-bottom: 8px !important;
+}
+.containerVideo .uploadTip {
+  color: #8a8f98;
+  display: block;
+  margin-bottom: 24px;
   font-size: 14px;
 }
-.fileList {
-  margin-top: 24px;
+.containerVideo .uploadButton {
+  background: linear-gradient(135deg, #00d4ff, #0099ff);
+  border: none;
+  border-radius: 8px;
+  height: 44px;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  transition: all 0.3s ease;
 }
-.fileItem {
-  padding: 16px;
-  border: 1px solid #f0f0f0;
-  border-radius: 6px;
-  margin-bottom: 12px;
-  transition: box-shadow 0.3s;
+.containerVideo .uploadButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
 }
-.fileItem:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.containerVideo .fileListCard {
+  background: rgba(16, 22, 36, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  backdrop-filter: blur(10px);
 }
-.fileInfo {
+.containerVideo .fileListCard :global(.my-template-umi-ant-typography) {
+  color: #e0e0e0;
+}
+.containerVideo .fileListCard :global(.my-template-umi-ant-card-head) {
+  border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+  padding: 20px 24px;
+}
+.containerVideo .fileListCard :global(.my-template-umi-ant-card-head) :global(.my-template-umi-ant-card-head-title) {
+  color: #e0e0e0;
+  font-weight: 600;
+  font-size: 18px;
+}
+.containerVideo .fileListCard :global(.my-template-umi-ant-card-body) {
+  padding: 0;
+}
+.containerVideo .fileItem {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+  transition: background-color 0.3s ease;
+}
+.containerVideo .fileItem:last-child {
+  border-bottom: none;
+}
+.containerVideo .fileItem:hover {
+  background: rgba(0, 212, 255, 0.05);
+}
+.containerVideo .fileContent {
+  width: 100%;
+}
+.containerVideo .fileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.containerVideo .fileInfo {
+  display: flex;
+  align-items: flex-start;
   flex: 1;
 }
-.fileName {
-  font-weight: 500;
-  margin-bottom: 8px;
-  font-size: 14px;
+.containerVideo .fileIcon {
+  font-size: 32px;
+  color: #00d4ff;
+  margin-right: 16px;
+  margin-top: 4px;
 }
-.fileMeta {
-  margin-bottom: 12px;
+.containerVideo .fileDetails {
+  flex: 1;
 }
-.fileMeta span {
-  margin-right: 12px;
-  color: #666;
+.containerVideo .fileName {
+  color: #e0e0e0;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 4px;
+  word-break: break-all;
+}
+.containerVideo .fileMeta :global(.my-template-umi-ant-tag) {
+  margin-right: 0;
+  border: none;
   font-size: 12px;
+  font-weight: 500;
 }
-.progress {
-  margin-bottom: 0;
+.containerVideo .statusTag {
+  border: none !important;
+  font-weight: 500;
 }
-.fileActions {
-  margin-left: 16px;
+.containerVideo .fileActions {
+  display: flex;
+  gap: 8px;
+}
+.containerVideo .actionButton {
+  border-radius: 6px;
+  font-weight: 500;
+}
+.containerVideo .progressSection {
+  margin-top: 12px;
+}
+.containerVideo .progressBar {
+  margin-bottom: 8px;
+}
+.containerVideo .progressBar :global(.my-template-umi-ant-progress-bg) {
+  border-radius: 4px;
+}
+.containerVideo .progressBar :global(.my-template-umi-ant-progress-text) {
+  color: #e0e0e0 !important;
+  font-weight: 600;
+}
+.containerVideo .progressText {
+  color: #8a8f98;
+  font-size: 12px;
+  text-align: center;
+}
+.containerVideo .completedSection {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(0, 255, 136, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 136, 0.2);
+}
+.containerVideo .completedBadge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.containerVideo .completedTag {
+  border: none;
+  font-weight: 600;
+  background: rgba(0, 255, 136, 0.15);
+  color: #00ff88;
+}
+@media (max-width: 768px) {
+  .contentVideo {
+    padding: 16px;
+  }
+  .contentVideo .fileHeader {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .contentVideo .fileActions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .contentVideo .completedBadge {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
 }

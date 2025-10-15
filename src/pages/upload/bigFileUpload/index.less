@@ -1,80 +1,341 @@
 // src/pages/Upload/index.less
-.container {
-    padding: 24px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
+// @import '~antd/dist/antd.dark.less';
 
-.uploadCard {
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+// 科技风配色
+@primary-color: #00d4ff;
+@success-color: #00ff88;
+@warning-color: #ffaa00;
+@error-color: #ff2e63;
+@background-color: #0a0e17;
+@card-background: rgba(16, 22, 36, 0.8);
+@border-color: rgba(0, 212, 255, 0.2);
+@text-color: #e0e0e0;
+@text-secondary: #8a8f98;
 
-.uploadArea {
-    text-align: center;
-    padding: 40px 20px;
-    border: 2px dashed #d9d9d9;
-    border-radius: 8px;
-    margin-bottom: 24px;
-    transition: border-color 0.3s;
+.containerVideo {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a0e17 0%, #13182a 100%);
+    position: relative;
+    overflow: hidden;
 
-    &:hover {
-        border-color: #1890ff;
+
+    // 粒子背景
+    .particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
     }
-}
 
-.uploadButton {
-    height: 48px;
-    font-size: 16px;
-    border-radius: 6px;
-}
-
-.uploadTip {
-    margin-top: 16px;
-    color: #666;
-    font-size: 14px;
-}
-
-.fileList {
-    margin-top: 24px;
-}
-
-.fileItem {
-    padding: 16px;
-    border: 1px solid #f0f0f0;
-    border-radius: 6px;
-    margin-bottom: 12px;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    .contentVideo {
+        position: relative;
+        z-index: 1;
+        padding: 24px;
+        max-width: 1200px;
+        margin: 0 auto;
     }
-}
 
-.fileInfo {
-    flex: 1;
-}
+    .header {
+        text-align: center;
+        margin-bottom: 32px;
+        padding: 40px 0 20px;
 
-.fileName {
-    font-weight: 500;
-    margin-bottom: 8px;
-    font-size: 14px;
-}
+        .title {
+            color: @primary-color !important;
+            margin-bottom: 8px !important;
+            font-weight: 700;
+            text-shadow: 0 0 20px fade(@primary-color, 40%);
 
-.fileMeta {
-    margin-bottom: 12px;
+            .anticon {
+                margin-right: 12px;
+            }
+        }
 
-    span {
-        margin-right: 12px;
-        color: #666;
+        .subtitle {
+            color: @text-secondary;
+            font-size: 16px;
+        }
+    }
+
+    .uploadCard {
+        background: @card-background;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid @border-color;
+        backdrop-filter: blur(10px);
+        margin-bottom: 24px;
+        overflow: hidden;
+    }
+
+    .uploadArea {
+        border: 2px dashed @border-color;
+        border-radius: 12px;
+        padding: 60px 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+        background: rgba(0, 212, 255, 0.05);
+        position: relative;
+        cursor: pointer;
+
+        &:hover,
+        &.dragOver {
+            border-color: @primary-color;
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 30px fade(@primary-color, 20%);
+
+            .uploadIcon {
+                color: @primary-color;
+                transform: scale(1.1);
+            }
+        }
+
+        &.dragOver {
+            .uploadContent::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: fade(@primary-color, 5%);
+                border: 2px solid @primary-color;
+                border-radius: 10px;
+                animation: pulse 2s infinite;
+            }
+        }
+    }
+
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 fade(@primary-color, 40%);
+        }
+
+        70% {
+            box-shadow: 0 0 0 10px fade(@primary-color, 0%);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 fade(@primary-color, 0%);
+        }
+    }
+
+    .fileInput {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        cursor: pointer;
+    }
+
+    .uploadContent {
+        position: relative;
+        z-index: 1;
+    }
+
+    .uploadIcon {
+        font-size: 64px;
+        color: @text-secondary;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .uploadTitle {
+        color: @text-color !important;
+        margin-bottom: 8px !important;
+    }
+
+    .uploadTip {
+        color: @text-secondary;
+        display: block;
+        margin-bottom: 24px;
+        font-size: 14px;
+    }
+
+    .uploadButton {
+        background: linear-gradient(135deg, @primary-color, #0099ff);
+        border: none;
+        border-radius: 8px;
+        height: 44px;
+        font-weight: 600;
+        box-shadow: 0 4px 15px fade(@primary-color, 30%);
+        transition: all 0.3s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px fade(@primary-color, 40%);
+        }
+    }
+
+    .fileListCard {
+        background: @card-background;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid @border-color;
+        backdrop-filter: blur(10px);
+
+        :global(.my-template-umi-ant-typography) {
+            color: @text-color
+        }
+
+        :global(.my-template-umi-ant-card-head) {
+            border-bottom: 1px solid @border-color;
+            padding: 20px 24px;
+
+            :global(.my-template-umi-ant-card-head-title) {
+                color: @text-color;
+                font-weight: 600;
+                font-size: 18px;
+            }
+        }
+
+        :global(.my-template-umi-ant-card-body) {
+            padding: 0;
+        }
+    }
+
+    .fileItem {
+        padding: 20px 24px;
+        border-bottom: 1px solid @border-color;
+        transition: background-color 0.3s ease;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+    }
+
+    .fileContent {
+        width: 100%;
+    }
+
+    .fileHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+    }
+
+    .fileInfo {
+        display: flex;
+        align-items: flex-start;
+        flex: 1;
+    }
+
+    .fileIcon {
+        font-size: 32px;
+        color: @primary-color;
+        margin-right: 16px;
+        margin-top: 4px;
+    }
+
+    .fileDetails {
+        flex: 1;
+    }
+
+    .fileName {
+        color: @text-color;
+        font-weight: 600;
+        font-size: 16px;
+        margin-bottom: 4px;
+        word-break: break-all;
+    }
+
+    .fileMeta {
+        :global(.my-template-umi-ant-tag) {
+            margin-right: 0;
+            border: none;
+            font-size: 12px;
+            font-weight: 500;
+        }
+    }
+
+    .statusTag {
+        border: none !important;
+        font-weight: 500;
+    }
+
+    .fileActions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .actionButton {
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+    .progressSection {
+        margin-top: 12px;
+    }
+
+    .progressBar {
+        margin-bottom: 8px;
+
+        :global(.my-template-umi-ant-progress-bg) {
+            border-radius: 4px;
+        }
+
+        :global(.my-template-umi-ant-progress-text) {
+            color: @text-color !important;
+            font-weight: 600;
+        }
+    }
+
+    .progressText {
+        color: @text-secondary;
         font-size: 12px;
+        text-align: center;
+    }
+
+    .completedSection {
+        margin-top: 12px;
+        padding: 12px;
+        background: rgba(0, 255, 136, 0.1);
+        border-radius: 8px;
+        border: 1px solid fade(@success-color, 20%);
+    }
+
+    .completedBadge {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .completedTag {
+        border: none;
+        font-weight: 600;
+        background: fade(@success-color, 15%);
+        color: @success-color;
     }
 }
 
-.progress {
-    margin-bottom: 0;
-}
+// 响应式设计
+@media (max-width: 768px) {
+    .contentVideo {
+        padding: 16px;
 
-.fileActions {
-    margin-left: 16px;
+
+        .fileHeader {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .fileActions {
+            width: 100%;
+            justify-content: flex-end;
+        }
+
+        .completedBadge {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+    }
 }

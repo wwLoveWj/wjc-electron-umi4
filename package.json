@@ -7,7 +7,7 @@
   "description": "一个关于umi4的模板项目",
   "scripts": {
     "start": "pnpm dev",
-    "dev": "cross-env UMI_ENV=dev umi dev",
+    "dev": "cross-env UMI_ENV=dev REACT_DEV_INSPECTOR_EDITOR=vscode umi dev",
     "uat": "cross-env UMI_ENV=uat umi build",
     "sit": "cross-env UMI_ENV=sit umi build",
     "build": "cross-env UMI_ENV=prod umi build",
@@ -30,8 +30,10 @@
     "antd": "^5.27.1",
     "archiver": "^7.0.1",
     "axios": "^1.11.0",
+    "babel-loader": "^10.0.0",
     "dayjs": "^1.11.18",
     "electron-store": "8.0.0",
+    "electron-updater": "^6.6.2",
     "events": "^3.3.0",
     "lodash-es": "^4.17.21",
     "magical-antd-ui": "^1.0.0",
@@ -44,7 +46,6 @@
     "react-screenshots": "^0.5.22",
     "sass": "^1.91.0",
     "umi": "^4.4.12",
-    "electron-updater": "^6.6.2",
     "vstores": "^0.0.17"
   },
   "devDependencies": {
@@ -54,6 +55,7 @@
     "cross-env": "^10.0.0",
     "electron": "^38.2.0",
     "electron-builder": "^26.0.12",
+    "react-dev-inspector": "^2.0.1",
     "typescript": "^5.0.3"
   },
   "engines": {

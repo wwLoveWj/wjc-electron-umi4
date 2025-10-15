@@ -1,10 +1,25 @@
 // src/pages/Upload/index.tsx
-import React, { useState, useRef, useEffect } from "react";
-import { Upload, Button, Progress, message, Card, List, Tag } from "antd";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import {
+  Upload,
+  Button,
+  Progress,
+  message,
+  Card,
+  List,
+  Tag,
+  Space,
+  Typography,
+} from "antd";
 import {
   InboxOutlined,
   PlayCircleOutlined,
   PauseCircleOutlined,
+  CloudUploadOutlined,
+  FileZipOutlined,
+  VideoCameraOutlined,
+  AudioOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import {
   checkFile,
@@ -13,6 +28,7 @@ import {
 } from "@/service/api/upload";
 import styles from "./index.less";
 
+const { Title, Text } = Typography;
 const { Dragger } = Upload;
 
 interface UploadFile {
@@ -28,6 +44,7 @@ interface UploadFile {
 
 const FileUpload: React.FC = () => {
   const [uploadFiles, setUploadFiles] = useState<UploadFile[]>([]);
+  const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   // 使用 useRef 来跟踪最新的 uploadFiles 状态
   const uploadFilesRef = useRef<UploadFile[]>([]);
@@ -69,7 +86,55 @@ const FileUpload: React.FC = () => {
       };
     });
   };
+  // 处理拖拽事件
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  }, []);
 
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      handleFiles(files);
+    }
+  }, []);
+  // 处理选择的文件
+  const handleFiles = async (files: File[]) => {
+    for (const file of files) {
+      const fileId = `${file.name}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+      const uploadFile: UploadFile = {
+        id: fileId,
+        file,
+        progress: 0,
+        status: "pending",
+        uploadedChunks: [],
+        totalChunks: Math.ceil(file.size / (2 * 1024 * 1024)),
+        fileHash: "",
+        worker: null,
+      };
+
+      setUploadFiles((prev) => [...prev, uploadFile]);
+      await startUpload(uploadFile);
+    }
+  };
+  const removeFile = (fileId: string) => {
+    const uploadFile = uploadFiles.find((f) => f.id === fileId);
+    if (uploadFile?.worker) {
+      uploadFile.worker.terminate();
+    }
+
+    setUploadFiles((prev) => prev.filter((file) => file.id !== fileId));
+    message.info("文件已移除");
+  };
   const handleFileSelect = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -290,89 +355,206 @@ const FileUpload: React.FC = () => {
     };
     return colors[status];
   };
+  // 获取文件类型图标
+  const getFileIcon = (fileName: string) => {
+    const ext = fileName.split(".").pop()?.toLowerCase();
+
+    if (["zip", "rar", "7z", "tar", "gz"].includes(ext || "")) {
+      return <FileZipOutlined className={styles.fileIcon} />;
+    } else if (["mp4", "avi", "mov", "wmv", "flv", "mkv"].includes(ext || "")) {
+      return <VideoCameraOutlined className={styles.fileIcon} />;
+    } else if (["mp3", "wav", "flac", "aac", "ogg"].includes(ext || "")) {
+      return <AudioOutlined className={styles.fileIcon} />;
+    } else {
+      return <FileZipOutlined className={styles.fileIcon} />;
+    }
+  };
+
+  // 获取状态文本
+  const getStatusText = (status: UploadFile["status"]) => {
+    const texts = {
+      pending: "等待中",
+      uploading: "上传中",
+      paused: "已暂停",
+      completed: "已完成",
+      error: "错误",
+      processing: "处理中",
+    };
+    return texts[status];
+  };
 
   return (
-    <div className={styles.container}>
-      <Card title="大文件上传" className={styles.uploadCard}>
-        <div className={styles.uploadArea}>
-          <input
-            type="file"
-            ref={fileInputRef}
-            multiple
-            onChange={handleFileSelect}
-            style={{ display: "none" }}
-          />
-          <Button
-            type="primary"
-            size="large"
-            onClick={() => fileInputRef.current?.click()}
-            className={styles.uploadButton}
-          >
-            选择文件
-          </Button>
-          <p className={styles.uploadTip}>
-            支持大视频、大音频文件，自动切片上传，支持断点续传
-          </p>
+    <div className={styles.containerVideo}>
+      {/* 粒子背景 */}
+      <div className={styles.particles} id="particles-js"></div>
+
+      <div className={styles.contentVideo}>
+        <div className={styles.header}>
+          <Title level={2} className={styles.title}>
+            <CloudUploadOutlined /> 大文件上传管理
+          </Title>
+          <Text className={styles.subtitle}>
+            支持大规模、大备份文件，自动切片上传，支持断点续传
+          </Text>
         </div>
 
-        <div className={styles.fileList}>
-          <List
-            dataSource={uploadFiles}
-            renderItem={(file) => (
-              <List.Item className={styles.fileItem}>
-                <div className={styles.fileInfo}>
-                  <div className={styles.fileName}>{file.file.name}</div>
-                  <div className={styles.fileMeta}>
-                    <Tag color={getStatusColor(file.status)}>
-                      {file.status === "uploading" && "上传中"}
-                      {file.status === "paused" && "已暂停"}
-                      {file.status === "completed" && "已完成"}
-                      {file.status === "error" && "错误"}
-                      {file.status === "pending" && "等待中"}
-                    </Tag>
-                    <span>
-                      {(file.file.size / (1024 * 1024)).toFixed(2)} MB
-                    </span>
-                    <span>
-                      {file.uploadedChunks.length}/{file.totalChunks} 切片
-                    </span>
+        {/* 上传区域 */}
+        <Card className={styles.uploadCard} bordered={false}>
+          <div
+            className={`${styles.uploadArea} ${isDragOver ? styles.dragOver : ""}`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <input
+              type="file"
+              ref={fileInputRef}
+              multiple
+              onChange={handleFileSelect}
+              className={styles.fileInput}
+            />
+
+            <div className={styles.uploadContent}>
+              <InboxOutlined className={styles.uploadIcon} />
+              <Title level={4} className={styles.uploadTitle}>
+                拖拽文件到此处或点击上传
+              </Title>
+              <Text className={styles.uploadTip}>
+                支持大视频、大音频、压缩包等文件类型
+              </Text>
+              <Button
+                type="primary"
+                size="large"
+                icon={<CloudUploadOutlined />}
+                onClick={() => fileInputRef.current?.click()}
+                className={styles.uploadButton}
+              >
+                选择文件
+              </Button>
+            </div>
+          </div>
+        </Card>
+
+        {/* 文件列表 */}
+        {uploadFiles.length > 0 && (
+          <Card
+            title={
+              <Space>
+                <span>上传队列</span>
+                <Tag color="blue">{uploadFiles.length} 个文件</Tag>
+              </Space>
+            }
+            className={styles.fileListCard}
+            bordered={false}
+          >
+            <List
+              dataSource={uploadFiles}
+              renderItem={(file) => (
+                <List.Item className={styles.fileItem}>
+                  <div className={styles.fileContent}>
+                    <div className={styles.fileHeader}>
+                      <div className={styles.fileInfo}>
+                        {getFileIcon(file.file.name)}
+                        <div className={styles.fileDetails}>
+                          <div className={styles.fileName}>
+                            {file.file.name}
+                          </div>
+                          <div className={styles.fileMeta}>
+                            <Space size="middle">
+                              <Text type="secondary">
+                                {(file.file.size / (1024 * 1024)).toFixed(2)} MB
+                              </Text>
+                              <Text type="secondary">
+                                {file.uploadedChunks.length}/{file.totalChunks}
+                                切片
+                              </Text>
+                              <Tag
+                                color={getStatusColor(file.status)}
+                                className={styles.statusTag}
+                              >
+                                {getStatusText(file.status)}
+                              </Tag>
+                            </Space>
+                          </div>
+                        </div>
+                      </div>
+                      <div className={styles.fileActions}>
+                        {file.status === "uploading" && (
+                          <Button
+                            icon={<PauseCircleOutlined />}
+                            onClick={() => pauseUpload(file.id)}
+                            className={styles.actionButton}
+                          >
+                            暂停
+                          </Button>
+                        )}
+                        {file.status === "paused" && (
+                          <Button
+                            icon={<PlayCircleOutlined />}
+                            type="primary"
+                            onClick={() => resumeUpload(file.id)}
+                            className={styles.actionButton}
+                          >
+                            继续
+                          </Button>
+                        )}
+                        {(file.status === "completed" ||
+                          file.status === "error") && (
+                          <Button
+                            icon={<DeleteOutlined />}
+                            onClick={() => removeFile(file.id)}
+                            className={styles.actionButton}
+                            danger
+                          >
+                            移除
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+
+                    {file.status !== "completed" && file.status !== "error" && (
+                      <div className={styles.progressSection}>
+                        <Progress
+                          percent={file.progress}
+                          status={
+                            file.status === "uploading"
+                              ? "active"
+                              : file.status === "error"
+                                ? "exception"
+                                : "normal"
+                          }
+                          strokeColor={{
+                            "0%": "#00d4ff",
+                            "100%": "#0099ff",
+                          }}
+                          className={styles.progressBar}
+                        />
+                        <div className={styles.progressText}>
+                          {file.progress}% - {file.uploadedChunks.length}/
+                          {file.totalChunks} 切片
+                        </div>
+                      </div>
+                    )}
+
+                    {file.status === "completed" && (
+                      <div className={styles.completedSection}>
+                        <div className={styles.completedBadge}>
+                          <Tag color="success" className={styles.completedTag}>
+                            上传完成
+                          </Tag>
+                          <Text type="secondary">
+                            文件哈希: {file.fileHash.substring(0, 20)}...
+                          </Text>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <Progress
-                    percent={file.progress}
-                    status={
-                      file.status === "uploading"
-                        ? "active"
-                        : file.status === "error"
-                          ? "exception"
-                          : "normal"
-                    }
-                    className={styles.progress}
-                  />
-                </div>
-                <div className={styles.fileActions}>
-                  {file.status === "uploading" && (
-                    <Button
-                      icon={<PauseCircleOutlined />}
-                      onClick={() => pauseUpload(file.id)}
-                    >
-                      暂停
-                    </Button>
-                  )}
-                  {file.status === "paused" && (
-                    <Button
-                      icon={<PlayCircleOutlined />}
-                      type="primary"
-                      onClick={() => resumeUpload(file.id)}
-                    >
-                      继续
-                    </Button>
-                  )}
-                </div>
-              </List.Item>
-            )}
-          />
-        </div>
-      </Card>
+                </List.Item>
+              )}
+            />
+          </Card>
+        )}
+      </div>
     </div>
   );
 };
