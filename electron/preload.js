@@ -1,5 +1,16 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
+// preload.js
+const ipc = {
+  render: {
+    // 主进程发出的通知
+    send: ["checkForUpdate", "checkAppVersion"],
+    // 渲染进程发出的通知
+    receive: ["version", "downloadProgress"],
+  },
+};
+
+// 通过contextBridge将electron注入到渲染进程的window上面，我们只需要访问window.electronAPI，即可访问到相关的内容
 contextBridge.exposeInMainWorld("electronAPI", {
   // 窗口控制
   minimizeWindow: () => ipcRenderer.invoke("window-minimize"),
@@ -38,4 +49,21 @@ contextBridge.exposeInMainWorld("electronAPI", {
   // 下载功能
   downloadMusicZip: (musicList) =>
     ipcRenderer.invoke("download-music-zip", musicList),
+  // 模块更新
+  ipcRender: {
+    // 主进程发送通知给渲染进程
+    send: (channel, data) => {
+      const validChannels = ipc.render.send;
+      if (validChannels.includes(channel)) {
+        ipcRenderer.send(channel, data);
+      }
+    },
+    // 渲染进程监听到主进程发来的通知，执行相关的操作
+    receive: (channel, func) => {
+      const validChannels = ipc.render.receive;
+      if (validChannels.includes(channel)) {
+        ipcRenderer.on(`${channel}`, (event, ...args) => func(...args));
+      }
+    },
+  },
 });

@@ -59,6 +59,7 @@ import { AddMusicModal } from "./addMusicModal";
 import { EmptyPlaylistState } from "./EmptyPlaylistState";
 import CustomTitleBar from "@/components/CustomTitleBar";
 import { MusicUploadModal } from "../upload";
+import CheckUpdate from "../../update/index";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -1218,6 +1219,7 @@ const TechWeddingPlayer: React.FC = () => {
               >
                 上传音乐
               </Button>
+              <CheckUpdate />
             </div>
           </div>
         </div>

@@ -28,12 +28,24 @@ export const MusicUploadModal: React.FC<{
 
   // 支持的音频格式
   const supportedFormats = [
+    "audio/mpeg",
     "audio/mp3",
+    "audio/x-mpeg",
+    "audio/mp4",
+    "audio/x-m4a",
+    "audio/aac",
+    "audio/x-aac",
     "audio/wav",
+    "audio/x-wav",
+    "audio/wave",
     "audio/flac",
+    "audio/x-flac",
     "audio/aac",
     "audio/ogg",
     "audio/m4a",
+    "audio/x-ogg",
+    "audio/opus",
+    "audio/x-opus",
   ];
   const maxFileSize = 50 * 1024 * 1024; // 50MB
 
