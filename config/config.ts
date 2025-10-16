@@ -74,4 +74,17 @@ export default defineConfig({
     logLevel: "info",
     defaultSizes: "parsed", // stat  // gzip
   },
+  // openAPI: {
+  //   requestLibPath: "import { request } from 'umi'",
+  //   schemaPath: "http://localhost:3000/swagger/docs.json", // Swagger 文档地址
+  //   projectName: "api", // 生成的文件名
+  //   apiPrefix: "'/api'", // API 前缀
+  //   namespace: "API", // 命名空间
+  //   hooks: {
+  //     // 自定义请求函数名
+  //     customFunctionName: (data: any) => {
+  //       return data.operationId;
+  //     },
+  //   },
+  // },
 });

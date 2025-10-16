@@ -6,6 +6,7 @@
   "version": "2.2.3",
   "description": "一个关于umi4的模板项目",
   "scripts": {
+    "openapi": "node scripts/generate-api.js",
     "start": "pnpm dev",
     "dev": "cross-env UMI_ENV=dev REACT_DEV_INSPECTOR_EDITOR=vscode umi dev",
     "uat": "cross-env UMI_ENV=uat umi build",
@@ -51,11 +52,14 @@
   "devDependencies": {
     "@types/react": "^18.0.33",
     "@types/react-dom": "^18.0.11",
+    "@umijs/openapi": "^1.14.1",
     "@umijs/plugins": "^4.4.12",
     "cross-env": "^10.0.0",
     "electron": "^38.2.0",
     "electron-builder": "^26.0.12",
+    "openapi-typescript-codegen": "^0.29.0",
     "react-dev-inspector": "^2.0.1",
+    "swagger-typescript-api": "^13.2.15",
     "typescript": "^5.0.3"
   },
   "engines": {
