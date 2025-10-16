@@ -66,4 +66,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
       }
     },
   },
+
+  selectVideoFiles: () => ipcRenderer.invoke("select-video-files"),
+  saveVideoFile: (buffer, filename) =>
+    ipcRenderer.invoke("save-video-file", buffer, filename),
 });

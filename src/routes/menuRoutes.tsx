@@ -56,6 +56,14 @@ export const menuRoutes: API.MenuRoutesType[] = [
     component: "./upload/bigFileUpload",
   },
   {
+    key: "video",
+    title: "视频管理",
+    path: "/video",
+    // hidden: true,
+    icon: RocketOutlined,
+    component: "./video",
+  },
+  {
     key: "todo",
     title: "待办管理",
     path: "/todo",
