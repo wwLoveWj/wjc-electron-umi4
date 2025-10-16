@@ -680,4 +680,31 @@ ipcMain.handle("del-music-file", async (event, music) => {
     return { success: false, error: error.message };
   }
 });
+// 视频播放器-------------
+// IPC 处理
+ipcMain.handle("select-video-files", async () => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    properties: ["openFile", "multiSelections"],
+    filters: [
+      {
+        name: "Videos",
+        extensions: ["mp4", "avi", "mov", "wmv", "mkv", "flv"],
+      },
+    ],
+  });
 
+  return result.filePaths;
+});
+
+ipcMain.handle("save-video-file", async (event, buffer, filename) => {
+  const result = await dialog.showSaveDialog(mainWindow, {
+    defaultPath: filename,
+    filters: [{ name: "Videos", extensions: ["mp4"] }],
+  });
+
+  if (!result.canceled) {
+    require("fs").writeFileSync(result.filePath, Buffer.from(buffer));
+  }
+
+  return result;
+});
