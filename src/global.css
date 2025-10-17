@@ -164,7 +164,7 @@ li {
   height: 9px;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(157, 165, 183, 0.5);
+  background-color: #0f0f23 !important;
   background-clip: padding-box;
   border-color: transparent;
   border-style: dashed;
@@ -172,11 +172,12 @@ li {
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(157, 165, 183, 0.8);
+  background-color: #6c5ce7 !important;
   background-clip: border-box;
 }
 /*---滚动框背景样式--*/
 ::-webkit-scrollbar-track-piece {
+  background-color: #1a1a2e;
   -webkit-border-radius: 0;
 }
 @media screen and (max-width: 800px) {

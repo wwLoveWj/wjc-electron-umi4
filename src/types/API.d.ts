@@ -35,4 +35,32 @@ declare namespace API {
     userId: string;
     [propsname: string]: any;
   }
+
+  export interface VideoItem {
+    id: string;
+    name: string;
+    path: string;
+    duration: number;
+    thumbnail?: string;
+    uploadTime: number;
+  }
+
+  export interface PlayerState {
+    currentVideo: VideoItem | null;
+    playlist: VideoItem[];
+    isPlaying: boolean;
+    currentTime: number;
+    duration: number;
+    volume: number;
+    isMuted: boolean;
+    playbackRate: number;
+    isFullscreen: boolean;
+    isCasting: boolean;
+  }
+
+  export interface ScreenCastDevice {
+    id: string;
+    name: string;
+    type: 'tv' | 'projector' | 'other';
+  }
 }

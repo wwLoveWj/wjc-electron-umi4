@@ -13,6 +13,7 @@ import type { RuntimeConfig } from "umi";
 import { matchRoutes } from "umi";
 import { PROJECT_CONFIG } from "./constants/constant";
 import "./utils/dayjs";
+import { Inspector, InspectParams } from "react-dev-inspector";
 
 // 初始化路由菜单数据
 export async function getInitialState() {
@@ -40,7 +41,18 @@ export function rootContainer(container: React.ReactNode) {
           },
         }}
       >
-        {container}
+        <Inspector
+          //  props 配置参考：https://github.com/zthxxx/react-dev-inspector#inspector-component-props
+          keys={["control", "shift", "f"]} // 默认开启快捷键，可以自定义
+          onClickElement={({ codeInfo }: InspectParams) => {
+            const { absolutePath, lineNumber, columnNumber } = codeInfo;
+            // 使用 vscode:// 协议打开文件
+            const vscodeUrl = `vscode://file/${absolutePath}:${lineNumber}:${columnNumber}`;
+            window.open(vscodeUrl, "_blank");
+          }}
+        >
+          {container}
+        </Inspector>
       </ConfigProvider>
     </WjConfigProvider>
   );

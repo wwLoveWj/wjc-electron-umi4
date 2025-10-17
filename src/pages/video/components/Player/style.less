@@ -1,0 +1,81 @@
+@primary-color: #00f2fe;
+@secondary-color: #4facfe;
+@background-dark: #0f1b31;
+@background-darker: #0a1124;
+@text-color: #ffffff;
+@text-secondary: #8a9ba8;
+
+// 进度条样式
+.progressContainer {
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 20;
+}
+
+.timeDisplay {
+    color: @text-color;
+    font-size: 12px;
+    font-weight: 500;
+    min-width: 40px;
+    text-align: center;
+}
+
+.progressBar {
+    flex: 1;
+    height: 6px;
+    background: rgba(@text-color, 0.3);
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: height 0.2s ease;
+
+    &:hover {
+        height: 8px;
+
+        .progressThumb {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+}
+
+.progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, @primary-color, @secondary-color);
+    border-radius: 3px;
+    transition: width 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.progressThumb {
+    width: 12px;
+    height: 12px;
+    background: @text-color;
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.2s ease;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.bufferBar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: rgba(@text-color, 0.2);
+    border-radius: 3px;
+    width: 0%; // 可以根据实际缓冲情况调整
+}

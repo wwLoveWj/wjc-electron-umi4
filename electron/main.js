@@ -16,12 +16,12 @@ const { createTray, createShortcutKeys } = require("./utils/tray");
 const path = require("path");
 const process = require("process");
 const fs = require("fs");
-const schedule = require("node-schedule");
-const notifier = require("node-notifier");
-const nodemailer = require("nodemailer");
 const mm = require("music-metadata"); // 用于解析音频文件元数据
 const archiver = require("archiver"); // 用于创建zip文件
+const { autoUpdater } = require("electron-updater");
 const { updater } = require("./buildConfig/updater.ts");
+const TodoScheduler = require("./todoScheduler");
+
 // 检查是否安装了 electron-store
 let Store;
 try {
@@ -31,113 +31,14 @@ try {
 }
 const store = new Store();
 
-class TodoScheduler {
-  constructor() {
-    this.jobs = new Map();
-    this.mailTransporter = null;
-    this.initMailTransporter();
-  }
-
-  initMailTransporter() {
-    // 配置邮件服务（这里使用QQ邮箱示例，你可以替换为其他服务商）
-    this.mailTransporter = nodemailer.createTransport({
-      host: "smtp.163.com", // 替换为你的 SMTP 服务器地址
-      port: 465, // 替换为你的 SMTP 服务器端口
-      secure: true, // 如果使用 TLS，则设置为 true
-      auth: {
-        user: "xxx@163.com", // 你的邮箱地址
-        pass: "123456", // 你的授权码
-      },
-    });
-  }
-
-  scheduleTask(task) {
-    const jobId = task.id;
-    const scheduledTime = new Date(task.scheduledTime);
-
-    const job = schedule.scheduleJob(scheduledTime, async () => {
-      try {
-        // 发送系统通知
-        notifier.notify({
-          title: "待办事项提醒",
-          message: `任务: ${task.title}`,
-          sound: true,
-          wait: true,
-        });
-
-        // 发送邮件通知
-        if (task.email && this.mailTransporter) {
-          await this.mailTransporter.sendMail({
-            from: "your-email@qq.com",
-            to: task.email,
-            subject: `待办提醒: ${task.title}`,
-            text: `您的待办事项 "${task.title}" 时间到了！\n\n描述: ${task.description || "无"}`,
-          });
-        }
-
-        // 触发窗口抖动和声音
-        const windows = BrowserWindow.getAllWindows();
-        windows.forEach((win) => {
-          if (win && !win.isDestroyed()) {
-            // 窗口抖动效果
-            this.shakeWindow(win);
-            // 发送渲染进程通知
-            win.webContents.send("task-notification", task);
-          }
-        });
-
-        // 任务完成后从列表中移除
-        this.jobs.delete(jobId);
-      } catch (error) {
-        console.error("任务执行失败:", error);
-      }
-    });
-
-    this.jobs.set(jobId, job);
-    return jobId;
-  }
-
-  shakeWindow(win) {
-    const initialPosition = win.getPosition();
-    const shakeIntensity = 10;
-    const shakeDuration = 500;
-    const startTime = Date.now();
-
-    const shake = () => {
-      const elapsed = Date.now() - startTime;
-      if (elapsed < shakeDuration) {
-        const x =
-          initialPosition[0] + (Math.random() - 0.5) * shakeIntensity * 2;
-        const y =
-          initialPosition[1] + (Math.random() - 0.5) * shakeIntensity * 2;
-        win.setPosition(Math.floor(x), Math.floor(y));
-        setTimeout(shake, 10);
-      } else {
-        win.setPosition(initialPosition[0], initialPosition[1]);
-      }
-    };
-    shake();
-  }
-
-  cancelTask(jobId) {
-    const job = this.jobs.get(jobId);
-    if (job) {
-      job.cancel();
-      this.jobs.delete(jobId);
-      return true;
-    }
-    return false;
-  }
-
-  getScheduledTasks() {
-    return Array.from(this.jobs.keys());
-  }
-}
-
 const todoScheduler = new TodoScheduler();
+const isDev = process.env.NODE_ENV;
 // 打印环境变量，用于调试
 console.log("当前环境:", process.env.NODE_ENV);
-
+// 这里是为了在本地做应用升级测试使用
+if (isDev) {
+  autoUpdater.updateConfigPath = path.join(__dirname, "dev-app-update.yml");
+}
 const gotTheLock = app.requestSingleInstanceLock();
 let mainWindow;
 
@@ -778,4 +679,32 @@ ipcMain.handle("del-music-file", async (event, music) => {
     console.error("删除音乐文件失败:", error);
     return { success: false, error: error.message };
   }
+});
+// 视频播放器-------------
+// IPC 处理
+ipcMain.handle("select-video-files", async () => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    properties: ["openFile", "multiSelections"],
+    filters: [
+      {
+        name: "Videos",
+        extensions: ["mp4", "avi", "mov", "wmv", "mkv", "flv"],
+      },
+    ],
+  });
+
+  return result.filePaths;
+});
+
+ipcMain.handle("save-video-file", async (event, buffer, filename) => {
+  const result = await dialog.showSaveDialog(mainWindow, {
+    defaultPath: filename,
+    filters: [{ name: "Videos", extensions: ["mp4"] }],
+  });
+
+  if (!result.canceled) {
+    require("fs").writeFileSync(result.filePath, Buffer.from(buffer));
+  }
+
+  return result;
 });

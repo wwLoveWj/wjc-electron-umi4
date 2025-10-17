@@ -13,5 +13,8 @@ export default defineConfig({
       // pathRewrite: { "^/api": "" },
     },
   },
-  define: {},
+  define: {
+    "process.env.EMIAL_PWD": "HPJEIWOOTHGWHJCO",
+    "process.env.EMIAL_USER": "blww885@163.com",
+  },
 });

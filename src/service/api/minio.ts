@@ -19,3 +19,7 @@ export const getMinioFilesAPI = (
     params: { page, limit, fileType },
   });
 };
+
+export const uploadMinioFilesAPI = (formData) => {
+  return request.upload("/api/minio/upload7", formData).promise;
+};

@@ -1,5 +1,5 @@
 // import { is } from "@electron-toolkit/utils";
-const { BrowserWindow, dialog, shell, ipcMain } = require("electron");
+const { BrowserWindow, dialog, shell, ipcMain, app } = require("electron");
 const { autoUpdater } = require("electron-updater");
 
 function updater(win) {
@@ -7,6 +7,9 @@ function updater(win) {
   autoUpdater.autoDownload = false;
   // 退出时自动安装更新
   autoUpdater.autoInstallOnAppQuit = false;
+  // 主要目的是为了方便开发者在开发、测试和调试阶段，模拟和应用自动更新流程。开发阶段调试用
+  autoUpdater.forceDevUpdateConfig = true;
+  // 需要调试本地更新时下面这行请注释
   if (process.env.NODE_ENV === "development") return;
   const checkForUpdates = (manual = false) => {
     autoUpdater.checkForUpdates().catch((error) => {
@@ -26,11 +29,21 @@ function updater(win) {
     checkForUpdates();
   });
 
-  // 监听来自渲染进程的手动检查更新请求
-  ipcMain.on("CheckForUpdates", () => {
+  // 监听来自渲染进程的手动检查更新请求，我们需要主动触发一次更新检查
+  ipcMain.on("checkForUpdate", () => {
+    console.log("更新吗======");
+    // 当我们收到渲染进程传来的消息，主进程就就进行一次更新检查
     checkForUpdates(true);
   });
-
+  // 当前引用的版本告知给渲染层
+  ipcMain.on("checkAppVersion", () => {
+    win.webContents.send("version", app.getVersion());
+  });
+  // 检测是否需要更新
+  // autoUpdater.on("checking-for-update", () => {
+  //   checkForUpdates(true);
+  //   console.log("检查============");
+  // });
   // 有新版本时
   autoUpdater.on("update-available", (info) => {
     dialog
@@ -99,7 +112,9 @@ function updater(win) {
       })
       .then((res) => {
         if (res.response === 0) {
-          shell.openExternal("https://github.com/owner/xxx/releases");
+          shell.openExternal(
+            "https://github.com/wwLoveWj/wjc-electron-umi4/releases"
+          );
         }
       });
   });

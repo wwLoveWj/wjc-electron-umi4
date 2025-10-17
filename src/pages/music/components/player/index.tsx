@@ -59,6 +59,7 @@ import { AddMusicModal } from "./addMusicModal";
 import { EmptyPlaylistState } from "./EmptyPlaylistState";
 import CustomTitleBar from "@/components/CustomTitleBar";
 import { MusicUploadModal } from "../upload";
+import CheckUpdate from "../../update/index";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -240,6 +241,7 @@ const TechWeddingPlayer: React.FC = () => {
   };
   // ===========================播放控制栏==========================================================
   // 处理进度条点击
+  // 修改进度条点击处理
   const handleProgressClick = (e: React.MouseEvent) => {
     if (!progressBarRef.current || !duration) return;
 
@@ -250,6 +252,14 @@ const TechWeddingPlayer: React.FC = () => {
     setCurrentTime(newTime);
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
+      setIsPlaying(true);
+      // 确保继续播放（如果之前是播放状态）
+      if (isPlaying) {
+        audioRef.current.play().catch((error) => {
+          console.error("Play failed after clicking progress:", error);
+          setIsPlaying(false);
+        });
+      }
     }
   };
 
@@ -257,6 +267,14 @@ const TechWeddingPlayer: React.FC = () => {
   const handleProgressDragStart = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsDraggingProgress(true);
+
+    // 记录拖动前的播放状态
+    const wasPlaying = isPlaying;
+
+    // 暂停播放，避免拖动时的杂音
+    if (audioRef.current && wasPlaying) {
+      audioRef.current.pause();
+    }
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
       if (!progressBarRef.current || !duration) return;
@@ -269,11 +287,31 @@ const TechWeddingPlayer: React.FC = () => {
       setCurrentTime(newTime);
     };
 
-    const handleMouseUp = () => {
+    const handleMouseUp = (upEvent: MouseEvent) => {
       setIsDraggingProgress(false);
-      if (audioRef.current && duration) {
-        audioRef.current.currentTime = currentTime;
+
+      // 计算最终位置
+      if (progressBarRef.current && duration) {
+        const rect = progressBarRef.current.getBoundingClientRect();
+        let percent = (upEvent.clientX - rect.left) / rect.width;
+        percent = Math.max(0, Math.min(1, percent));
+        const finalTime = percent * duration;
+
+        setCurrentTime(finalTime);
+
+        if (audioRef.current) {
+          audioRef.current.currentTime = finalTime;
+          setIsPlaying(true);
+          // 如果之前是播放状态，恢复播放
+          if (wasPlaying) {
+            audioRef.current.play().catch((error) => {
+              console.error("Play failed after dragging:", error);
+              setIsPlaying(false);
+            });
+          }
+        }
       }
+
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
@@ -505,6 +543,94 @@ const TechWeddingPlayer: React.FC = () => {
     }
   }, [isPlaying]);
 
+  // 修改键盘事件处理，确保切换后自动播放
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // 如果焦点在输入框中，不触发播放控制
+      const activeElement = document.activeElement;
+      if (
+        activeElement?.tagName === "INPUT" ||
+        activeElement?.tagName === "TEXTAREA" ||
+        (activeElement as HTMLElement)?.contentEditable === "true"
+      ) {
+        return;
+      }
+
+      switch (e.key) {
+        case "ArrowLeft":
+          // 左箭头：后退5秒
+          e.preventDefault();
+          if (audioRef.current && duration) {
+            const newTime = Math.max(0, currentTime - 5);
+            setCurrentTime(newTime);
+            audioRef.current.currentTime = newTime;
+            setIsPlaying(true);
+            // 确保继续播放
+            if (isPlaying) {
+              audioRef.current.play().catch((error) => {
+                console.error("Play failed after seeking:", error);
+              });
+            }
+          }
+          break;
+
+        case "ArrowRight":
+          // 右箭头：前进5秒
+          e.preventDefault();
+          if (audioRef.current && duration) {
+            const newTime = Math.min(duration, currentTime + 5);
+            setCurrentTime(newTime);
+            audioRef.current.currentTime = newTime;
+            setIsPlaying(true);
+            // 确保继续播放
+            if (isPlaying) {
+              audioRef.current.play().catch((error) => {
+                console.error("Play failed after seeking:", error);
+              });
+            }
+          }
+          break;
+
+        case "ArrowUp":
+          // 上箭头：上一首
+          e.preventDefault();
+          handlePrev();
+          break;
+
+        case "ArrowDown":
+          // 下箭头：下一首
+          e.preventDefault();
+          handleNext();
+          break;
+
+        case " ":
+          // 空格键：播放/暂停
+          e.preventDefault();
+          if (currentMusic || currentPlaylist.musics.length > 0) {
+            togglePlay();
+          }
+          break;
+
+        default:
+          break;
+      }
+    };
+
+    // 添加事件监听
+    document.addEventListener("keydown", handleKeyDown);
+
+    // 清理函数
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [
+    currentTime,
+    duration,
+    currentMusic,
+    currentPlaylist.musics.length,
+    isPlaying,
+  ]); // 添加 isPlaying 作为依赖
+
   // 当音量改变时，更新音频音量
   useEffect(() => {
     if (audioRef.current) {
@@ -531,19 +657,42 @@ const TechWeddingPlayer: React.FC = () => {
     );
     let nextIndex;
 
-    if (playMode === "random") {
-      nextIndex = Math.floor(Math.random() * currentPlaylist.musics.length);
-    } else if (playMode === "single") {
-      nextIndex = currentIndex;
-    } else {
-      nextIndex = (currentIndex + 1) % currentPlaylist.musics.length;
+    switch (playMode) {
+      case "random":
+        // 随机播放：随机选择一首，确保不是当前播放的
+        do {
+          nextIndex = Math.floor(Math.random() * currentPlaylist.musics.length);
+        } while (
+          currentPlaylist.musics.length > 1 &&
+          nextIndex === currentIndex
+        );
+        break;
+
+      case "single":
+        // 单曲循环：播放同一首
+        nextIndex = currentIndex;
+        break;
+
+      case "list":
+      default:
+        // 列表循环：播放下一首，如果是最后一首则播放第一首
+        nextIndex = (currentIndex + 1) % currentPlaylist.musics.length;
+        break;
     }
 
     setCurrentMusic(currentPlaylist.musics[nextIndex]);
     setCurrentTime(0);
+
+    // 确保自动播放
+    setIsPlaying(true);
+
+    // 确保音频开始播放
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+    }
   };
 
-  // 上一首
+  // 修改 handlePrev 函数，确保切换后自动播放
   const handlePrev = () => {
     if (!currentMusic || currentPlaylist.musics.length === 0) return;
 
@@ -552,19 +701,37 @@ const TechWeddingPlayer: React.FC = () => {
     );
     let prevIndex;
 
-    if (playMode === "random") {
-      prevIndex = Math.floor(Math.random() * currentPlaylist.musics.length);
-    } else if (playMode === "single") {
-      prevIndex = currentIndex;
-    } else {
-      prevIndex =
-        currentIndex === 0
-          ? currentPlaylist.musics.length - 1
-          : currentIndex - 1;
+    switch (playMode) {
+      case "random":
+        // 随机播放：随机选择一首
+        prevIndex = Math.floor(Math.random() * currentPlaylist.musics.length);
+        break;
+
+      case "single":
+        // 单曲循环：播放同一首
+        prevIndex = currentIndex;
+        break;
+
+      case "list":
+      default:
+        // 列表循环：播放上一首，如果是第一首则播放最后一首
+        prevIndex =
+          currentIndex === 0
+            ? currentPlaylist.musics.length - 1
+            : currentIndex - 1;
+        break;
     }
 
     setCurrentMusic(currentPlaylist.musics[prevIndex]);
     setCurrentTime(0);
+
+    // 确保自动播放
+    setIsPlaying(true);
+
+    // 确保音频开始播放
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+    }
   };
 
   // 选择音乐
@@ -1052,6 +1219,7 @@ const TechWeddingPlayer: React.FC = () => {
               >
                 上传音乐
               </Button>
+              <CheckUpdate />
             </div>
           </div>
         </div>
@@ -1733,7 +1901,6 @@ const TechWeddingPlayer: React.FC = () => {
 
             {/* 可拖动的进度条 */}
             <div className={styles.progressContainer}>
-              <span className={styles.time}>{formatTime(currentTime)}</span>
               <div
                 className={styles.progressBar}
                 onClick={handleProgressClick}
@@ -1749,11 +1916,16 @@ const TechWeddingPlayer: React.FC = () => {
                   />
                 </div>
               </div>
-              <span className={styles.time}>{formatTime(duration)}</span>
             </div>
           </div>
 
           <div className={styles.playerExtra}>
+            {/* 进度条播放进度 */}
+            <div className={styles?.playerProcessTime}>
+              <span className={styles.time}>{formatTime(currentTime)}</span>
+              <span style={{ margin: "0 6px" }}>/</span>
+              <span className={styles.time}>{formatTime(duration)}</span>
+            </div>
             {/* 音量控制 */}
             <div className={styles.volumeControl}>
               <Button
