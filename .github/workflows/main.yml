@@ -45,33 +45,11 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: pnpm run build:win
 
-      - name: Build Electron App for macos
-        if: matrix.os == 'macos-latest'
-        run: |
-          pnpm run build:mac
-          pnpm run build:mac-arm
-
       # 添加构建后文件检查
       - name: Check built files
         run: |
           echo "Built files in dist-electron directory:"
           ls -la dist-electron/ || echo "No dist-electron directory"
-
-      # 修改清理步骤 - 更保守的清理策略
-      - name: Cleanup Artifacts for Windows
-        if: matrix.os == 'windows-latest'
-        run: |
-          echo "Files before cleanup:"
-          ls -la dist-electron/
-          # 只清理不需要的文件，保留所有构建产物
-          pnpm exec del-cli "dist-electron/**/*.js" "dist-electron/**/*.map" "!dist-electron/*.exe" "!dist-electron/*.yml" "!dist-electron/*.blockmap" "!dist-electron/*.zip" || echo "Cleanup completed"
-
-      - name: Cleanup Artifacts for MacOS
-        if: matrix.os == 'macos-latest'
-        run: |
-          echo "Files before cleanup:"
-          ls -la dist-electron/
-          pnpm exec del-cli "dist-electron/**/*.js" "dist-electron/**/*.map" "!dist-electron/*.dmg" "!dist-electron/*.yml" "!dist-electron/*.zip" "!dist-electron/*.tar.gz" || echo "Cleanup completed"
 
       # 添加最终文件检查
       - name: Verify final artifacts
