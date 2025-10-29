@@ -41,6 +41,29 @@ export default defineConfig({
     "@umijs/plugins/dist/model",
     // "@umijs/plugins/dist/locale",
   ],
+  // 确保源码映射正确
+  devtool: process.env.NODE_ENV === "development" ? "source-map" : false,
+
+  chainWebpack: (config) => {
+    // 确保文件路径正确
+    config.module
+      .rule("js")
+      .test(/\.(js|jsx|ts|tsx)$/)
+      .use("babel-loader")
+      .loader("babel-loader")
+      .options({
+        presets: [
+          [
+            "@umijs/babel-preset-umi",
+            {
+              // 确保源码映射
+              sourceMaps: true,
+            },
+          ],
+        ],
+      });
+    return config;
+  },
   analyze: {
     analyzerMode: "server",
     analyzerPort: 8888,
@@ -51,4 +74,17 @@ export default defineConfig({
     logLevel: "info",
     defaultSizes: "parsed", // stat  // gzip
   },
+  // openAPI: {
+  //   requestLibPath: "import { request } from 'umi'",
+  //   schemaPath: "http://localhost:3000/swagger/docs.json", // Swagger 文档地址
+  //   projectName: "api", // 生成的文件名
+  //   apiPrefix: "'/api'", // API 前缀
+  //   namespace: "API", // 命名空间
+  //   hooks: {
+  //     // 自定义请求函数名
+  //     customFunctionName: (data: any) => {
+  //       return data.operationId;
+  //     },
+  //   },
+  // },
 });

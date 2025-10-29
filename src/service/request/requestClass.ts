@@ -132,7 +132,8 @@ class WjcRequest {
           // const token = getCookie("yyds");
           // conf.headers.Authorization = "bearer " + token;
 
-          const accessToken = localStorage.getItem("yyds");
+          const accessToken =
+            typeof window !== "undefined" ? localStorage.getItem("yyds") : null;
           if (accessToken) {
             conf.headers.Authorization = "Bearer " + accessToken;
           }
@@ -307,8 +308,10 @@ class WjcRequest {
       }
     );
     // 更新存储的 access token
-    localStorage.setItem("access_token", response.data.accessToken);
-    localStorage.setItem("refresh_token", response.data.refreshToken);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("access_token", response.data.accessToken);
+      localStorage.setItem("refresh_token", response.data.refreshToken);
+    }
     return response;
   };
 

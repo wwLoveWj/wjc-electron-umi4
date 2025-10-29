@@ -410,7 +410,37 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 30px;
+    position: relative;
     .glass-effect;
+
+    .progressContainer {
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: flex;
+        align-items: center;
+        width: 100%;
+
+        .time {
+            color: @text-secondary;
+            font-size: 12px;
+            min-width: 40px;
+        }
+
+        .progressSlider {
+            flex: 1;
+            margin: 0 10px;
+
+            :global(.my-template-umi-ant-slider-track) {
+                background: @primary-color;
+            }
+
+            :global(.my-template-umi-ant-slider-handle) {
+                border: 2px solid @primary-color;
+                .neon-glow(fade(@primary-color, 50%));
+            }
+        }
+    }
 
     .playerInfo {
         display: flex;
@@ -485,31 +515,6 @@
             }
         }
 
-        .progressContainer {
-            display: flex;
-            align-items: center;
-            width: 100%;
-
-            .time {
-                color: @text-secondary;
-                font-size: 12px;
-                min-width: 40px;
-            }
-
-            .progressSlider {
-                flex: 1;
-                margin: 0 10px;
-
-                :global(.my-template-umi-ant-slider-track) {
-                    background: @primary-color;
-                }
-
-                :global(.my-template-umi-ant-slider-handle) {
-                    border: 2px solid @primary-color;
-                    .neon-glow(fade(@primary-color, 50%));
-                }
-            }
-        }
     }
 
     .playerExtra {
@@ -1465,7 +1470,7 @@ img {
             height: 4px;
             background: @border-color;
             border-radius: 2px;
-            margin: 0 10px;
+            // margin: 0 10px;
             position: relative;
             overflow: hidden;
 
@@ -2002,17 +2007,25 @@ img {
 }
 
 .time {
-    font-size: 12px;
+    font-size: 16px;
     color: #666;
-    min-width: 40px;
+    // min-width: 40px;
 }
 
 .playerExtra {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     flex: 1;
-    min-width: 120px;
+    min-width: 180px;
+
+    .playerProcessTime {
+        display: flex;
+        color: #666;
+        align-items: center;
+        justify-content: space-around;
+        margin-right: 20px;
+    }
 }
 
 .volumeControl {

@@ -56,6 +56,9 @@ declare interface Window {
       size?: number;
       error?: string;
     }>;
+    // 视频
+    selectVideoFiles: () => Promise<string[]>;
+    saveVideoFile: (videoBlob: Blob, filename: string) => Promise<void>;
   };
 }
 

@@ -1,0 +1,209 @@
+@primary-color: #00f2fe;
+@secondary-color: #4facfe;
+@background-dark: #0f1b31;
+@background-darker: #0a1124;
+@text-color: #ffffff;
+@text-secondary: #8a9ba8;
+
+// 播放列表样式
+.playlistSidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 400px; // 增加宽度以显示更多信息
+    background: rgba(@background-darker, 0.95);
+    backdrop-filter: blur(10px);
+    border-left: 1px solid rgba(@primary-color, 0.3);
+    z-index: 30;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+.playlist {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.playlistHeader {
+    padding: 20px;
+    border-bottom: 1px solid rgba(@primary-color, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+        color: @text-color;
+        margin: 0;
+        font-weight: 600;
+        font-size: 18px;
+    }
+}
+
+.closeIcon {
+    color: @text-secondary;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+
+    &:hover {
+        color: @text-color;
+    }
+}
+
+.playlistContent {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+
+    // 自定义滚动条
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: rgba(@background-dark, 0.5);
+        border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(@primary-color, 0.5);
+        border-radius: 3px;
+
+        &:hover {
+            background: rgba(@primary-color, 0.7);
+        }
+    }
+}
+
+.playlistItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 8px;
+    background: rgba(@background-dark, 0.6);
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(@primary-color, 0.1);
+        border-color: rgba(@primary-color, 0.3);
+        transform: translateX(-2px);
+    }
+
+    &.active {
+        background: rgba(@primary-color, 0.15);
+        border-color: @primary-color;
+        box-shadow: 0 4px 12px rgba(@primary-color, 0.2);
+
+        .playingIcon {
+            color: @primary-color;
+        }
+
+        .videoName {
+            color: @primary-color;
+            font-weight: 600;
+        }
+    }
+}
+
+.itemInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.playingIcon {
+    color: @primary-color;
+    font-size: 18px;
+    flex-shrink: 0;
+    animation: pulse 2s infinite;
+}
+
+.playIcon {
+    color: @text-secondary;
+    font-size: 16px;
+    flex-shrink: 0;
+    transition: color 0.3s ease;
+
+    .playlistItem:hover & {
+        color: @primary-color;
+    }
+}
+
+.videoInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.videoName {
+    color: @text-color;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.3s ease;
+}
+
+.videoDuration {
+    color: @text-secondary;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.deleteIcon {
+    color: @text-secondary;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+
+    &:hover {
+        color: #ff4d4f;
+        background: rgba(255, 77, 79, 0.1);
+    }
+}
+
+.emptyPlaylist {
+    text-align: center;
+    padding: 60px 20px;
+    color: @text-secondary;
+
+    p {
+        margin: 0;
+        font-size: 14px;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

@@ -100,7 +100,7 @@ const TodoNotification: React.FC = () => {
         id: Date.now().toString(),
         title: values.title,
         description: values.description,
-        scheduledTime: values.scheduledTime,
+        scheduledTime: dayjs(values.scheduledTime).format("YYYY-MM-DD HH:mm:ss"),
         email: values.email,
         createdAt: new Date(),
       };

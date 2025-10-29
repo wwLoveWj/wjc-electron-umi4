@@ -3,15 +3,16 @@
   "author": "wjc",
   "name": "my-template-umi",
   "main": "./electron/main.js",
-  "version": "1.1.2",
+  "version": "3.0.0",
   "description": "一个关于umi4的模板项目",
   "scripts": {
+    "openapi": "node scripts/generate-api.js",
     "start": "pnpm dev",
-    "dev": "cross-env UMI_ENV=dev umi dev",
+    "dev": "cross-env UMI_ENV=dev REACT_DEV_INSPECTOR_EDITOR=vscode umi dev",
     "uat": "cross-env UMI_ENV=uat umi build",
     "sit": "cross-env UMI_ENV=sit umi build",
     "build": "cross-env UMI_ENV=prod umi build",
-    "build:win": "npm run build && electron-builder --win --config --publish never",
+    "build:win": "pnpm build && electron-builder --win --publish=onTag",
     "build:linux": "npm run build && electron-builder --linux --config --publish never",
     "build:mac": "npm run build && electron-builder --mac --config --publish never",
     "build:mac-arm": "npm run build && electron-builder --arm64 --config --publish never",
@@ -30,8 +31,10 @@
     "antd": "^5.27.1",
     "archiver": "^7.0.1",
     "axios": "^1.11.0",
+    "babel-loader": "^10.0.0",
     "dayjs": "^1.11.18",
     "electron-store": "8.0.0",
+    "electron-updater": "^6.6.2",
     "events": "^3.3.0",
     "lodash-es": "^4.17.21",
     "magical-antd-ui": "^1.0.0",
@@ -44,16 +47,19 @@
     "react-screenshots": "^0.5.22",
     "sass": "^1.91.0",
     "umi": "^4.4.12",
-    "electron-updater": "^6.6.2",
     "vstores": "^0.0.17"
   },
   "devDependencies": {
     "@types/react": "^18.0.33",
     "@types/react-dom": "^18.0.11",
+    "@umijs/openapi": "^1.14.1",
     "@umijs/plugins": "^4.4.12",
     "cross-env": "^10.0.0",
     "electron": "^38.2.0",
     "electron-builder": "^26.0.12",
+    "openapi-typescript-codegen": "^0.29.0",
+    "react-dev-inspector": "^2.0.1",
+    "swagger-typescript-api": "^13.2.15",
     "typescript": "^5.0.3"
   },
   "engines": {
@@ -61,10 +67,17 @@
   },
   "engineStrict": true,
   "build": {
-    "appId": "com.yourapp.id",
-    "productName": "musicApp",
+    "publish": {
+      "provider": "github",
+      "owner": "wwLoveWj",
+      "repo": "wjc-electron-umi4",
+      "releaseType": "release"
+    },
+    "appId": "com.wjc.electron",
+    "copyright": "Copyright © 2025 wjc",
+    "productName": "wjcMusic",
     "directories": {
-      "output": "dist-electron2"
+      "output": "dist-electron"
     },
     "files": [
       "dist/**/*",
@@ -82,7 +95,30 @@
       "**/node_modules/nodemailer/**",
       "**/*.node"
     ],
+    "generateUpdatesFilesForAllChannels": true,
     "npmRebuild": false,
-    "nodeGypRebuild": false
+    "nodeGypRebuild": false,
+    "win": {
+      "icon": "./src/assets/favicon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}_setup_${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./src/assets/favicon.ico",
+      "uninstallerIcon": "./src/assets/favicon.ico",
+      "installerHeaderIcon": "./src/assets/favicon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": false,
+      "warningsAsErrors": false
+    }
   }
 }
