@@ -50,12 +50,14 @@ jobs:
 
       # 添加构建后文件检查
       - name: Check built files
+        shell: bash
         run: |
           echo "Built files in dist-electron directory:"
           ls -la dist-electron/ || echo "No dist-electron directory"
 
       # 添加最终文件检查
       - name: Verify final artifacts
+        shell: bash
         run: |
           echo "Final artifacts:"
           ls -la dist-electron/ || echo "No dist directory"
