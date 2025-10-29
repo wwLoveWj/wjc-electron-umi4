@@ -3,7 +3,7 @@
   "author": "wjc",
   "name": "my-template-umi",
   "main": "./electron/main.js",
-  "version": "3.0.0",
+  "version": "3.0.8",
   "description": "一个关于umi4的模板项目",
   "scripts": {
     "openapi": "node scripts/generate-api.js",
