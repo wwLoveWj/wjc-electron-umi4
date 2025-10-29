@@ -1,32 +1,32 @@
 name: AutoBuild
 
 permissions:
-  contents: write
+  contents: write # 给予写入仓库内容的权限
 
 on:
   push:
     tags:
-      - v*
+      - v* # 当推送以v开头的标签时触发此工作流
 
 jobs:
   release:
-    name: build and release electron app
-    runs-on: ${{ matrix.os }}
+    name: build and release electron app # 任务名称
+    runs-on: ${{ matrix.os }} # 在matrix.os定义的操作系统上运行
 
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') # 只在推送标签时运行
     strategy:
-      fail-fast: false
+      fail-fast: false # 如果一个任务失败,其他任务继续运行
       matrix:
-        os: [windows-latest, macos-latest]
+        os: [windows-latest, macos-latest] # 在Windows和macOS上运行任务
 
     steps:
       - name: Check out git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 # 检出代码仓库
 
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 20 # 安装Node.js 20（这里node环境是能够运行代码的环境）
 
       - name: Install Dependencies
         run: |
@@ -44,6 +44,8 @@ jobs:
       - name: Build Electron App for windows
         if: matrix.os == 'windows-latest'
         run: pnpm run build:win
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # 添加构建后文件检查
       - name: Check built files
