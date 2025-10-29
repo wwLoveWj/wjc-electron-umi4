@@ -35,6 +35,7 @@ jobs:
 
       # 添加构建前的目录检查
       - name: Check directory structure
+        shell: bash
         run: |
           echo "Current directory structure:"
           ls -la
