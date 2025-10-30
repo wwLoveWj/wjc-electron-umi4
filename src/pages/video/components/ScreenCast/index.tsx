@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useModel } from "umi";
 import { WifiOutlined, CloseOutlined } from "@ant-design/icons";
-import styles from "../styles.less";
+import styles from "./index.less";
 
 const ScreenCast: React.FC = () => {
   const [devices, setDevices] = useState<API.ScreenCastDevice[]>([]);

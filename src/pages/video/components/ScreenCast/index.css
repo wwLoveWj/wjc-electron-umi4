@@ -1,0 +1,146 @@
+.castModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(5, 10, 24, 0.95);
+  backdrop-filter: blur(15px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+.castContent {
+  background: #0a1124;
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  border-radius: 16px;
+  padding: 0;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 242, 254, 0.1);
+  animation: modalAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+.castHeader {
+  padding: 25px 30px;
+  border-bottom: 1px solid rgba(0, 242, 254, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(5, 10, 24, 0.5);
+}
+.castHeader h3 {
+  color: #ffffff;
+  margin: 0;
+  font-weight: 600;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.castIcon {
+  color: #00f2fe;
+  font-size: 24px;
+}
+.devicesList {
+  padding: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.discovering {
+  text-align: center;
+  padding: 60px 20px;
+  color: #8a9ba8;
+}
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 242, 254, 0.3);
+  border-top: 3px solid #00f2fe;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.deviceItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px 20px;
+  margin-bottom: 10px;
+  background: rgba(5, 10, 24, 0.6);
+  border-radius: 12px;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.deviceItem:hover {
+  background: rgba(0, 242, 254, 0.1);
+  border-color: rgba(0, 242, 254, 0.3);
+  transform: translateX(5px);
+}
+.deviceIcon {
+  font-size: 28px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 242, 254, 0.1);
+  border-radius: 10px;
+}
+.deviceInfo {
+  flex: 1;
+}
+.deviceName {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.deviceType {
+  color: #8a9ba8;
+  font-size: 13px;
+}
+.connectButton {
+  background: linear-gradient(135deg, #00f2fe, #4facfe);
+  color: #050a18;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+.deviceItem:hover .connectButton {
+  transform: scale(1.05);
+  box-shadow: 0 3px 10px rgba(0, 242, 254, 0.3);
+}
+.castActions {
+  padding: 20px;
+  border-top: 1px solid rgba(0, 242, 254, 0.2);
+  text-align: center;
+}
+.rescanButton {
+  background: transparent;
+  border: 1px solid rgba(0, 242, 254, 0.5);
+  color: #00f2fe;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+.rescanButton:hover {
+  background: rgba(0, 242, 254, 0.1);
+  border-color: #00f2fe;
+  transform: translateY(-2px);
+}
