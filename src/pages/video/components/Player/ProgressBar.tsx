@@ -2,14 +2,18 @@ import React from "react";
 import { useModel } from "umi";
 import styles from "./style.less";
 
-const ProgressBar: React.FC = () => {
+interface ProgressBarProps {
+  videoRef?: React.RefObject<HTMLVideoElement>;
+}
+
+const ProgressBar: React.FC<ProgressBarProps> = ({ videoRef }) => {
   const { currentTime, duration, seekTo } = useModel("useVideoPlayerModel");
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const percent = (e.clientX - rect.left) / rect.width;
     const newTime = percent * duration;
-    seekTo(newTime);
+    seekTo(newTime, videoRef?.current);
   };
 
   const formatTime = (time: number) => {
@@ -22,7 +26,9 @@ const ProgressBar: React.FC = () => {
     const seconds = Math.floor(time % 60);
 
     if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+      return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
+        .toString()
+        .padStart(2, "0")}`;
     } else {
       return `${minutes}:${seconds.toString().padStart(2, "0")}`;
     }

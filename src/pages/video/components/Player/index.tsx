@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import { useModel } from "umi";
 import ControlBar from "./ControlBar";
 import ProgressBar from "./ProgressBar";
@@ -16,8 +16,7 @@ const VideoPlayer: React.FC = () => {
   const {
     currentVideo,
     isPlaying,
-    setVideoRef,
-    setContainerRef,
+    setUserInteracted,
     play,
     pause,
     toggleFullscreen,
@@ -28,53 +27,70 @@ const VideoPlayer: React.FC = () => {
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [showCenterControls, setShowCenterControls] = useState(false);
   const [videoError, setVideoError] = useState<string | null>(null);
+  const [autoPlayBlocked, setAutoPlayBlocked] = useState(false);
 
-  // 设置视频和容器引用
-  useEffect(() => {
-    if (videoRef.current) {
-      setVideoRef(videoRef.current);
-    }
-    if (containerRef.current) {
-      setContainerRef(containerRef.current);
-    }
-  }, [setVideoRef, setContainerRef]);
+  // 使用 useCallback 创建 ref 回调函数
+  const handleVideoRef = useCallback((element: HTMLVideoElement) => {
+    videoRef.current = element;
+    console.log("Video ref set:", element);
+  }, []);
 
-  // 当切换视频时，确保视频元素更新
+  const handleContainerRef = useCallback((element: HTMLDivElement) => {
+    containerRef.current = element;
+    console.log("Container ref set:", element);
+  }, []);
+
+  // 当切换视频时，重置错误状态
   useEffect(() => {
-    if (videoRef.current && currentVideo) {
+    if (currentVideo) {
       setVideoError(null);
-      videoRef.current.load();
+      setAutoPlayBlocked(false);
+      console.log("Current video changed:", currentVideo);
 
-      // 视频加载后尝试播放
-      const handleLoaded = () => {
-        play().catch((error) => {
-          console.error("自动播放失败:", error);
-          setVideoError("点击播放按钮开始播放");
-        });
-      };
-
-      videoRef.current.addEventListener("loadeddata", handleLoaded);
-      return () => {
-        videoRef.current?.removeEventListener("loadeddata", handleLoaded);
-      };
+      // 确保视频元素重新加载
+      if (videoRef.current) {
+        videoRef.current.load();
+      }
     }
-  }, [currentVideo, play]);
+  }, [currentVideo]);
 
   const togglePlayPause = async () => {
+    console.log("togglePlayPause called", {
+      currentVideo,
+      isPlaying,
+      videoRef: videoRef.current,
+    });
+
     if (!currentVideo) {
       showUpload();
       return;
     }
 
+    // 确保 videoRef 存在
+    if (!videoRef.current) {
+      console.error("videoRef is null, cannot play");
+      setVideoError("播放器未准备好，请刷新页面重试");
+      return;
+    }
+
     try {
+      // 标记用户已经交互
+      setUserInteracted();
+
       if (isPlaying) {
-        pause();
+        pause(videoRef.current);
       } else {
-        await play();
+        await play(videoRef.current);
+        setAutoPlayBlocked(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("播放控制失败:", error);
-      setVideoError("播放失败，请检查视频文件");
+      if (error.name === "NotAllowedError") {
+        setVideoError("浏览器阻止了自动播放，请点击播放按钮");
+        setAutoPlayBlocked(true);
+      } else {
+        setVideoError("播放失败，请检查视频文件");
+      }
     }
   };
 
@@ -99,13 +115,32 @@ const VideoPlayer: React.FC = () => {
   ) => {
     console.error("视频加载错误:", e);
     setVideoError("视频加载失败，请检查文件格式或路径");
-    pause();
+    if (videoRef.current) {
+      pause(videoRef.current);
+    }
   };
+
+  // 处理视频元数据加载完成
+  const handleLoadedMetadata = () => {
+    console.log("视频元数据加载完成，videoRef:", videoRef.current);
+  };
+
+  // 处理视频可以播放
+  const handleCanPlay = () => {
+    console.log("视频可以播放，videoRef:", videoRef.current);
+  };
+
+  // 全屏切换函数
+  const handleToggleFullscreen = useCallback(() => {
+    if (containerRef.current) {
+      toggleFullscreen(containerRef.current);
+    }
+  }, [toggleFullscreen]);
 
   return (
     <div
       className={styles.playerContainer}
-      ref={containerRef}
+      ref={handleContainerRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -114,27 +149,44 @@ const VideoPlayer: React.FC = () => {
         {currentVideo ? (
           <>
             <video
-              ref={videoRef}
+              ref={handleVideoRef}
               className={styles.videoElement}
               src={currentVideo?.path}
               preload="metadata"
               onClick={handleVideoClick}
               onError={handleVideoError}
+              onLoadedMetadata={handleLoadedMetadata}
+              onCanPlay={handleCanPlay}
+              playsInline
             />
 
+            {/* 自动播放被阻止的提示 */}
+            {autoPlayBlocked && (
+              <div className={styles.autoplayBlockedOverlay}>
+                <div className={styles.autoplayMessage}>
+                  <p>点击播放按钮开始播放视频</p>
+                  <button
+                    className={styles.playButton}
+                    onClick={handleVideoClick}
+                  >
+                    <PlayCircleFilled />
+                    播放视频
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* 错误提示 */}
-            {videoError && (
+            {videoError && !autoPlayBlocked && (
               <div className={styles.errorOverlay}>
                 <div className={styles.errorMessage}>
                   <p>{videoError}</p>
-                  {videoError.includes("点击播放") && (
-                    <button
-                      className={styles.retryButton}
-                      onClick={handleVideoClick}
-                    >
-                      点击播放
-                    </button>
-                  )}
+                  <button
+                    className={styles.retryButton}
+                    onClick={handleVideoClick}
+                  >
+                    重试播放
+                  </button>
                 </div>
               </div>
             )}
@@ -153,7 +205,9 @@ const VideoPlayer: React.FC = () => {
             {/* 中央播放控制按钮 */}
             <div
               className={`${styles.centerControls} ${
-                showCenterControls || !isPlaying ? styles.visible : ""
+                showCenterControls || !isPlaying || autoPlayBlocked
+                  ? styles.visible
+                  : ""
               }`}
               onClick={handleVideoClick}
             >
@@ -167,11 +221,13 @@ const VideoPlayer: React.FC = () => {
             {/* 视频信息覆盖层 */}
             <div className={styles.videoInfoOverlay}>
               <h3 className={styles.videoTitle}>{currentVideo.name}</h3>
-              {videoError && <div className={styles.errorIndicator}>!</div>}
+              {(videoError || autoPlayBlocked) && (
+                <div className={styles.errorIndicator}>!</div>
+              )}
             </div>
 
             {/* 进度条 */}
-            <ProgressBar />
+            <ProgressBar videoRef={videoRef} />
           </>
         ) : (
           // 没有视频时的提示
@@ -206,7 +262,9 @@ const VideoPlayer: React.FC = () => {
         {/* 控制栏 */}
         <ControlBar
           onTogglePlaylist={() => setShowPlaylist(!showPlaylist)}
-          onToggleFullscreen={toggleFullscreen}
+          onToggleFullscreen={handleToggleFullscreen}
+          videoRef={videoRef}
+          containerRef={containerRef}
         />
       </div>
 

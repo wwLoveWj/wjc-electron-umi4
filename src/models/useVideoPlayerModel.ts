@@ -1,29 +1,7 @@
-import { useState, useCallback, useRef, useEffect } from "react";
-
-export interface VideoItem {
-  id: string;
-  name: string;
-  path: string;
-  duration: number;
-  thumbnail?: string;
-  uploadTime: number;
-}
-
-export interface PlayerState {
-  currentVideo: VideoItem | null;
-  playlist: VideoItem[];
-  isPlaying: boolean;
-  currentTime: number;
-  duration: number;
-  volume: number;
-  isMuted: boolean;
-  playbackRate: number;
-  isFullscreen: boolean;
-  isCasting: boolean;
-}
+import { useState, useCallback, useEffect } from "react";
 
 export default function useVideoPlayerModel() {
-  const [playerState, setPlayerState] = useState<PlayerState>({
+  const [playerState, setPlayerState] = useState<API.PlayerState>({
     currentVideo: null,
     playlist: [],
     isPlaying: false,
@@ -34,167 +12,129 @@ export default function useVideoPlayerModel() {
     playbackRate: 1,
     isFullscreen: false,
     isCasting: false,
+    userInteracted: false,
   });
 
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  // 不再在模型中存储 videoRef，而是通过参数传递
+  const setUserInteracted = useCallback(() => {
+    setPlayerState((prev) => ({
+      ...prev,
+      userInteracted: true,
+    }));
+  }, []);
 
-  // 设置视频引用
-  const setVideoRef = useCallback(
-    (element: HTMLVideoElement) => {
-      videoRef.current = element;
+  // 播放函数现在需要接收 videoElement 参数
+  const play = useCallback(
+    async (videoElement?: HTMLVideoElement) => {
+      console.log("play function called with videoElement:", videoElement);
 
-      if (element) {
-        // 设置初始值
-        element.volume = playerState.volume;
-        element.playbackRate = playerState.playbackRate;
+      if (!playerState.currentVideo) {
+        console.error("No current video to play");
+        return;
+      }
 
-        // 添加事件监听器
-        const handleTimeUpdate = () => {
-          setPlayerState((prev) => ({
-            ...prev,
-            currentTime: element.currentTime,
-            duration: element.duration || prev.duration,
-          }));
-        };
+      // 如果没有传入 videoElement，尝试从状态中获取
+      let videoToPlay = videoElement;
 
-        const handleLoadedMetadata = () => {
-          setPlayerState((prev) => ({
-            ...prev,
-            duration: element.duration || 0,
-          }));
-        };
+      if (!videoToPlay) {
+        console.error("No video element provided to play function");
+        return;
+      }
 
-        const handleEnded = () => {
-          setPlayerState((prev) => ({
-            ...prev,
-            isPlaying: false,
-            currentTime: 0,
-          }));
-        };
+      try {
+        // 设置静音以绕过自动播放策略（可选）
+        videoToPlay.muted = false;
 
-        const handlePlay = () => {
-          setPlayerState((prev) => ({
-            ...prev,
-            isPlaying: true,
-          }));
-        };
+        const playPromise = videoToPlay.play();
 
-        const handlePause = () => {
-          setPlayerState((prev) => ({
-            ...prev,
-            isPlaying: false,
-          }));
-        };
+        if (playPromise !== undefined) {
+          await playPromise;
+          console.log("视频播放成功");
+          setPlayerState((prev) => ({ ...prev, isPlaying: true }));
+        }
+      } catch (error: any) {
+        console.error("播放失败:", error);
 
-        const handleError = (e: any) => {
-          console.error("视频播放错误:", e);
-          setPlayerState((prev) => ({
-            ...prev,
-            isPlaying: false,
-          }));
-        };
-
-        // 添加事件监听
-        element.addEventListener("timeupdate", handleTimeUpdate);
-        element.addEventListener("loadedmetadata", handleLoadedMetadata);
-        element.addEventListener("ended", handleEnded);
-        element.addEventListener("play", handlePlay);
-        element.addEventListener("pause", handlePause);
-        element.addEventListener("error", handleError);
-
-        // 清理函数
-        return () => {
-          element.removeEventListener("timeupdate", handleTimeUpdate);
-          element.removeEventListener("loadedmetadata", handleLoadedMetadata);
-          element.removeEventListener("ended", handleEnded);
-          element.removeEventListener("play", handlePlay);
-          element.removeEventListener("pause", handlePause);
-          element.removeEventListener("error", handleError);
-        };
+        // 如果自动播放被阻止，尝试静音播放
+        if (error.name === "NotAllowedError") {
+          console.log("自动播放被阻止，尝试静音播放");
+          try {
+            videoToPlay.muted = true;
+            await videoToPlay.play();
+            console.log("静音播放成功");
+            setPlayerState((prev) => ({ ...prev, isPlaying: true }));
+          } catch (mutedError) {
+            console.error("静音播放也失败:", mutedError);
+            setPlayerState((prev) => ({ ...prev, isPlaying: false }));
+          }
+        } else {
+          setPlayerState((prev) => ({ ...prev, isPlaying: false }));
+        }
       }
     },
-    [playerState.volume, playerState.playbackRate]
+    [playerState.currentVideo]
   );
 
-  // 设置容器引用
-  const setContainerRef = useCallback((element: HTMLDivElement) => {
-    containerRef.current = element;
+  const pause = useCallback((videoElement?: HTMLVideoElement) => {
+    if (videoElement) {
+      videoElement.pause();
+      setPlayerState((prev) => ({ ...prev, isPlaying: false }));
+    }
   }, []);
 
-  const play = useCallback(async () => {
-    if (videoRef.current && playerState.currentVideo) {
-      try {
-        await videoRef.current.play();
-      } catch (error) {
-        console.error("播放失败:", error);
-        // 如果自动播放被阻止，显示用户交互提示
-        setPlayerState((prev) => ({
-          ...prev,
-          isPlaying: false,
-        }));
+  const seekTo = useCallback(
+    (time: number, videoElement?: HTMLVideoElement) => {
+      if (videoElement) {
+        videoElement.currentTime = time;
+        setPlayerState((prev) => ({ ...prev, currentTime: time }));
       }
-    }
-  }, [playerState.currentVideo]);
+    },
+    []
+  );
 
-  const pause = useCallback(() => {
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
-  }, []);
-
-  const seekTo = useCallback((time: number) => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = time;
-      setPlayerState((prev) => ({ ...prev, currentTime: time }));
-    }
-  }, []);
-
-  const setVolume = useCallback((volume: number) => {
-    if (videoRef.current) {
-      videoRef.current.volume = volume;
+  const setVolume = useCallback(
+    (volume: number, videoElement?: HTMLVideoElement) => {
+      if (videoElement) {
+        videoElement.volume = volume;
+      }
       setPlayerState((prev) => ({ ...prev, volume, isMuted: volume === 0 }));
-    }
-  }, []);
+    },
+    []
+  );
 
-  const toggleMute = useCallback(() => {
-    if (videoRef.current) {
+  const toggleMute = useCallback(
+    (videoElement?: HTMLVideoElement) => {
       const newMuted = !playerState.isMuted;
-      videoRef.current.muted = newMuted;
+      if (videoElement) {
+        videoElement.muted = newMuted;
+      }
       setPlayerState((prev) => ({ ...prev, isMuted: newMuted }));
-    }
-  }, [playerState.isMuted]);
+    },
+    [playerState.isMuted]
+  );
 
-  const setPlaybackRate = useCallback((rate: number) => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = rate;
+  const setPlaybackRate = useCallback(
+    (rate: number, videoElement?: HTMLVideoElement) => {
+      if (videoElement) {
+        videoElement.playbackRate = rate;
+      }
       setPlayerState((prev) => ({ ...prev, playbackRate: rate }));
-    }
-  }, []);
+    },
+    []
+  );
 
-  const setCurrentVideo = useCallback((video: VideoItem) => {
+  const setCurrentVideo = useCallback((video: API.VideoItem) => {
     setPlayerState((prev) => ({
       ...prev,
       currentVideo: video,
       currentTime: 0,
       isPlaying: false,
     }));
-
-    // 延迟设置持续时间，等待视频加载
-    setTimeout(() => {
-      if (videoRef.current) {
-        setPlayerState((prev) => ({
-          ...prev,
-          duration: videoRef.current?.duration || 0,
-        }));
-      }
-    }, 500);
   }, []);
 
-  const addToPlaylist = useCallback((video: VideoItem) => {
+  const addToPlaylist = useCallback((video: API.VideoItem) => {
     setPlayerState((prev) => {
       const newPlaylist = [...prev.playlist, video];
-      // 如果没有当前播放的视频，设置新添加的视频为当前视频
       const newCurrentVideo = prev.currentVideo ? prev.currentVideo : video;
 
       return {
@@ -228,10 +168,7 @@ export default function useVideoPlayerModel() {
     const currentIndex = playlist.findIndex((v) => v.id === currentVideo.id);
     const nextIndex = (currentIndex + 1) % playlist.length;
     setCurrentVideo(playlist[nextIndex]);
-
-    // 切换视频后自动播放
-    setTimeout(() => play(), 100);
-  }, [playerState, setCurrentVideo, play]);
+  }, [playerState, setCurrentVideo]);
 
   const prevVideo = useCallback(() => {
     const { playlist, currentVideo } = playerState;
@@ -240,10 +177,7 @@ export default function useVideoPlayerModel() {
     const currentIndex = playlist.findIndex((v) => v.id === currentVideo.id);
     const prevIndex = (currentIndex - 1 + playlist.length) % playlist.length;
     setCurrentVideo(playlist[prevIndex]);
-
-    // 切换视频后自动播放
-    setTimeout(() => play(), 100);
-  }, [playerState, setCurrentVideo, play]);
+  }, [playerState, setCurrentVideo]);
 
   // 投屏功能
   const toggleCast = useCallback(() => {
@@ -251,23 +185,26 @@ export default function useVideoPlayerModel() {
   }, []);
 
   // 全屏功能
-  const toggleFullscreen = useCallback(async () => {
-    if (!containerRef.current) return;
+  const toggleFullscreen = useCallback(
+    async (containerElement?: HTMLElement) => {
+      if (!containerElement) return;
 
-    try {
-      if (!document.fullscreenElement) {
-        // 进入全屏
-        await containerRef.current.requestFullscreen();
-        setPlayerState((prev) => ({ ...prev, isFullscreen: true }));
-      } else {
-        // 退出全屏
-        await document.exitFullscreen();
-        setPlayerState((prev) => ({ ...prev, isFullscreen: false }));
+      try {
+        if (!document.fullscreenElement) {
+          // 进入全屏
+          await containerElement.requestFullscreen();
+          setPlayerState((prev) => ({ ...prev, isFullscreen: true }));
+        } else {
+          // 退出全屏
+          await document.exitFullscreen();
+          setPlayerState((prev) => ({ ...prev, isFullscreen: false }));
+        }
+      } catch (error) {
+        console.error("全屏操作失败:", error);
       }
-    } catch (error) {
-      console.error("全屏操作失败:", error);
-    }
-  }, []);
+    },
+    []
+  );
 
   // 监听全屏变化
   useEffect(() => {
@@ -302,8 +239,7 @@ export default function useVideoPlayerModel() {
 
   return {
     ...playerState,
-    setVideoRef,
-    setContainerRef,
+    setUserInteracted,
     play,
     pause,
     seekTo,

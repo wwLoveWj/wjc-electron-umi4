@@ -17,12 +17,15 @@ import styles from "../styles.less";
 
 interface ControlBarProps {
   onTogglePlaylist: () => void;
-  onToggleFullscreen: () => void;
+  onToggleFullscreen: () => void; // 现在不需要参数，因为已经在 VideoPlayer 中处理了
+  videoRef?: React.RefObject<HTMLVideoElement>;
+  containerRef?: React.RefObject<HTMLDivElement>;
 }
 
 const ControlBar: React.FC<ControlBarProps> = ({
   onTogglePlaylist,
   onToggleFullscreen,
+  videoRef,
 }) => {
   const {
     isPlaying,
@@ -31,6 +34,7 @@ const ControlBar: React.FC<ControlBarProps> = ({
     playbackRate,
     isCasting,
     isFullscreen,
+    setUserInteracted,
     play,
     pause,
     toggleMute,
@@ -45,15 +49,29 @@ const ControlBar: React.FC<ControlBarProps> = ({
   const { showUpload } = useModel("useVideoUploadModel");
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVolume(parseFloat(e.target.value));
+    setVolume(parseFloat(e.target.value), videoRef?.current);
   };
 
   const handlePlaybackRateChange = (rate: number) => {
-    setPlaybackRate(rate);
+    setPlaybackRate(rate, videoRef?.current);
   };
 
   const handleUploadClick = () => {
     showUpload();
+  };
+
+  const handlePlayClick = async () => {
+    // 标记用户交互
+    setUserInteracted();
+    await play(videoRef?.current);
+  };
+
+  const handlePauseClick = () => {
+    pause(videoRef?.current);
+  };
+
+  const handleMuteClick = () => {
+    toggleMute(videoRef?.current);
   };
 
   return (
@@ -64,9 +82,15 @@ const ControlBar: React.FC<ControlBarProps> = ({
           onClick={prevVideo}
         />
         {isPlaying ? (
-          <PauseCircleOutlined className={styles.controlIcon} onClick={pause} />
+          <PauseCircleOutlined
+            className={styles.controlIcon}
+            onClick={handlePauseClick}
+          />
         ) : (
-          <PlayCircleOutlined className={styles.controlIcon} onClick={play} />
+          <PlayCircleOutlined
+            className={styles.controlIcon}
+            onClick={handlePlayClick}
+          />
         )}
         <StepForwardOutlined
           className={styles.controlIcon}
@@ -77,12 +101,12 @@ const ControlBar: React.FC<ControlBarProps> = ({
           {isMuted ? (
             <MutedOutlined
               className={styles.controlIcon}
-              onClick={() => toggleMute()}
+              onClick={handleMuteClick}
             />
           ) : (
             <SoundOutlined
               className={styles.controlIcon}
-              onClick={() => toggleMute()}
+              onClick={handleMuteClick}
             />
           )}
           <input
