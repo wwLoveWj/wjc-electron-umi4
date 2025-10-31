@@ -84,9 +84,6 @@ const TechWeddingPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(0.8);
-  const [playMode, setPlayMode] = useState<"list" | "single" | "random">(
-    "list"
-  );
   const [duration, setDuration] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [selectedMusicIds, setSelectedMusicIds] = useState<string[]>([]);
@@ -199,6 +196,10 @@ const TechWeddingPlayer: React.FC = () => {
   const volumeBarRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const screens = useBreakpoint();
+  const playModeRef = useRef<"list" | "single" | "random">("list");
+  // 添加一个 ref 来同步当前音乐
+  const currentMusicRef = useRef<Music | null>(null);
+  const updatedPlaylistsRef = useRef<any>(null);
 
   // 切换播放模式
   const togglePlayMode = () => {
@@ -207,14 +208,14 @@ const TechWeddingPlayer: React.FC = () => {
       "single",
       "random",
     ];
-    const currentIndex = modes.indexOf(playMode);
+    const currentIndex = modes.indexOf(playModeRef.current);
     const nextIndex = (currentIndex + 1) % modes.length;
-    setPlayMode(modes[nextIndex]);
+    playModeRef.current = modes[nextIndex];
   };
 
   // 获取播放模式图标
   const getPlayModeIcon = () => {
-    switch (playMode) {
+    switch (playModeRef.current) {
       case "list":
         return <RedoOutlined />; // 列表循环图标
       case "single":
@@ -228,7 +229,7 @@ const TechWeddingPlayer: React.FC = () => {
 
   // 获取播放模式提示文本
   const getPlayModeTooltip = () => {
-    switch (playMode) {
+    switch (playModeRef.current) {
       case "list":
         return "列表循环";
       case "single":
@@ -638,6 +639,16 @@ const TechWeddingPlayer: React.FC = () => {
     }
   }, [volume]);
 
+  // 在 useEffect 中同步 ref 和 state
+  useEffect(() => {
+    currentMusicRef.current = currentMusic;
+  }, [currentMusic]);
+
+  useEffect(() => {
+    updatedPlaylistsRef.current =
+      playlists.find((p) => p.id === currentPlaylistId) || playlists[0];
+  }, [playlists]);
+
   // 播放/暂停
   const togglePlay = () => {
     if (currentMusic) {
@@ -650,20 +661,23 @@ const TechWeddingPlayer: React.FC = () => {
 
   // 下一首
   const handleNext = () => {
-    if (!currentMusic || currentPlaylist.musics.length === 0) return;
+    const currentMusic = currentMusicRef.current;
+    if (!currentMusic || updatedPlaylistsRef.current.musics.length === 0)
+      return;
 
-    const currentIndex = currentPlaylist.musics.findIndex(
+    const currentIndex = updatedPlaylistsRef.current.musics.findIndex(
       (m) => m.id === currentMusic.id
     );
     let nextIndex;
-
-    switch (playMode) {
+    switch (playModeRef.current) {
       case "random":
         // 随机播放：随机选择一首，确保不是当前播放的
         do {
-          nextIndex = Math.floor(Math.random() * currentPlaylist.musics.length);
+          nextIndex = Math.floor(
+            Math.random() * updatedPlaylistsRef.current.musics.length
+          );
         } while (
-          currentPlaylist.musics.length > 1 &&
+          updatedPlaylistsRef.current.musics.length > 1 &&
           nextIndex === currentIndex
         );
         break;
@@ -676,17 +690,26 @@ const TechWeddingPlayer: React.FC = () => {
       case "list":
       default:
         // 列表循环：播放下一首，如果是最后一首则播放第一首
-        nextIndex = (currentIndex + 1) % currentPlaylist.musics.length;
+        nextIndex =
+          (currentIndex + 1) % updatedPlaylistsRef.current.musics.length;
         break;
     }
-
-    setCurrentMusic(currentPlaylist.musics[nextIndex]);
+    if (playModeRef.current === "single") {
+      // 重置当前歌曲并播放
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play();
+      }
+      return; // 注意这里要 return，避免执行后面的 setCurrentMusic
+    }
+    const nextMusic = updatedPlaylistsRef.current.musics[nextIndex];
+    setCurrentMusic(nextMusic);
     setCurrentTime(0);
 
     // 确保自动播放
     setIsPlaying(true);
 
-    // 确保音频开始播放
+    // 直接使用 nextMusic 更新音频
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
     }
@@ -701,7 +724,7 @@ const TechWeddingPlayer: React.FC = () => {
     );
     let prevIndex;
 
-    switch (playMode) {
+    switch (playModeRef.current) {
       case "random":
         // 随机播放：随机选择一首
         prevIndex = Math.floor(Math.random() * currentPlaylist.musics.length);
@@ -816,7 +839,9 @@ const TechWeddingPlayer: React.FC = () => {
           // 添加到当前播放列表
           // 为上传的音乐设置封面
           const newMusics: Music[] = successfulUploads.map((file) => ({
-            id: `music-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            id: `music-${Date.now()}-${Math.random()
+              .toString(36)
+              .substr(2, 9)}`,
             title: file.title || "未知标题",
             artist: file.artist || "未知艺术家",
             album: file.album || "",
@@ -915,8 +940,9 @@ const TechWeddingPlayer: React.FC = () => {
 
     if (window.electronAPI) {
       try {
-        const result =
-          await window.electronAPI.downloadMusicZip(selectedMusics);
+        const result = await window.electronAPI.downloadMusicZip(
+          selectedMusics
+        );
         if (result.success) {
           message.success(`音乐包已保存 (${result.size}MB)`);
         } else {
@@ -975,8 +1001,9 @@ const TechWeddingPlayer: React.FC = () => {
           // 如果音乐有文件路径，尝试删除物理文件
           if (musicToDelete.filePath && window.electronAPI) {
             try {
-              const result =
-                await window.electronAPI.deleteMusicFile(musicToDelete);
+              const result = await window.electronAPI.deleteMusicFile(
+                musicToDelete
+              );
               if (!result.success) {
                 deleteSuccess = false;
                 console.error("删除文件失败:", result.error);
@@ -1232,14 +1259,20 @@ const TechWeddingPlayer: React.FC = () => {
           <div className={styles.sidebar}>
             <div className={styles.navMenu}>
               <div
-                className={`${styles.navItem} ${activeTab === "home" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "home" ? styles.active : ""
+                }`}
                 onClick={() => setActiveTab("home")}
               >
                 <HomeOutlined />
                 <span>首页</span>
               </div>
               <div
-                className={`${styles.navItem} ${activeTab === "albums" || activeTab === "album-detail" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "albums" || activeTab === "album-detail"
+                    ? styles.active
+                    : ""
+                }`}
                 onClick={() => {
                   setActiveTab("albums");
                   setSelectedAlbum(null);
@@ -1249,7 +1282,9 @@ const TechWeddingPlayer: React.FC = () => {
                 <span>专辑</span>
               </div>
               <div
-                className={`${styles.navItem} ${activeTab === "favorites" ? styles.active : ""}`}
+                className={`${styles.navItem} ${
+                  activeTab === "favorites" ? styles.active : ""
+                }`}
                 onClick={() => {
                   setActiveTab("favorites");
                   setCurrentPlaylistId("default");
@@ -1360,7 +1395,9 @@ const TechWeddingPlayer: React.FC = () => {
                       {filteredMusic.map((music, index) => (
                         <div
                           key={music.id}
-                          className={`${styles.musicListItem} ${currentMusic?.id === music.id ? styles.active : ""}`}
+                          className={`${styles.musicListItem} ${
+                            currentMusic?.id === music.id ? styles.active : ""
+                          }`}
                           onClick={() => handleSelectMusic(music)}
                         >
                           <div className={styles.musicListInfo}>
@@ -1403,7 +1440,9 @@ const TechWeddingPlayer: React.FC = () => {
                                   )
                                 }
                                 onClick={(e) => toggleLike(music.id, e)}
-                                className={`${styles.likeButton} ${music.liked ? styles.liked : ""}`}
+                                className={`${styles.likeButton} ${
+                                  music.liked ? styles.liked : ""
+                                }`}
                               />
                               <Popconfirm
                                 title={`确定要从"${currentPlaylist.name}"中移除这首歌曲吗？`}
@@ -1642,7 +1681,9 @@ const TechWeddingPlayer: React.FC = () => {
                     {selectedAlbum.musics.map((music, index) => (
                       <div
                         key={music.id}
-                        className={`${styles.trackItem} ${currentMusic?.id === music.id ? styles.active : ""}`}
+                        className={`${styles.trackItem} ${
+                          currentMusic?.id === music.id ? styles.active : ""
+                        }`}
                         onClick={() => handleSelectMusic(music)}
                       >
                         <div className={styles.trackNumber}>
@@ -1757,7 +1798,9 @@ const TechWeddingPlayer: React.FC = () => {
                         {filteredMusic.map((music, index) => (
                           <div
                             key={music.id}
-                            className={`${styles.musicListItem} ${currentMusic?.id === music.id ? styles.active : ""}`}
+                            className={`${styles.musicListItem} ${
+                              currentMusic?.id === music.id ? styles.active : ""
+                            }`}
                             onClick={() => handleSelectMusic(music)}
                           >
                             <div className={styles.musicListInfo}>
@@ -1803,7 +1846,9 @@ const TechWeddingPlayer: React.FC = () => {
                                     e.stopPropagation();
                                     toggleLike(music.id);
                                   }}
-                                  className={`${styles.likeButton} ${music.liked ? styles.liked : ""}`}
+                                  className={`${styles.likeButton} ${
+                                    music.liked ? styles.liked : ""
+                                  }`}
                                 />
                                 {currentPlaylist.id !== "default" && (
                                   <Popconfirm
@@ -1894,7 +1939,9 @@ const TechWeddingPlayer: React.FC = () => {
                     currentMusic.liked ? <HeartFilled /> : <HeartOutlined />
                   }
                   onClick={() => toggleLike(currentMusic.id)}
-                  className={`${styles.likeButton} ${currentMusic.liked ? styles.liked : ""}`}
+                  className={`${styles.likeButton} ${
+                    currentMusic.liked ? styles.liked : ""
+                  }`}
                 />
               )}
             </div>
