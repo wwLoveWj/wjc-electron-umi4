@@ -12,6 +12,14 @@
   z-index: 1000;
   animation: fadeIn 0.3s ease;
 }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 .castContent {
   background: #0a1124;
   border: 1px solid rgba(0, 242, 254, 0.3);
@@ -22,6 +30,16 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 242, 254, 0.1);
   animation: modalAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+}
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 .castHeader {
   padding: 25px 30px;
@@ -40,14 +58,64 @@
   align-items: center;
   gap: 12px;
 }
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 .castIcon {
   color: #00f2fe;
   font-size: 24px;
+}
+.closeIcon {
+  color: #8a9ba8;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+.closeIcon:hover {
+  color: #ffffff;
+  background: rgba(0, 242, 254, 0.1);
+  transform: rotate(90deg);
+}
+.castInfo {
+  padding: 20px 30px;
+  background: rgba(5, 10, 24, 0.3);
+  border-bottom: 1px solid rgba(0, 242, 254, 0.1);
+}
+.castInfo p {
+  margin: 0;
+  font-size: 14px;
+  color: #ffffff;
+}
+.castInfo p.warning {
+  color: #ff6b6b;
+  font-weight: 500;
+}
+.castInfo strong {
+  color: #00f2fe;
+  font-weight: 600;
 }
 .devicesList {
   padding: 20px;
   max-height: 400px;
   overflow-y: auto;
+}
+.devicesList::-webkit-scrollbar {
+  width: 6px;
+}
+.devicesList::-webkit-scrollbar-track {
+  background: rgba(10, 17, 36, 0.5);
+  border-radius: 3px;
+}
+.devicesList::-webkit-scrollbar-thumb {
+  background: rgba(0, 242, 254, 0.5);
+  border-radius: 3px;
+}
+.devicesList::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 242, 254, 0.7);
 }
 .discovering {
   text-align: center;
@@ -55,13 +123,10 @@
   color: #8a9ba8;
 }
 .loadingSpinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(0, 242, 254, 0.3);
-  border-top: 3px solid #00f2fe;
-  border-radius: 50%;
+  color: #00f2fe;
+  font-size: 32px;
+  margin-bottom: 20px;
   animation: spin 1s linear infinite;
-  margin: 0 auto 20px;
 }
 @keyframes spin {
   0% {
@@ -88,6 +153,10 @@
   border-color: rgba(0, 242, 254, 0.3);
   transform: translateX(5px);
 }
+.deviceItem:hover .connectButton:not(.connecting) {
+  transform: scale(1.05);
+  box-shadow: 0 3px 10px rgba(0, 242, 254, 0.3);
+}
 .deviceIcon {
   font-size: 28px;
   width: 50px;
@@ -97,6 +166,7 @@
   justify-content: center;
   background: rgba(0, 242, 254, 0.1);
   border-radius: 10px;
+  flex-shrink: 0;
 }
 .deviceInfo {
   flex: 1;
@@ -119,18 +189,24 @@
   font-weight: 600;
   font-size: 14px;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
-.deviceItem:hover .connectButton {
-  transform: scale(1.05);
-  box-shadow: 0 3px 10px rgba(0, 242, 254, 0.3);
+.connectButton.connecting {
+  background: rgba(138, 155, 168, 0.5);
+  cursor: not-allowed;
+  opacity: 0.7;
 }
-.castActions {
-  padding: 20px;
-  border-top: 1px solid rgba(0, 242, 254, 0.2);
+.noDevices {
   text-align: center;
+  padding: 60px 20px;
+  color: #8a9ba8;
 }
-.rescanButton {
-  background: transparent;
+.noDevices p {
+  margin: 0 0 20px 0;
+  font-size: 16px;
+}
+.retryButton {
+  background: rgba(0, 242, 254, 0.1);
   border: 1px solid rgba(0, 242, 254, 0.5);
   color: #00f2fe;
   padding: 10px 20px;
@@ -139,8 +215,88 @@
   transition: all 0.3s ease;
   font-weight: 500;
 }
-.rescanButton:hover {
-  background: rgba(0, 242, 254, 0.1);
-  border-color: #00f2fe;
+.retryButton:hover {
+  background: rgba(0, 242, 254, 0.2);
   transform: translateY(-2px);
+}
+.castActions {
+  padding: 20px 30px;
+  border-top: 1px solid rgba(0, 242, 254, 0.2);
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+.rescanButton {
+  background: rgba(0, 242, 254, 0.1);
+  border: 1px solid rgba(0, 242, 254, 0.5);
+  color: #00f2fe;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+.rescanButton:hover:not(:disabled) {
+  background: rgba(0, 242, 254, 0.2);
+  transform: translateY(-2px);
+}
+.rescanButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+.closeButton {
+  background: rgba(138, 155, 168, 0.1);
+  border: 1px solid rgba(138, 155, 168, 0.3);
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+.closeButton:hover {
+  background: rgba(138, 155, 168, 0.2);
+  border-color: rgba(138, 155, 168, 0.5);
+  transform: translateY(-2px);
+}
+.castHint {
+  padding: 15px 30px;
+  background: rgba(0, 242, 254, 0.05);
+  border-top: 1px solid rgba(0, 242, 254, 0.1);
+}
+.castHint p {
+  margin: 0;
+  font-size: 12px;
+  color: #8a9ba8;
+  text-align: center;
+  line-height: 1.4;
+}
+@media (max-width: 768px) {
+  .castContent {
+    width: 95%;
+    margin: 20px;
+  }
+  .castHeader {
+    padding: 20px;
+  }
+  .castInfo {
+    padding: 15px 20px;
+  }
+  .devicesList {
+    padding: 15px;
+  }
+  .deviceItem {
+    padding: 15px;
+  }
+  .castActions {
+    padding: 15px 20px;
+    flex-direction: column;
+  }
+  .castActions button {
+    width: 100%;
+  }
+  .castHint {
+    padding: 12px 20px;
+  }
 }

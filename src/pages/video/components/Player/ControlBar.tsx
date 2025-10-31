@@ -8,6 +8,7 @@ import {
   SoundOutlined,
   MutedOutlined,
   FullscreenOutlined,
+  FullscreenExitOutlined,
   UnorderedListOutlined,
   UploadOutlined,
   WifiOutlined,
@@ -16,15 +17,20 @@ import styles from "../styles.less";
 
 interface ControlBarProps {
   onTogglePlaylist: () => void;
+  onToggleFullscreen: () => void;
 }
 
-const ControlBar: React.FC<ControlBarProps> = ({ onTogglePlaylist }) => {
+const ControlBar: React.FC<ControlBarProps> = ({
+  onTogglePlaylist,
+  onToggleFullscreen,
+}) => {
   const {
     isPlaying,
     volume,
     isMuted,
     playbackRate,
     isCasting,
+    isFullscreen,
     play,
     pause,
     toggleMute,
@@ -35,6 +41,7 @@ const ControlBar: React.FC<ControlBarProps> = ({ onTogglePlaylist }) => {
     toggleCast,
   } = useModel("useVideoPlayerModel");
 
+  // 从 upload 模型获取方法
   const { showUpload } = useModel("useVideoUploadModel");
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,6 +50,10 @@ const ControlBar: React.FC<ControlBarProps> = ({ onTogglePlaylist }) => {
 
   const handlePlaybackRateChange = (rate: number) => {
     setPlaybackRate(rate);
+  };
+
+  const handleUploadClick = () => {
+    showUpload();
   };
 
   return (
@@ -103,19 +114,31 @@ const ControlBar: React.FC<ControlBarProps> = ({ onTogglePlaylist }) => {
       </div>
 
       <div className={styles.rightControls}>
-        <UploadOutlined className={styles.controlIcon} onClick={showUpload} />
+        <UploadOutlined
+          className={styles.controlIcon}
+          onClick={handleUploadClick}
+        />
         <UnorderedListOutlined
           className={styles.controlIcon}
           onClick={onTogglePlaylist}
         />
         <WifiOutlined
-          className={`${styles.controlIcon} ${isCasting ? styles.castingActive : ""}`}
+          className={`${styles.controlIcon} ${
+            isCasting ? styles.castingActive : ""
+          }`}
           onClick={toggleCast}
         />
-        <FullscreenOutlined
-          className={styles.controlIcon}
-          // onClick={toggleFullscreen}
-        />
+        {isFullscreen ? (
+          <FullscreenExitOutlined
+            className={styles.controlIcon}
+            onClick={onToggleFullscreen}
+          />
+        ) : (
+          <FullscreenOutlined
+            className={styles.controlIcon}
+            onClick={onToggleFullscreen}
+          />
+        )}
       </div>
     </div>
   );

@@ -21,6 +21,16 @@
     animation: fadeIn 0.3s ease;
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
 .castContent {
     background: @background-dark;
     border: 1px solid rgba(@primary-color, 0.3);
@@ -33,6 +43,18 @@
         0 0 0 1px rgba(@primary-color, 0.1);
     animation: modalAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
+}
+
+@keyframes modalAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 .castHeader {
@@ -54,15 +76,76 @@
     }
 }
 
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .castIcon {
     color: @primary-color;
     font-size: 24px;
+}
+
+.closeIcon {
+    color: @text-secondary;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+
+    &:hover {
+        color: @text-color;
+        background: rgba(@primary-color, 0.1);
+        transform: rotate(90deg);
+    }
+}
+
+.castInfo {
+    padding: 20px 30px;
+    background: rgba(@background-darker, 0.3);
+    border-bottom: 1px solid rgba(@primary-color, 0.1);
+
+    p {
+        margin: 0;
+        font-size: 14px;
+        color: @text-color;
+
+        &.warning {
+            color: @accent-color;
+            font-weight: 500;
+        }
+    }
+
+    strong {
+        color: @primary-color;
+        font-weight: 600;
+    }
 }
 
 .devicesList {
     padding: 20px;
     max-height: 400px;
     overflow-y: auto;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: rgba(@background-dark, 0.5);
+        border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(@primary-color, 0.5);
+        border-radius: 3px;
+
+        &:hover {
+            background: rgba(@primary-color, 0.7);
+        }
+    }
 }
 
 .discovering {
@@ -72,13 +155,10 @@
 }
 
 .loadingSpinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(@primary-color, 0.3);
-    border-top: 3px solid @primary-color;
-    border-radius: 50%;
+    color: @primary-color;
+    font-size: 32px;
+    margin-bottom: 20px;
     animation: spin 1s linear infinite;
-    margin: 0 auto 20px;
 }
 
 @keyframes spin {
@@ -107,6 +187,11 @@
         background: rgba(@primary-color, 0.1);
         border-color: rgba(@primary-color, 0.3);
         transform: translateX(5px);
+
+        .connectButton:not(.connecting) {
+            transform: scale(1.05);
+            box-shadow: 0 3px 10px rgba(@primary-color, 0.3);
+        }
     }
 }
 
@@ -119,6 +204,7 @@
     justify-content: center;
     background: rgba(@primary-color, 0.1);
     border-radius: 10px;
+    flex-shrink: 0;
 }
 
 .deviceInfo {
@@ -145,21 +231,28 @@
     font-weight: 600;
     font-size: 14px;
     transition: all 0.3s ease;
+    flex-shrink: 0;
 
-    .deviceItem:hover & {
-        transform: scale(1.05);
-        box-shadow: 0 3px 10px rgba(@primary-color, 0.3);
+    &.connecting {
+        background: rgba(@text-secondary, 0.5);
+        cursor: not-allowed;
+        opacity: 0.7;
     }
 }
 
-.castActions {
-    padding: 20px;
-    border-top: 1px solid rgba(@primary-color, 0.2);
+.noDevices {
     text-align: center;
+    padding: 60px 20px;
+    color: @text-secondary;
+
+    p {
+        margin: 0 0 20px 0;
+        font-size: 16px;
+    }
 }
 
-.rescanButton {
-    background: transparent;
+.retryButton {
+    background: rgba(@primary-color, 0.1);
     border: 1px solid rgba(@primary-color, 0.5);
     color: @primary-color;
     padding: 10px 20px;
@@ -169,8 +262,106 @@
     font-weight: 500;
 
     &:hover {
-        background: rgba(@primary-color, 0.1);
-        border-color: @primary-color;
+        background: rgba(@primary-color, 0.2);
         transform: translateY(-2px);
+    }
+}
+
+.castActions {
+    padding: 20px 30px;
+    border-top: 1px solid rgba(@primary-color, 0.2);
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.rescanButton {
+    background: rgba(@primary-color, 0.1);
+    border: 1px solid rgba(@primary-color, 0.5);
+    color: @primary-color;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+
+    &:hover:not(:disabled) {
+        background: rgba(@primary-color, 0.2);
+        transform: translateY(-2px);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+}
+
+// 新增取消按钮样式
+.closeButton {
+    background: rgba(@text-secondary, 0.1);
+    border: 1px solid rgba(@text-secondary, 0.3);
+    color: @text-color;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+
+    &:hover {
+        background: rgba(@text-secondary, 0.2);
+        border-color: rgba(@text-secondary, 0.5);
+        transform: translateY(-2px);
+    }
+}
+
+.castHint {
+    padding: 15px 30px;
+    background: rgba(@primary-color, 0.05);
+    border-top: 1px solid rgba(@primary-color, 0.1);
+
+    p {
+        margin: 0;
+        font-size: 12px;
+        color: @text-secondary;
+        text-align: center;
+        line-height: 1.4;
+    }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+    .castContent {
+        width: 95%;
+        margin: 20px;
+    }
+
+    .castHeader {
+        padding: 20px;
+    }
+
+    .castInfo {
+        padding: 15px 20px;
+    }
+
+    .devicesList {
+        padding: 15px;
+    }
+
+    .deviceItem {
+        padding: 15px;
+    }
+
+    .castActions {
+        padding: 15px 20px;
+        flex-direction: column;
+
+        button {
+            width: 100%;
+        }
+    }
+
+    .castHint {
+        padding: 12px 20px;
     }
 }
