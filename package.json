@@ -99,7 +99,7 @@
     "npmRebuild": false,
     "nodeGypRebuild": false,
     "win": {
-      "icon": "./src/assets/favicon.ico",
+      "icon": "./src/assets/music.ico",
       "target": [
         {
           "target": "nsis",
@@ -113,9 +113,9 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "./src/assets/favicon.ico",
-      "uninstallerIcon": "./src/assets/favicon.ico",
-      "installerHeaderIcon": "./src/assets/favicon.ico",
+      "installerIcon": "./src/assets/music.ico",
+      "uninstallerIcon": "./src/assets/music.ico",
+      "installerHeaderIcon": "./src/assets/music.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": false,
       "warningsAsErrors": false
